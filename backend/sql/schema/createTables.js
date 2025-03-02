@@ -1,6 +1,22 @@
+require('dotenv').config({ path: '../../../.env' });
 const mysql = require('mysql2');
-const dbUrl = 'mysql://srb34:CS491CityN@vApp@sql.njit.edu:3306/srb34';
-const connection = mysql.createConnection(dbUrl);
+
+const connection = mysql.createConnection({
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME
+});
+
+// verify .env variable are loaded correctly
+console.log("Database Credentials Loaded:", {
+    DB_HOST: process.env.DB_HOST,
+    DB_PORT: process.env.DB_PORT,
+    DB_USER: process.env.DB_USER,
+    DB_PASSWORD: process.env.DB_PASSWORD,
+    DB_NAME: process.env.DB_NAME
+});
 
 const createTables = [
     `CREATE TABLE IF NOT EXISTS User (
@@ -19,7 +35,7 @@ const createTables = [
         User1ID INT NOT NULL,
         User2ID INT NOT NULL,
         Status ENUM('Accepted', 'Pending') NOT NULL DEFAULT 'Pending',
-        Timestamp TIMESmysTAMP DEFAULT CURRENT_TIMESTAMP,
+        Timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         CONSTRAINT fk_friends_user1 FOREIGN KEY (User1ID) REFERENCES User(UserID) ON DELETE CASCADE,
         CONSTRAINT fk_friends_user2 FOREIGN KEY (User2ID) REFERENCES User(UserID) ON DELETE CASCADE,
         CONSTRAINT unique_friendship_pair UNIQUE (User1ID, User2ID) -- Ensures friendships are unique
@@ -47,18 +63,42 @@ const createTables = [
         CONSTRAINT fk_rsvp_user FOREIGN KEY (UserID) REFERENCES User(UserID) ON DELETE CASCADE,
         CONSTRAINT fk_rsvp_event FOREIGN KEY (EventID) REFERENCES Events(EventID) ON DELETE CASCADE,
         CONSTRAINT unique_rsvp UNIQUE (UserID, EventID)
+    );`,
+
+    `CREATE TABLE IF NOT EXISTS Map (
+        MapID INT AUTO_INCREMENT PRIMARY KEY,
+        EventID INT NOT NULL,
+        Latitude DECIMAL(10, 8) NOT NULL,
+        Longitude DECIMAL(11, 8) NOT NULL,
+        Timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        CONSTRAINT fk_map_event FOREIGN KEY (EventID) REFERENCES Events(EventID) ON DELETE CASCADE
     );`
 ];
 
 
-createTables.forEach(query => {
-    connection.query(query, (err, results) => {
-        if (err) {
-            console.error("Error creating tables:", err.sqlMessage);
-        } else {
-            console.log("Table created successfully.");
-        }
+connection.connect(err => {
+    if (err) {
+        console.error("Database connection failed:", err);
+        return;
+    }
+    console.log("Connected to MySQL successfully!");
+
+    // Run queries one by one
+    let completedQueries = 0;
+    createTables.forEach(query => {
+        connection.query(query, (err, results) => {
+            if (err) {
+                console.error("Error creating table:", err.sqlMessage);
+            } else {
+                console.log("Table created successfully.");
+            }
+
+            // close connection only after all queries finish
+            completedQueries++;
+            if (completedQueries === createTables.length) {
+                console.log("All tables processed. Closing connection.");
+                connection.end();
+            }
+        });
     });
 });
-
-connection.end();
