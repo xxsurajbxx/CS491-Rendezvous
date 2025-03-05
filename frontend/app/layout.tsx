@@ -1,9 +1,13 @@
 import "../styles/globals.css"; // Change this line
+import NavigationBar from "./components/NavigationBar";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <NavigationBar />
+        {children}
+        </body>
     </html>
   );
 }
