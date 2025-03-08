@@ -6,11 +6,8 @@
 
 //leaflet imports here
 import "leaflet/dist/leaflet.css";
-import 'leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css';
-import "leaflet-defaulticon-compatibility";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import { Icon } from "leaflet";
-import markerIconPng from "leaflet/dist/images/marker-icon.png"
 
 //Defines a marked position on the leaflet map including name of location, coordinates of location, and a popup description that describes that location/event.
 interface Marker {
@@ -40,7 +37,7 @@ export default function LeafletMap(){
     }
   ]
   const customMarkerIcon = new Icon({
-    iconUrl: "/markerPing.png",
+    iconUrl: "/companyLogo.png",
     iconSize: [markerSize, markerSize]
   })
   
