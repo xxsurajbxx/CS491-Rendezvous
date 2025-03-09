@@ -20,7 +20,7 @@ export default function Home() {
       <SidebarProvider>
         <EventSideBar />
         <SidebarInset>
-          <main className="flex min-h-screen items-center justify-center bg-gray-100">
+          <main className="flex min-h-screen items-center justify-center bg-gray-100 p-6">
             <LeafletMap />
           </main>
         </SidebarInset>

@@ -14,7 +14,8 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
-export const EventCard: React.FC<EventCard> = ({title, date, description, where, people}) => {
+
+export const EventCard: React.FC<EventCard> = ({title, date, description, where, startTime, endTime, people}) => {
   const [open, setOpen] = useState(false);
 
   const infoBtnEventHandle = () => {
@@ -23,22 +24,34 @@ export const EventCard: React.FC<EventCard> = ({title, date, description, where,
 
   return(
     <Card>
-      <CardHeader className="">
-        <CardTitle className="flex flex-row items-center justify-center">
-          <div className="w-fit"><p className="text-xl">{date}</p></div>
-          <div className="w-fit h-full"><p className="text-2xl">{title}</p></div>
+      <CardHeader>
+        <CardTitle>
+            <p className="text-xl">{date}</p>
+            <p className="text-2xl">{title}</p>
         </CardTitle>
       </CardHeader>
       <CardContent>
         <Accordion type="single" collapsible>
             <AccordionItem value="item-1" className="overflow-hidden">
-              <AccordionContent>
-                <p>Description: {description}</p>
-                <p>{where}</p>
-                <p>People You May Know:</p>
-                {people.map(person => (
-                  <p>{person}</p>
-                ))}
+              <AccordionContent className="flex flex-col p-0">
+                <div className="mb-3">
+                  <p>{description}</p>
+                </div>
+                <div className="mb-3">
+                  <p className="font-bold">Where:</p>
+                  <p>{where}</p>
+                </div>
+                <div className="mb-3">
+                  <p className="font-semibold">Time:</p>
+                  <p><span className="font-semibold">From: </span>{startTime} <span className="font-semibold"> To: </span>{endTime}</p>
+                </div>
+                <div className="mb-3">
+                  <p className="font-bold">People You May Know:</p>
+                  {people.map(person => (
+                    <p>{person}</p>
+                  ))}
+                </div>
+                <Button className="self-center w-1/2 font-semibold bg-purple-900">RSVP</Button>
               </AccordionContent>
               <AccordionTrigger onClick={infoBtnEventHandle}><h3>{open === false ? "More Info" : "Hide Info"}</h3></AccordionTrigger>
             </AccordionItem>

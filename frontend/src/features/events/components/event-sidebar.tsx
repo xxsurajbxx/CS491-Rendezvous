@@ -16,6 +16,8 @@ export const EventSideBar = () => {
       date: "April 9",
       description: "Cool event happening at Prudential. Bunch of bands playing here.",
       where: "25 Lafayette St, Newark, NJ 07102",
+      startTime: "9:00pm",
+      endTime: "12:00am",
       people: [
         "Danny Arco",
         "Chad Vincento",
@@ -28,6 +30,8 @@ export const EventSideBar = () => {
       date: "April 9",
       description: "Cool event happening at Prudential. Bunch of bands playing here.",
       where: "25 Lafayette St, Newark, NJ 07102",
+      startTime: "9:00pm",
+      endTime: "12:00am",
       people: [
         "Danny Arco",
         "Chad Vincento",
@@ -40,6 +44,8 @@ export const EventSideBar = () => {
       date: "April 9",
       description: "Cool event happening at Prudential. Bunch of bands playing here.",
       where: "25 Lafayette St, Newark, NJ 07102",
+      startTime: "9:00pm",
+      endTime: "12:00am",
       people: [
         "Danny Arco",
         "Chad Vincento",
@@ -52,6 +58,8 @@ export const EventSideBar = () => {
       date: "April 9",
       description: "Cool event happening at Prudential. Bunch of bands playing here.",
       where: "25 Lafayette St, Newark, NJ 07102",
+      startTime: "9:00pm",
+      endTime: "12:00am",
       people: [
         "Danny Arco",
         "Chad Vincento",
@@ -65,7 +73,7 @@ export const EventSideBar = () => {
     <Sidebar variant="inset" collapsible="none" className="w-1/4 max-h-screen top-[80px]">
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Events</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-xl py-7">Events</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="gap-4">
               {events.map(event => (
@@ -74,6 +82,8 @@ export const EventSideBar = () => {
                   date={event.date}
                   description={event.description}
                   where={event.where}
+                  startTime={event.startTime}
+                  endTime={event.endTime}
                   people={event.people}
                 />
               ))}

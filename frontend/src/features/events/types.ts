@@ -1,9 +1,11 @@
 interface EventCard {
     title: string,
     date: string,
-    // locationLat: number,
-    // locationLong: number,
+    startTime: string,
+    endTime: string,
     description: string
     where: string,
+    // locationLat: number,
+    // locationLong: number,
     people: string[]
 }
