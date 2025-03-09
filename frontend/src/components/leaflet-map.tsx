@@ -46,7 +46,7 @@ export default function LeafletMap(){
       center={[newarkLat,newarkLong]}
       zoom={currentZoom}
       scrollWheelZoom={true}
-      className="h-96 w-96"
+      className="h-full w-full"
     >
       <TileLayer 
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
