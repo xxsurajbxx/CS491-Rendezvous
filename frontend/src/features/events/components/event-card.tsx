@@ -36,9 +36,6 @@ export const EventCard: React.FC<EventCard> = ({title, date, description, where,
             <AccordionItem value="item-1" className="overflow-hidden">
               <AccordionContent className="flex flex-col p-0">
                 <div className="mb-3">
-                  <p>{description}</p>
-                </div>
-                <div className="mb-3">
                   <p className="font-bold">Where:</p>
                   <p>{where}</p>
                 </div>
