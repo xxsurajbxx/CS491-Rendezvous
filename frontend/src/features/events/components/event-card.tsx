@@ -27,8 +27,9 @@ export const EventCard: React.FC<EventCard> = ({title, date, description, where,
       <CardHeader>
         <CardTitle>
             <p className="text-xl">{date}</p>
-            <p className="text-2xl">{title}</p>
+            <p className="text-3xl">{title}</p>
         </CardTitle>
+        <CardDescription className="py-2">{description}</CardDescription>
       </CardHeader>
       <CardContent>
         <Accordion type="single" collapsible>
