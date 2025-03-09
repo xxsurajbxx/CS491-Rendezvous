@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/accordion";
 
 
-export const EventCard: React.FC<EventCard> = ({title, date, description, where, startTime, endTime, people}) => {
+export const EventCard: React.FC<EventCard> = ({key, title, date, description, where, startTime, endTime, people}) => {
   const [open, setOpen] = useState(false);
 
   const infoBtnEventHandle = () => {
@@ -45,8 +45,8 @@ export const EventCard: React.FC<EventCard> = ({title, date, description, where,
                 </div>
                 <div className="mb-3">
                   <p className="font-bold">People You May Know:</p>
-                  {people.map(person => (
-                    <p>{person}</p>
+                  {people.map((person, index) => (
+                    <p key={index}>{person}</p>
                   ))}
                 </div>
                 <Button className="self-center w-1/2 font-semibold bg-purple-900">RSVP</Button>

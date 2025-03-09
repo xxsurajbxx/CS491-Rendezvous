@@ -1,4 +1,5 @@
 interface EventCard {
+    key: number,
     title: string,
     date: string,
     startTime: string,

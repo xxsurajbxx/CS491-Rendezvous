@@ -53,8 +53,8 @@ export default function LeafletMap(){
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       {/* map function to display all the marker locations of events within the given area. */}
-      {temporaryMarkers.map(marker => (
-        <Marker position={marker.geocode} icon={customMarkerIcon}>
+      {temporaryMarkers.map((marker, index) => (
+        <Marker key={index} position={marker.geocode} icon={customMarkerIcon}>
           <Popup><h2>{marker.popup}</h2></Popup>
         </Marker>
       ))}

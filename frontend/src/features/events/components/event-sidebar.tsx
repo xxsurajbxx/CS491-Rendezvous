@@ -76,8 +76,9 @@ export const EventSideBar = () => {
           <SidebarGroupLabel className="text-xl py-7">Events</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="gap-4">
-              {events.map(event => (
+              {events.map((event, index) => (
                 <EventCard
+                  key={index}
                   title={event.title}
                   date={event.date}
                   description={event.description}
