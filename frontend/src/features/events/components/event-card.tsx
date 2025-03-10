@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/accordion";
 
 
-export const EventCard: React.FC<EventCard> = ({key, title, date, description, where, startTime, endTime, people}) => {
+export const EventCard: React.FC<EventCard> = ({title, date, description, where, startTime, endTime, people}) => {
   const [open, setOpen] = useState(false);
 
   const infoBtnEventHandle = () => {
