@@ -22,26 +22,6 @@ import { Tab, TabProps } from "../types";
 
 
 export const FriendsSideBar: React.FC<TabProps> = ({ setWindow }) => {
-  const sideTabs: Tab[] = [
-    {
-      windowType: 'COMMUNITY',
-      title: "Community",
-      url: "/community",
-      iconUrl: "/communityIcon.png"
-    },
-    {
-      windowType: 'RSVP',
-      title: "RSVP's",
-      url: "/rsvp",
-      iconUrl: "/communityIcon.png"
-    },
-    {
-      windowType: 'REQUESTS',
-      title: "Friend Requests",
-      url: "/reqeusts",
-      iconUrl: "/friendsIcon.png"
-    },
-  ]
 
   return(
     <Sidebar variant="inset" collapsible="none" className="w-1/4 max-h-screen top-[80px]">
@@ -54,7 +34,7 @@ export const FriendsSideBar: React.FC<TabProps> = ({ setWindow }) => {
           <SidebarGroupContent>
             <SidebarMenu className="gap-4">
               {sideTabs.map((tab, index) => (
-                <button onClick={() => setWindow(tab.windowType)}>
+                <button key={index} onClick={() => setWindow(tab.windowType)}>
                   <Card key={index} className="hover:bg-[#5C3B58]">
                     <CardContent>
                       <div className="flex flex-row items-center gap-x-2">
@@ -73,3 +53,24 @@ export const FriendsSideBar: React.FC<TabProps> = ({ setWindow }) => {
     </Sidebar>
   );
 }
+
+const sideTabs: Tab[] = [
+  {
+    windowType: 'COMMUNITY',
+    title: "Community",
+    url: "/community",
+    iconUrl: "/communityIcon.png"
+  },
+  {
+    windowType: 'RSVP',
+    title: "RSVP's",
+    url: "/rsvp",
+    iconUrl: "/communityIcon.png"
+  },
+  {
+    windowType: 'REQUESTS',
+    title: "Friend Requests",
+    url: "/reqeusts",
+    iconUrl: "/friendsIcon.png"
+  },
+]

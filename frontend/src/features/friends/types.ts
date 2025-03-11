@@ -10,3 +10,12 @@ export interface Tab {
     url: string,
     iconUrl: string
 }
+
+export interface PersonProfile {
+    name: string,
+    photo: string,
+}
+
+export interface PersonProfiles {
+    personProfiles: PersonProfile[]
+}
