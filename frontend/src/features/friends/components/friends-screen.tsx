@@ -64,6 +64,7 @@ export const FriendsScreen = () => {
       name: "Keeanu Reeves",
       photo: "/profileIcon.png"
     },
+    
   ]
 
   return(
@@ -74,11 +75,11 @@ export const FriendsScreen = () => {
       <SidebarProvider>
         <FriendsSideBar setWindow={setTabType} />
         <SidebarInset>
-          <main className="min-h-screen bg-gray-100 p-6">
+          <div className="h-fit bg-gray-100 p-6">
             {tabType === 'COMMUNITY' && <CommunityWindow personProfiles={placeholderPersonProfiles} />}
             {tabType === 'RSVP' && <RsvpWindow />}
             {tabType === 'REQUESTS' && <RequestsWindow />}
-          </main>
+          </div>
         </SidebarInset>
       </SidebarProvider>
     </div>
