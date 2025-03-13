@@ -1,4 +1,5 @@
 import React from "react";
+import { Calendar } from "lucide-react";
 
 import {
   Sidebar,
@@ -35,13 +36,9 @@ export const FriendsSideBar: React.FC<TabProps> = ({ setWindow }) => {
             <SidebarMenu className="gap-4">
               {sideTabs.map((tab, index) => (
                 <button key={index} onClick={() => setWindow(tab.windowType)}>
-                  <Card key={index} className="hover:bg-[#5C3B58]">
-                    <CardContent>
-                      <div className="flex flex-row items-center gap-x-2">
-                        <Image src={tab.iconUrl} width={30} height={30} alt="icon image" />
-                        <p>{tab.title}</p>
-                      </div>
-                    </CardContent>
+                  <Card key={index} className="flex flex-row p-3 gap-x-3 h-12 items-center hover:bg-[#5C3B58]">
+                    <Image src={tab.iconUrl} width={30} height={30} alt="icon image" />
+                    <p>{tab.title}</p>
                   </Card>
                 </button>
               ))}
@@ -49,7 +46,6 @@ export const FriendsSideBar: React.FC<TabProps> = ({ setWindow }) => {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      
     </Sidebar>
   );
 }
@@ -65,7 +61,7 @@ const sideTabs: Tab[] = [
     windowType: 'RSVP',
     title: "RSVP's",
     url: "/rsvp",
-    iconUrl: "/communityIcon.png"
+    iconUrl: "/rsvpIcon.png"
   },
   {
     windowType: 'REQUESTS',

@@ -21,7 +21,7 @@ export const FriendsScreen = () => {
       photo: "/profileIcon.png"
     },
     {
-      name: "Michelle Lay",
+      name: "Michelle Gru",
       photo: "/profileIcon.png"
     },
     {
@@ -45,7 +45,7 @@ export const FriendsScreen = () => {
       photo: "/profileIcon.png"
     },
     {
-      name: "Michelle Lay",
+      name: "Michelle Lee",
       photo: "/profileIcon.png"
     },
     {
@@ -75,10 +75,10 @@ export const FriendsScreen = () => {
       <SidebarProvider>
         <FriendsSideBar setWindow={setTabType} />
         <SidebarInset>
-          <div className="h-fit bg-gray-100 p-6">
+          <div className="h-full bg-gray-100 p-6">
             {tabType === 'COMMUNITY' && <CommunityWindow personProfiles={placeholderPersonProfiles} />}
             {tabType === 'RSVP' && <RsvpWindow />}
-            {tabType === 'REQUESTS' && <RequestsWindow />}
+            {tabType === 'REQUESTS' && <RequestsWindow personProfiles={placeholderPersonProfiles} />}
           </div>
         </SidebarInset>
       </SidebarProvider>

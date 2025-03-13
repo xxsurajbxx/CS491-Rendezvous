@@ -12,7 +12,7 @@ export const CommunityWindow: FC<PersonProfiles> = ({ personProfiles }) => {
   return(
     <div className="flex flex-col items-center gap-7">
       <p className="text-xl font-semibold">My Friends</p>
-      <div className="flex flex-col items-center max-h-[600px] overflow-auto gap-5">
+      <div className="flex flex-col max-h-[500px] overflow-auto gap-5">
         <div className="flex flex-row justify-center flex-wrap gap-3">
           {personProfiles.map((person, index) => (
             <Card key={index} className="min-w-52 w-1/5 min-h-[150px] max-h-[400px]">
@@ -32,7 +32,7 @@ export const CommunityWindow: FC<PersonProfiles> = ({ personProfiles }) => {
       <Separator className="bg-gray-300" />
 
       <p className="text-xl font-semibold">People You May Know</p>
-      <div className="flex flex-col items-center max-h-[600px] overflow-auto gap-5">
+      <div className="flex flex-col items-center max-h-[500px] overflow-auto gap-5">
         <div className="flex flex-row justify-center flex-wrap gap-3">
           {personProfiles.map((person, index) => (
             <Card key={index} className="min-w-52 w-1/5 min-h-[150px] max-h-[400px]">
