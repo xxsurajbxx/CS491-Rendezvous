@@ -405,7 +405,7 @@ export const EventForm = () => {
                   </div>
                 </div>
                 {/* Submit Button */}
-                <Button type="submit" className="w-full">
+                <Button type="submit" className="w-full bg-purple-900">
                   Create Event
                 </Button>
               </form>
