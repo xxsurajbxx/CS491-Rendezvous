@@ -44,7 +44,7 @@ export default function NavigationBar(){
             <Link href="/">
               <NavigationMenuItem className="flex flex-row items-center gap-x-1">
                 <Image src="/companyLogo.png" alt="logo" width={45} height={45} />
-                <p className="text-3xl text-white font-semibold">City Traveling</p>
+                <p className="text-3xl text-white font-semibold">Rendezvous</p>
               </NavigationMenuItem>
             </Link>
           </Button>
