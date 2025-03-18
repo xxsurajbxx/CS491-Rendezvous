@@ -19,3 +19,20 @@ export interface PersonProfile {
 export interface PersonProfiles {
     personProfiles: PersonProfile[]
 }
+
+export interface RsvpCard {
+    eventName: string,
+    host: string,
+    date: string,
+    startTime: string,
+    endTime: string,
+    maxRSVP: number,
+    rsvpList?: PersonProfile[]
+}
+export interface RsvpCards {
+    rsvpCards: RsvpCard[]
+}
+
+export interface RsvpWindowProps {
+    rsvpCards: RsvpCard[]
+}
