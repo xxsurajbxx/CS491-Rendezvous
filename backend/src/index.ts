@@ -2,11 +2,20 @@ import express from "express";
 import dotenv from "dotenv";
 import authRoutes from "./authRoutes";
 import { pool } from "./db"; // ensure pool creation is handled in ./db
+import cors from "cors";
 
 dotenv.config({ path: __dirname + "/../../.env" });
 
 const app = express();
-const PORT = 5000;
+const PORT = 8080;
+
+app.use(
+  cors({
+    origin: "http://localhost:3000", // Allow frontend requests
+    methods: "GET,POST,PUT,DELETE,OPTIONS",
+    allowedHeaders: "Content-Type,Authorization",
+  })
+);
 
 // middleware
 app.use(express.json());

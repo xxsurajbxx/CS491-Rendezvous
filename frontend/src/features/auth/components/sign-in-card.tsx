@@ -6,6 +6,8 @@ import { SignInFlow } from "../types";
 import { useState } from "react";
 //import { useAuthActions } from "@convex-dev/auth/react";
 import { TriangleAlert } from "lucide-react";
+import { setTokenCookie } from "../../../../utils/auth";
+import { useRouter } from "next/navigation";
 
 interface SignInCardProps {
     setState: (state: SignInFlow) => void;
@@ -16,20 +18,42 @@ export const SignInCard = ({setState}: SignInCardProps) => {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [pending, setPending] = useState(false);
+    const router = useRouter();
     //const { signIn } = useAuthActions();
 
-    const onPasswordSignIn = (e: React.FormEvent<HTMLFormElement>) => {
+    const onPasswordSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setPending(true);
-        //signIn("password", { email, password, flow: "signIn" })
-        //.catch(() => { setError("Invalid email or password") })
-        //.finally(() => {setPending(false)})
+
+        try {
+            const response = await fetch("http://localhost:8080/api/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password }),
+            });
+            const data = await response.json();
+            if (!response.ok){
+                throw new Error("Invalid username or password");
+            }
+
+            const cookieStatus = await setTokenCookie(data.token);
+            if (!cookieStatus) {
+                throw new Error("Something went wrong");
+            }
+            router.replace("/");
+        }
+        catch (error) {
+            if (error instanceof Error) {
+                setError(error.message); // Use the error message from the Error object
+            } else {
+                setError("An unexpected error occurred"); // Fallback in case the error is not an instance of Error
+            }
+        }
+        finally{
+            setPending(false);
+        }
     }
     
-    const onProviderSignIn = (value: "github" | "google") => {
-        setPending(true);
-        //signIn(value).finally(() => {setPending(false)});
-    }
     return (
         <Card className="w-full h-full p-8">
             <CardHeader className="px-0 pt-0">

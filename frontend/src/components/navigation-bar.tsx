@@ -11,12 +11,12 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
   NavigationMenuViewport
-} from "@/components/ui/navigation-menu"
+} from "@/components/ui/navigation-menu";
 
 import Image from "next/image";
 import Link from "next/link";
 
-
+/*
 const navigationItems = [
   {
     title: "Item one",
@@ -31,11 +31,10 @@ const navigationItems = [
     href: "#",
   },
 ]
+*/
 
-
-export default function NavigationBar(){
-
-  return(
+export default function NavigationBar() {
+  return (
     <NavigationMenu className="bg-purple-900 h-20">
       <NavigationMenuList className="flex justify-between w-screen px-7">
         <div className="flex flex-row items-center">
@@ -81,7 +80,6 @@ export default function NavigationBar(){
             </Link>
           </Button>
         </div>
-        
       </NavigationMenuList>
     </NavigationMenu>
   );
