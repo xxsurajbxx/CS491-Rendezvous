@@ -90,7 +90,8 @@ const placeholderRsvpCards: RsvpCard[] = [
   {
     eventName: "Green Day Live",
     host: "John Deere",
-    date: "March 18",
+    location: "23 Westford Ave, Newark, NJ",
+    date: new Date(2025, 5, 10),
     startTime: "8:00pm",
     endTime: "10:00pm",
     maxRSVP: 8,
@@ -124,7 +125,8 @@ const placeholderRsvpCards: RsvpCard[] = [
   {
     eventName: "Green Day Live",
     host: "John Deere",
-    date: "March 18",
+    location: "123 Fordham Place, Newark, NJ",
+    date: new Date(2025, 6, 23),
     startTime: "8:00pm",
     endTime: "10:00pm",
     maxRSVP: 8,
@@ -158,7 +160,8 @@ const placeholderRsvpCards: RsvpCard[] = [
   {
     eventName: "Green Day Live",
     host: "John Deere",
-    date: "March 18",
+    location: "68 Westhel Drive, Newark, NJ",
+    date: new Date(2025, 8, 1),
     startTime: "8:00pm",
     endTime: "10:00pm",
     maxRSVP: 8,
@@ -192,7 +195,8 @@ const placeholderRsvpCards: RsvpCard[] = [
   {
     eventName: "Green Day Live",
     host: "John Deere",
-    date: "March 18",
+    location: "3 Place Park, Newark, NJ",
+    date: new Date(2025, 7, 28),
     startTime: "8:00pm",
     endTime: "10:00pm",
     maxRSVP: 8,
@@ -226,7 +230,8 @@ const placeholderRsvpCards: RsvpCard[] = [
   {
     eventName: "Green Day Live",
     host: "John Deere",
-    date: "March 18",
+    location: "8 Jamaica Avenue, Newark, NJ",
+    date: new Date(2025, 7, 1),
     startTime: "8:00pm",
     endTime: "10:00pm",
     maxRSVP: 8,

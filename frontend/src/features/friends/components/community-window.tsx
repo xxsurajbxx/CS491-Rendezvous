@@ -22,7 +22,7 @@ export const CommunityWindow: FC<PersonProfiles> = ({ personProfiles }) => {
               </CardHeader>
               <CardFooter className="flex flex-col items-center">
                 <CardDescription>You are friends.</CardDescription>
-                <button className="list-none text-[#5C3B58] font-semibold">unfollow</button>
+                <Button className="bg-inherit shadow-none text-[#5C3B58] font-semibold">unfollow</Button>
               </CardFooter>
             </Card>
           ))}

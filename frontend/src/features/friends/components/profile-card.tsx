@@ -11,11 +11,9 @@ export const ProfileCard = () => {
 
   return(
     <Card>
-      <CardContent>
-        <div className="flex flex-row items-center justify-center">
-          <Image src="/profileIcon.png" width={40} height={40} alt="profile pic" />
-          <p>Gary Heincliff</p>
-        </div>
+      <CardContent className="flex flex-row items-center justify-center p-3 gap-x-3">
+        <Image src="/profileIcon.png" width={40} height={40} alt="profile pic" />
+        <p>Gary Heincliff</p>
       </CardContent>
     </Card>
   );

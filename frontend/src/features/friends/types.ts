@@ -23,7 +23,8 @@ export interface PersonProfiles {
 export interface RsvpCard {
     eventName: string,
     host: string,
-    date: string,
+    location: string,
+    date: Date,
     startTime: string,
     endTime: string,
     maxRSVP: number,
