@@ -1,5 +1,11 @@
-import NavigationBar from "@/components/navigation-bar";
-export default function Home() {
+import NavigationBar from "../components/navigation-bar";
+import { getTokenPayload } from "../../utils/auth";
+import { redirect } from "next/navigation";
+export default async function Home() {
+  const token = getTokenPayload();
+  if(!token){
+    redirect("/auth");
+  }
   return (
     <div>
       <NavigationBar />

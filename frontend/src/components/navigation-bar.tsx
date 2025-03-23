@@ -3,13 +3,13 @@
  */
 
 //shadcn imports
-import { Button } from "@/components/ui/button";
+import { Button } from "./ui/button";
 
 //Nextjs imports
 import Image from "next/image";
 import Link from "next/link";
 
-
+/*
 const navigationItems = [
   {
     title: "Item one",
@@ -24,6 +24,7 @@ const navigationItems = [
     href: "#",
   },
 ]
+*/
 
 
 export default function NavigationBar(){

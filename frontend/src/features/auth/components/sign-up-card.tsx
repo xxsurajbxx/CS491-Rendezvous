@@ -45,14 +45,6 @@ export const SignUpCard = ({setState}: SignUpCardProps) => {
         }
 
         setPending(true);
-        //signIn("password", { name, email, password, flow: "signUp" })
-        //.catch(() => { setError("Something went wrong") })
-        //.finally(() => {setPending(false)})
-    }
-
-    const onProviderSignUp = (value: "github" | "google") => {
-        setPending(true);
-        //signIn(value).finally(() => {setPending(false)});
     }
     
     return (
