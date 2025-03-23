@@ -70,11 +70,18 @@ export default function NavigationBar(){
           </NavigationMenuItem>
           {/* end of navigation menu items for different app pages */}
         </div>
-
-        {/* login button */}
-        <NavigationMenuItem>
-          <Button className="bg-black rounded-md h-10 w-40 text-xl text-white font-semibold"><Link href="/auth">Login</Link></Button>
-        </NavigationMenuItem>
+        <div className="flex flex-row">
+          {/* login button */}
+          <NavigationMenuItem>
+            <Button className="bg-black rounded-md h-10 w-40 text-xl text-white font-semibold"><Link href="/auth">Login</Link></Button>
+          </NavigationMenuItem>
+          <Button className="bg-inherit shadow-none hover:bg-inherit">
+            <Link href="/profile">
+              <Image src="/profileIcon.png" height={45} width={45} alt="profile icon" className="bg-gray-600 rounded-full" />
+            </Link>
+          </Button>
+        </div>
+        
       </NavigationMenuList>
     </NavigationMenu>
   );
