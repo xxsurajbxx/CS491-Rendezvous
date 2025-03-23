@@ -65,6 +65,7 @@ export const EventForm = () => {
     setLocation(input)
     setIsLocationValid(false)
     setLocationTouched(true)
+    setCoordinates({lat: null, lon: null});
   }
 
   // Handle place selection from Geoapify
