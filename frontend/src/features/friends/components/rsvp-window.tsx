@@ -1,7 +1,7 @@
-import { FC, useState } from "react";
+import { FC } from "react";
 import { RsvpCardComponent } from "./rsvp-card";
 
-import { RsvpCards, RsvpWindowProps } from "../types";
+import { RsvpWindowProps } from "../types";
 
 export const RsvpWindow: FC<RsvpWindowProps> = ({ rsvpCards }) => {
 

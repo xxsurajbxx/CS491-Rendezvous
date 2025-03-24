@@ -1,5 +1,5 @@
 import { FC, useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardFooter } from "@/components/ui/card";
 import {
   Accordion,
   AccordionContent,
@@ -18,12 +18,13 @@ export const RsvpCardComponent: FC<RsvpCard> = ({
   location,
   startTime,
   endTime,
-  maxRSVP,
+  //maxRSVP,
   rsvpList
 }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const handleInfoBtnEvent = () => {
+    
     isOpen === false ? setIsOpen(true) : setIsOpen(false);
   }
 

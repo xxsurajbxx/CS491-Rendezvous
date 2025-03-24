@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 
 import NavigationBar from "@/components/navigation-bar";
-import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { FriendsSideBar } from "./sidebar";
 import { FriendsTabType, PersonProfile, RsvpCard } from "../types";
 

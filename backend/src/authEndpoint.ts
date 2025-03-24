@@ -1,9 +1,7 @@
 import { pool } from "./db";
 import jwt from "jsonwebtoken"; // run "npm install jsonwebtoken"
 import bcrypt from "bcryptjs"; // run "npm install bcryptjs"
-import dotenv from "dotenv";
 
-dotenv.config({ path: __dirname + "/../../.env" });
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 

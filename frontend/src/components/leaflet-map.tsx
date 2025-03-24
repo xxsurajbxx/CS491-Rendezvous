@@ -19,10 +19,10 @@ interface Marker {
 
 export default function LeafletMap(){
   //coordinates for Newark, NJ
-  let newarkLat = 40.73566
-  let newarkLong = -74.17237
-  let currentZoom = 13
-  let markerSize = 35
+  const newarkLat = 40.73566
+  const newarkLong = -74.17237
+  const currentZoom = 13
+  const markerSize = 35
 
   const temporaryMarkers: Marker[] = [
     {

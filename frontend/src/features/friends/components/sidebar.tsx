@@ -1,5 +1,5 @@
 import React from "react";
-import { Calendar } from "lucide-react";
+//import { Calendar } from "lucide-react";
 
 import {
   Sidebar,
@@ -11,9 +11,6 @@ import {
 } from "@/components/ui/sidebar";
 import {
   Card,
-  CardContent,
-  CardHeader,
-  CardTitle
 } from "@/components/ui/card";
 
 import Image from "next/image";
