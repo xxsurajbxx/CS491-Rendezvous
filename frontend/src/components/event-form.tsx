@@ -40,6 +40,15 @@ const formSchema = z.object({
 // And use this instead
 type FormValues = z.infer<typeof formSchema>
 
+type SelectedPlace = {
+  geometry?: {
+    coordinates?: [number, number]; // [longitude, latitude]
+  };
+  properties: {
+    formatted: string;
+  };
+};
+
 export const EventForm = () => {
   const [location, setLocation] = useState("")
   const [coordinates, setCoordinates] = useState<{ lat: number | null; lon: number | null }>({ lat: null, lon: null })
@@ -70,7 +79,7 @@ export const EventForm = () => {
   }
 
   // Handle place selection from Geoapify
-  const handlePlaceSelect = (selectedPlace: any) => {
+  const handlePlaceSelect = (selectedPlace: SelectedPlace) => {
     if (selectedPlace?.geometry?.coordinates) {
       const [longitude, latitude] = selectedPlace.geometry.coordinates
       setCoordinates({ lat: latitude, lon: longitude })

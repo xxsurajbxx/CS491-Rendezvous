@@ -4,7 +4,7 @@ import authRoutes from "./authRoutes";
 import { pool } from "./db"; // ensure pool creation is handled in ./db
 import cors from "cors";
 
-dotenv.config({ path: __dirname + "/../../.env" });
+dotenv.config();
 
 const app = express();
 const PORT = 8080;
@@ -27,10 +27,13 @@ const testConnection = async () => {
     console.log("Connected to MySQL successfully");
     connection.release();
   } catch (error) {
+    console.log(error);
+    /*
     console.error(
       "Database connection failed:",
       error instanceof Error ? error.message : error
     );
+    */
     process.exit(1);
   }
 };

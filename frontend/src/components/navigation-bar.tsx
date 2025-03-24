@@ -6,11 +6,8 @@ import {
   NavigationMenu,
   NavigationMenuContent,
   NavigationMenuItem,
-  NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
-  NavigationMenuViewport
 } from "@/components/ui/navigation-menu";
 
 import Image from "next/image";

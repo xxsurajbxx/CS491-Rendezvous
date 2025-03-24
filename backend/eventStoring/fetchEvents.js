@@ -1,6 +1,9 @@
-const axios = require("axios"); // axios for making HTTP requests
-require('dotenv').config({ path: '../../.env' });
+import axios from "axios";
+import dotenv from "dotenv";
 const mysql = require('mysql2');
+
+dotenv.config();
+
 const HASDATA_API_KEY = process.env.HASDATA_API_KEY;
 const connection = mysql.createConnection({
     host: process.env.DB_HOST,

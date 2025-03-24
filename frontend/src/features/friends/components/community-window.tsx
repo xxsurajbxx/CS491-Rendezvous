@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { PersonProfiles } from "../types";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 import Image from "next/image";
