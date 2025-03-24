@@ -1,41 +1,20 @@
-"use client"
+import { getTokenPayload } from "../../utils/auth"
+import { redirect } from "next/navigation"
+import HomeClient from "./home-client"
 
-import NavigationBar from "@/components/navigation-bar";
-import dynamic from "next/dynamic";
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
-import { EventSideBar } from "@/features/events/components/event-sidebar";
-import { getTokenPayload } from "../../utils/auth";
-import { redirect } from "next/navigation";
-
-// Token check and redirect (from feature/login)
-
-
-// Dynamically load LeafletMap
-const LeafletMap = dynamic(() => import('../components/leaflet-map'), {
-  ssr: false
-});
-
+// Server Component for auth check
 export default async function Home() {
-  const token = getTokenPayload();
+  const token = getTokenPayload()
+
   if (!token) {
-    redirect("/auth");
+    redirect("/auth")
   }
   else{
-    return (
-      <div>
-        <header>
-          <NavigationBar />
-        </header>
-        <SidebarProvider>
-          <EventSideBar />
-          <SidebarInset>
-            <main className="flex min-h-screen items-center justify-center bg-gray-100 p-6">
-              <LeafletMap />
-            </main>
-          </SidebarInset>
-        </SidebarProvider>
-      </div>
-    );
+      // Render the client component after auth check
+  return <HomeClient />
+
   }
 
+
 }
+
