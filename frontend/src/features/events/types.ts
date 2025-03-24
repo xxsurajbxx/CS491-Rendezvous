@@ -1,4 +1,4 @@
-export interface EventCard {
+export interface EventCardData {
     title: string,
     date: string,
     startTime: string,

@@ -24,8 +24,11 @@ export const RsvpCardComponent: FC<RsvpCard> = ({
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const handleInfoBtnEvent = () => {
-    
-    isOpen === false ? setIsOpen(true) : setIsOpen(false);
+    if (isOpen === false) {
+      setIsOpen(true)
+    } else {
+      setIsOpen(false)
+    }
   }
 
   return(

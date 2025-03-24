@@ -13,13 +13,18 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { EventCardData } from "../types";
 
 
-export const EventCard: React.FC<EventCard> = ({title, date, description, where, startTime, endTime, people}) => {
+export const EventCard: React.FC<EventCardData> = ({title, date, description, where, startTime, endTime, people}) => {
   const [open, setOpen] = useState(false);
 
   const infoBtnEventHandle = () => {
-    open === false ? setOpen(true) : setOpen(false);
+    if (open === false){
+      setOpen(true)
+    } else {
+      setOpen(false)
+    }
   }
 
   return(
