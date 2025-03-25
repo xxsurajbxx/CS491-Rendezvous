@@ -1,3 +1,4 @@
+import { FC } from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -8,66 +9,67 @@ import {
 } from "@/components/ui/sidebar"
 
 import { EventCard } from "./event-card";
+import { SidebarProps } from "../types";
 
-export const EventSideBar = () => {
-  const events = [
-    {
-      title: 'Prudential Live',
-      date: "April 9",
-      description: "Cool event happening at Prudential. Bunch of bands playing here.",
-      where: "25 Lafayette St, Newark, NJ 07102",
-      startTime: "9:00pm",
-      endTime: "12:00am",
-      people: [
-        "Danny Arco",
-        "Chad Vincento",
-        "Minny Palabi",
-        "Marc Hamilton",
-      ]
-    },
-    {
-      title: 'Prudential Live',
-      date: "April 9",
-      description: "Cool event happening at Prudential. Bunch of bands playing here.",
-      where: "25 Lafayette St, Newark, NJ 07102",
-      startTime: "9:00pm",
-      endTime: "12:00am",
-      people: [
-        "Danny Arco",
-        "Chad Vincento",
-        "Minny Palabi",
-        "Marc Hamilton",
-      ]
-    },
-    {
-      title: 'Prudential Live',
-      date: "April 9",
-      description: "Cool event happening at Prudential. Bunch of bands playing here.",
-      where: "25 Lafayette St, Newark, NJ 07102",
-      startTime: "9:00pm",
-      endTime: "12:00am",
-      people: [
-        "Danny Arco",
-        "Chad Vincento",
-        "Minny Palabi",
-        "Marc Hamilton",
-      ]
-    },
-    {
-      title: 'Prudential Live',
-      date: "April 9",
-      description: "Cool event happening at Prudential. Bunch of bands playing here.",
-      where: "25 Lafayette St, Newark, NJ 07102",
-      startTime: "9:00pm",
-      endTime: "12:00am",
-      people: [
-        "Danny Arco",
-        "Chad Vincento",
-        "Minny Palabi",
-        "Marc Hamilton",
-      ]
-    },
-  ]
+export const EventSideBar: FC<SidebarProps> = ({ events }) => {
+  // const events = [
+  //   {
+  //     title: 'Prudential Live',
+  //     date: "April 9",
+  //     description: "Cool event happening at Prudential. Bunch of bands playing here.",
+  //     where: "25 Lafayette St, Newark, NJ 07102",
+  //     startTime: "9:00pm",
+  //     endTime: "12:00am",
+  //     people: [
+  //       "Danny Arco",
+  //       "Chad Vincento",
+  //       "Minny Palabi",
+  //       "Marc Hamilton",
+  //     ]
+  //   },
+  //   {
+  //     title: 'Prudential Live',
+  //     date: "April 9",
+  //     description: "Cool event happening at Prudential. Bunch of bands playing here.",
+  //     where: "25 Lafayette St, Newark, NJ 07102",
+  //     startTime: "9:00pm",
+  //     endTime: "12:00am",
+  //     people: [
+  //       "Danny Arco",
+  //       "Chad Vincento",
+  //       "Minny Palabi",
+  //       "Marc Hamilton",
+  //     ]
+  //   },
+  //   {
+  //     title: 'Prudential Live',
+  //     date: "April 9",
+  //     description: "Cool event happening at Prudential. Bunch of bands playing here.",
+  //     where: "25 Lafayette St, Newark, NJ 07102",
+  //     startTime: "9:00pm",
+  //     endTime: "12:00am",
+  //     people: [
+  //       "Danny Arco",
+  //       "Chad Vincento",
+  //       "Minny Palabi",
+  //       "Marc Hamilton",
+  //     ]
+  //   },
+  //   {
+  //     title: 'Prudential Live',
+  //     date: "April 9",
+  //     description: "Cool event happening at Prudential. Bunch of bands playing here.",
+  //     where: "25 Lafayette St, Newark, NJ 07102",
+  //     startTime: "9:00pm",
+  //     endTime: "12:00am",
+  //     people: [
+  //       "Danny Arco",
+  //       "Chad Vincento",
+  //       "Minny Palabi",
+  //       "Marc Hamilton",
+  //     ]
+  //   },
+  // ]
   
   return(
     <Sidebar variant="inset" collapsible="none" className="w-1/4 max-h-screen top-[80px]">
