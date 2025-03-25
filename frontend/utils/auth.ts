@@ -16,7 +16,6 @@ export interface DecodedToken {
 export async function setTokenCookie(token: string) {
   try {
     const cookieStore = await cookies();
-    console.log(process.env.NEXT_PUBLIC_JWT_SECRET);
     const decoded = jwt.verify(token, process.env.NEXT_PUBLIC_JWT_SECRET as string) as DecodedToken; 
     const exp = new Date(decoded.exp * 1000);
     cookieStore.set("token", token, {

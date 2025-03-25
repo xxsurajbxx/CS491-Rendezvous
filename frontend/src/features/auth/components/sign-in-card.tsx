@@ -32,8 +32,8 @@ export const SignInCard = ({setState}: SignInCardProps) => {
                 body: JSON.stringify({ email, password }),
             });
             const data = await response.json();
-            if (!response.ok){
-                throw new Error("Invalid username or password");
+            if(data.status === "fail" || !response.ok){
+                throw new Error(data.message || "Incorrect username or password");
             }
 
             const cookieStatus = await setTokenCookie(data.token);
