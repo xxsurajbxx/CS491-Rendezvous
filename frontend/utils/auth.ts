@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 import { jwtDecode } from 'jwt-decode';
 
 // Define your DecodedToken interface
-interface DecodedToken {
+export interface DecodedToken {
   userId: string;
   email: string;
   name: string;
@@ -44,7 +44,6 @@ export async function getTokenPayload() {
       // Verify and decode the token
       const decoded = jwt.verify(token, process.env.NEXT_PUBLIC_JWT_SECRET as string);
       const payload = jwtDecode<DecodedToken>(token);
-      console.log(payload);
       return payload;
     } catch (error) {
       if( error instanceof jwt.JsonWebTokenError){

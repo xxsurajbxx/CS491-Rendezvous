@@ -1,7 +1,6 @@
-/**
- * Main component for the Navigation Bar used on majority of the pages for City Traveling app.
- */
+"use client";
 import { Button } from "@/components/ui/button";
+import { removeTokenCookieWithRedirect } from "../../utils/auth";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -12,25 +11,28 @@ import {
 
 import Image from "next/image";
 import Link from "next/link";
+import { getTokenPayload } from "../../utils/auth";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { DecodedToken } from "../../utils/auth";
 
-/*
-const navigationItems = [
-  {
-    title: "Item one",
-    href: "#",
-  },
-  {
-    title: "Item two",
-    href: "#",
-  },
-  {
-    title: "Sign Up",
-    href: "#",
-  },
-]
-*/
 
 export default function NavigationBar() {
+  const [token, setToken] = useState<DecodedToken | null>(null);
+  const router = useRouter();
+
+  // Fetch token on component mount
+  useEffect(() => {
+    async function fetchToken() {
+      const payload = await getTokenPayload();
+      setToken(payload);
+    }
+    fetchToken();
+  }, []);
+  async function handleLogout() {
+    await removeTokenCookieWithRedirect();
+    router.push("/auth"); 
+  }
   return (
     <NavigationMenu className="bg-purple-900 h-20">
       <NavigationMenuList className="flex justify-between w-screen px-7">
@@ -69,7 +71,11 @@ export default function NavigationBar() {
         <div className="flex flex-row">
           {/* login button */}
           <NavigationMenuItem>
+            {token ?
+            <Button className="bg-black rounded-md h-10 w-40 text-xl text-white font-semibold" onClick={handleLogout}>Logout</Button>
+            :
             <Button className="bg-black rounded-md h-10 w-40 text-xl text-white font-semibold"><Link href="/auth">Login</Link></Button>
+            }
           </NavigationMenuItem>
           <Button className="bg-inherit shadow-none hover:bg-inherit">
             <Link href="/profile">
