@@ -11,7 +11,7 @@ import { EventCard } from "./event-card";
 import { SidebarProps } from "../types";
 import { Accordion } from "@radix-ui/react-accordion";
 
-export const EventSideBar = ({ events, openEventCard, setOpenEventCard }: SidebarProps) => {
+export const EventSideBar = ({ events, openEventCards, setOpenEventCards }: SidebarProps) => {
   // const events = [
   //   {
   //     title: 'Prudential Live',
@@ -78,7 +78,7 @@ export const EventSideBar = ({ events, openEventCard, setOpenEventCard }: Sideba
           <SidebarGroupLabel className="text-xl py-7">Events</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="gap-4">
-              <Accordion type="single" value={openEventCard} onValueChange={setOpenEventCard} collapsible className="flex flex-col gap-y-2">
+              <Accordion type="multiple" value={openEventCards} onValueChange={setOpenEventCards} className="flex flex-col gap-y-2">
                 {events.map((event, index) => (
                   <EventCard
                     key={index}

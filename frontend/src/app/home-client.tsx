@@ -13,13 +13,15 @@ const LeafletMap = dynamic(() => import("../components/leaflet-map"), {
 })
 
 export default function HomeClient() {
-  const [openEventCard, setOpenEventCard] = useState<string | undefined>(undefined)
+  const [openEventCards, setOpenEventCards] = useState<string[]>([])
   
   const handleOpenEventCard = (eventCard: string) => {
     const targetElementCard = document.getElementById(eventCard)
-    setOpenEventCard(eventCard)
+    setOpenEventCards((prev) => (
+      prev.includes(eventCard) ? prev.filter((currentEventCard) => currentEventCard !== eventCard) : [...prev, eventCard]
+    ))
     if (targetElementCard) {
-      targetElementCard.scrollIntoView({behavior: 'smooth', block: 'center', inline: 'nearest'}) 
+      targetElementCard.scrollIntoView({behavior: 'smooth', block: 'center', inline: 'nearest'})
     }
   }
   
@@ -32,8 +34,8 @@ export default function HomeClient() {
       <SidebarProvider>
         <EventSideBar
           events={temporaryEventData}
-          openEventCard={openEventCard}
-          setOpenEventCard={setOpenEventCard}
+          openEventCards={openEventCards}
+          setOpenEventCards={setOpenEventCards}
         />
         <SidebarInset>
           <main className="flex min-h-screen items-center justify-center bg-gray-100 p-6">

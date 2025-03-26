@@ -24,6 +24,6 @@ export interface EventCardData {
 
 export interface SidebarProps {
     events: EventCardData[],
-    openEventCard: string | undefined,
-    setOpenEventCard(eventCard: string | undefined): void,
+    openEventCards: string[] | undefined,
+    setOpenEventCards(eventCard: string[]): void,
 }
