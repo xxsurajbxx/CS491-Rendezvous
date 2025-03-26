@@ -11,6 +11,7 @@ import { Icon } from "leaflet";
 
 //Defines a marked position on the leaflet map including name of location, coordinates of location, and a popup description that describes that location/event.
 interface LeafletMarker {
+  id: number,
   title: string,
   description: string,
   locationLat: number,
@@ -18,11 +19,12 @@ interface LeafletMarker {
 }
 
 type LeafletMapProps = {
-  markers: LeafletMarker[]
+  markers: LeafletMarker[],
+  handleOpenEventCard(id: string): void
 }
 
 
-export default function LeafletMap({ markers }: LeafletMapProps){
+export default function LeafletMap({ markers, handleOpenEventCard }: LeafletMapProps){
   //coordinates for Newark, NJ
   const newarkLat = 40.73566
   const newarkLong = -74.17237
@@ -61,7 +63,14 @@ export default function LeafletMap({ markers }: LeafletMapProps){
       />
       {/* map function to display all the marker locations of events within the given area. */}
       {markers.map((marker, index) => (
-        <Marker key={index} position={[marker.locationLat, marker.locationLong]} icon={customMarkerIcon}>
+        <Marker
+          key={index}
+          position={[marker.locationLat, marker.locationLong]}
+          icon={customMarkerIcon}
+          eventHandlers={{
+            click: () => handleOpenEventCard('event-card-'+marker.id)
+          }}
+        >
           <Popup><h2>{marker.description}</h2></Popup>
         </Marker>
       ))}

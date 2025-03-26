@@ -5,6 +5,7 @@ import dynamic from "next/dynamic"
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
 import { EventSideBar } from "@/features/events/components/event-sidebar"
 import { EventCardData } from "@/features/events/types"
+import { useState } from "react"
 
 // Dynamically load LeafletMap
 const LeafletMap = dynamic(() => import("../components/leaflet-map"), {
@@ -12,6 +13,15 @@ const LeafletMap = dynamic(() => import("../components/leaflet-map"), {
 })
 
 export default function HomeClient() {
+  const [openEventCard, setOpenEventCard] = useState<string | undefined>(undefined)
+  
+  const handleOpenEventCard = (eventCard: string) => {
+    const targetElementCard = document.getElementById(eventCard)
+    setOpenEventCard(eventCard)
+    if (targetElementCard) {
+      targetElementCard.scrollIntoView({behavior: 'smooth', block: 'center', inline: 'nearest'}) 
+    }
+  }
   
 
   return (
@@ -20,10 +30,17 @@ export default function HomeClient() {
         <NavigationBar />
       </header>
       <SidebarProvider>
-        <EventSideBar events={temporaryEventData} />
+        <EventSideBar
+          events={temporaryEventData}
+          openEventCard={openEventCard}
+          setOpenEventCard={setOpenEventCard}
+        />
         <SidebarInset>
           <main className="flex min-h-screen items-center justify-center bg-gray-100 p-6">
-            <LeafletMap markers={temporaryLeafletMarkers} />
+            <LeafletMap
+              markers={temporaryLeafletMarkers}
+              handleOpenEventCard={handleOpenEventCard}
+            />
           </main>
         </SidebarInset>
       </SidebarProvider>
@@ -33,6 +50,7 @@ export default function HomeClient() {
 
 const temporaryEventData: EventCardData[] = [
   {
+    id: 1,
     title: 'Newark Museum of Art',
     date: "April 9",
     description: "Art event happening at museum. Lots of art sculptures.",
@@ -47,6 +65,7 @@ const temporaryEventData: EventCardData[] = [
     ]
   },
   {
+    id: 2,
     title: 'Branch Brook Park Cherry Blossom Festival',
     date: "April 9",
     description: "Lots of cherry blossom trees. good for picnics.",
@@ -61,6 +80,7 @@ const temporaryEventData: EventCardData[] = [
     ]
   },
   {
+    id: 3,
     title: 'Prudential Live',
     date: "April 9",
     description: "Cool event happening at Prudential. Bunch of bands playing here.",
@@ -75,6 +95,7 @@ const temporaryEventData: EventCardData[] = [
     ]
   },
   {
+    id: 4,
     title: 'NJIT Freshman Info Session',
     date: "April 9",
     description: "Information session for incoming freshman.",
@@ -92,24 +113,28 @@ const temporaryEventData: EventCardData[] = [
 
 const temporaryLeafletMarkers = [
   {
+    id: 1,
     title: 'Newark Museum of Art',
     description: "Art event happening at museum. Lots of art sculptures.",
     locationLat: 40.742651,
     locationLong: -74.171779
   },
   {
+    id: 2,
     title: 'Branch Brook Park Cherry Blossom Festival',
     description: "Lots of cherry blossom trees. good for picnics.",
     locationLat: 40.7797,
     locationLong: -74.1748,
   },
   {
+    id: 3,
     title: 'Prudential Live',
     description: "Cool event happening at Prudential. Bunch of bands playing here.",
     locationLat: 40.7335,
     locationLong: -74.1711,
   },
   {
+    id: 4,
     title: 'NJIT Freshman Info Session',
     description: "Information session for incoming freshman.",
     locationLat: 40.7424,

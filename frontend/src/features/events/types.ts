@@ -1,4 +1,5 @@
 export interface EventData {
+    id: number
     title: string,
     date: string,
     startTime: string,
@@ -11,6 +12,7 @@ export interface EventData {
 }
 
 export interface EventCardData {
+    id: number,
     title: string,
     date: string,
     startTime: string,
@@ -21,5 +23,7 @@ export interface EventCardData {
 }
 
 export interface SidebarProps {
-    events: EventCardData[]
+    events: EventCardData[],
+    openEventCard: string | undefined,
+    setOpenEventCard(eventCard: string | undefined): void,
 }
