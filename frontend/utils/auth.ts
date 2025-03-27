@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation';
 import { jwtDecode } from 'jwt-decode';
 
 // Define your DecodedToken interface
-interface DecodedToken {
+export interface DecodedToken {
   userId: string;
   email: string;
   name: string;
@@ -16,7 +16,6 @@ interface DecodedToken {
 export async function setTokenCookie(token: string) {
   try {
     const cookieStore = await cookies();
-    console.log(process.env.NEXT_PUBLIC_JWT_SECRET);
     const decoded = jwt.verify(token, process.env.NEXT_PUBLIC_JWT_SECRET as string) as DecodedToken; 
     const exp = new Date(decoded.exp * 1000);
     cookieStore.set("token", token, {
@@ -44,7 +43,6 @@ export async function getTokenPayload() {
       // Verify and decode the token
       const decoded = jwt.verify(token, process.env.NEXT_PUBLIC_JWT_SECRET as string);
       const payload = jwtDecode<DecodedToken>(token);
-      console.log(payload);
       return payload;
     } catch (error) {
       if( error instanceof jwt.JsonWebTokenError){
