@@ -1,7 +1,8 @@
 CREATE TABLE Events (
     EventID INT AUTO_INCREMENT PRIMARY KEY,
     Name VARCHAR(255) NOT NULL,
-    DateTime DATETIME NOT NULL,
+    startDateTime DATETIME NOT NULL,
+    endDateTime DATETIME NOT NULL,
     Location VARCHAR(255) NOT NULL,
     HostUserID INT NOT NULL,
     TicketmasterLink VARCHAR(500) NULL,
