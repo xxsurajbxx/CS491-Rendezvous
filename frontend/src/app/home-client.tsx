@@ -5,7 +5,7 @@ import dynamic from "next/dynamic"
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
 import { EventSideBar } from "@/features/events/components/event-sidebar"
 import { EventCardData } from "@/features/events/types"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 // Dynamically load LeafletMap
 const LeafletMap = dynamic(() => import("../components/leaflet-map"), {
@@ -13,6 +13,7 @@ const LeafletMap = dynamic(() => import("../components/leaflet-map"), {
 })
 
 export default function HomeClient() {
+  const [eventCardsData, setEventCardsData] = useState<EventCardData[] | undefined>(undefined)
   const [openEventCards, setOpenEventCards] = useState<string[]>([])
   
   const handleOpenEventCard = (eventCard: string) => {
@@ -25,6 +26,30 @@ export default function HomeClient() {
     }
   }
   
+  const getAllEventCardData = async () => {
+    try {
+      const response = await fetch('/getAllEventData', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (!response.ok) throw new Error('Bad Request. Try Again.')
+
+      const result = await response.json();
+      setEventCardsData(result)
+      console.log(result)
+    } catch (error) {
+      console.error('Fetch error:', error)
+    }
+  }
+
+  const splitEventCardsData = (eventsData: EventCardData[]) => {
+    
+  }
+
+  useEffect(() => {
+    
+    getAllEventCardData()
+  }, [])
 
   return (
     <div>
