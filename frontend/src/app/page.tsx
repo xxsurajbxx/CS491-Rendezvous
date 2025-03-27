@@ -4,10 +4,9 @@ import HomeClient from "./home-client"
 
 // Server Component for auth check
 export default async function Home() {
-  const token = getTokenPayload()
-
+  const token = await getTokenPayload();
   if (!token) {
-    redirect("/auth")
+    redirect("/auth");
   }
   else{
       // Render the client component after auth check

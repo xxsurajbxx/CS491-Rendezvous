@@ -5,6 +5,8 @@ import { Separator } from "@/components/ui/separator";
 import { SignInFlow } from "../types";
 import { useState } from "react";
 import { TriangleAlert } from "lucide-react";
+import { setTokenCookie } from "../../../../utils/auth";
+import { useRouter } from "next/navigation";
 //import { useAuthActions } from "@convex-dev/auth/react";
 
 interface SignUpCardProps {
@@ -19,9 +21,10 @@ export const SignUpCard = ({setState}: SignUpCardProps) => {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
     const [pending, setPending] = useState(false);
+    const router = useRouter();
     //const { signIn } = useAuthActions();
 
-    const onPasswordSignUp = (e: React.FormEvent<HTMLFormElement>) => {
+    const onPasswordSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if(!firstName){
             setError("First name is required");
@@ -45,6 +48,53 @@ export const SignUpCard = ({setState}: SignUpCardProps) => {
         }
 
         setPending(true);
+
+        try {
+            const response = await fetch("http://localhost:8080/api/signup", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ firstName, lastName, email, password }),
+            });
+            const data = await response.json();
+            if(data.status === "fail" || !response.ok){
+                throw new Error(data.message || "Failed to sign up");
+            }
+                try {
+                    const response = await fetch("http://localhost:8080/api/login", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ email, password }),
+                    });
+                    const data = await response.json();
+                    if(data.status === "fail" || !response.ok){
+                        throw new Error(data.message || "Incorrect username or password");
+                    }
+
+                    const cookieStatus = await setTokenCookie(data.token);
+                    if (!cookieStatus) {
+                        throw new Error("Something went wrong with logging in");
+                    }
+                    router.replace("/");
+                }
+                catch (error) {
+                    if (error instanceof Error) {
+                        setError(error.message); // Use the error message from the Error object
+                    } else {
+                        setError("An unexpected error occurred"); // Fallback in case the error is not an instance of Error
+                    }
+                    router.replace("/auth");
+                }
+        }
+        catch (error) {
+            if (error instanceof Error) {
+                setError(error.message); // Use the error message from the Error object
+            } else {
+                setError("An unexpected error occurred"); // Fallback in case the error is not an instance of Error
+            }
+        }
+        finally{
+            setPending(false);
+        }
     }
     
     return (
