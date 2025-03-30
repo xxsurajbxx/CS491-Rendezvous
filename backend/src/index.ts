@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import authRoutes from "./authRoutes";
 import eventRoutes from "./eventRoutes";
+import friendRoutes from "./friendRoutes";
 import { pool } from "./db"; // ensure pool creation is handled in ./db
 import cors from "cors";
 
@@ -44,6 +45,7 @@ testConnection();
 // routes
 app.use("/api", authRoutes);
 app.use("/api/events", eventRoutes);
+app.use("/api/friends", friendRoutes);
 
 // root route to check if server is running
 app.get("/", (req, res) => {
