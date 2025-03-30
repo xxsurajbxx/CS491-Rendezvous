@@ -141,7 +141,8 @@ export const EventForm = () => {
     const formData = {
       ...data,
       location,
-      coordinates,
+      latitude: coordinates.lat,
+      longitude: coordinates.lon,
       hostUserID: 1,
       startDateTime: formatDate(data.startDateTime),
       endDateTime: formatDate(data.endDateTime)
