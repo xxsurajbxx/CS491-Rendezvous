@@ -11,7 +11,7 @@ import { EventCard } from "./event-card";
 import { SidebarProps } from "../types";
 import { Accordion } from "@radix-ui/react-accordion";
 
-export const EventSideBar = ({ events, openEventCards, setOpenEventCards }: SidebarProps) => {
+export const EventSideBar = ({ events, openEventCards, setOpenEventCards, isOpen }: SidebarProps) => {
   
   return(
     <Sidebar variant="inset" collapsible="none" className="w-1/4 max-h-screen top-[80px]">
@@ -27,10 +27,11 @@ export const EventSideBar = ({ events, openEventCards, setOpenEventCards }: Side
                     EventID={event.EventID}
                     Name={event.Name}
                     Description={event.Description}
-                    location={event.location}
+                    Location={event.Location}
                     startDateTime={event.startDateTime}
-                    endTime={event.endTime}
+                    endDateTime={event.endDateTime}
                     people={event.people}
+                    isOpen={isOpen}
                   />
                 ))}
               </Accordion>

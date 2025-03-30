@@ -40,8 +40,8 @@ export default function NavigationBar() {
           {/* Company logo and Company Name */}
           <Button className="bg-inherit hover:bg-inherit shadow-none">
             <Link href="/">
-              <NavigationMenuItem className="flex flex-row items-center gap-x-1">
-                <Image src="/companyLogo.png" alt="logo" width={45} height={45} />
+              <NavigationMenuItem className="flex flex-row items-center">
+                <Image src="/companyLogo.png" alt="logo" width={80} height={80} />
                 <p className="text-3xl text-white font-semibold">Rendezvous</p>
               </NavigationMenuItem>
             </Link>
@@ -50,7 +50,7 @@ export default function NavigationBar() {
           {/* start of navigation menu items for different app pages */}
           <NavigationMenuItem>
             <NavigationMenuTrigger className="bg-purple-900">Events</NavigationMenuTrigger>
-            <NavigationMenuContent>
+            <NavigationMenuContent className="z-[20]">
               <ul className="w-[400px] gap-3 p-4">
                 <Link href="/events/create">Create Event</Link>
               </ul>

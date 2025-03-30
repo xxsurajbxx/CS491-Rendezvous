@@ -8,15 +8,7 @@
 import "leaflet/dist/leaflet.css";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import { Icon } from "leaflet";
-
-//Defines a marked position on the leaflet map including name of location, coordinates of location, and a popup description that describes that location/event.
-interface LeafletMarker {
-  EventID: number,
-  Name: string,
-  Description: string,
-  Latitude: number,
-  Longitude: number
-}
+import { LeafletMarker } from "@/features/events/types";
 
 type LeafletMapProps = {
   markers: LeafletMarker[] | undefined,
@@ -29,7 +21,7 @@ export default function LeafletMap({ markers, handleOpenEventCard }: LeafletMapP
   const newarkLat = 40.73566
   const newarkLong = -74.17237
   const currentZoom = 13
-  const markerSize = 35
+  const markerSize = 45
 
   const customMarkerIcon = new Icon({
     iconUrl: "/companyLogo.png",
@@ -41,7 +33,7 @@ export default function LeafletMap({ markers, handleOpenEventCard }: LeafletMapP
       center={[newarkLat,newarkLong]}
       zoom={currentZoom}
       scrollWheelZoom={true}
-      className="h-full w-full rounded-lg"
+      className="h-full w-full rounded-lg z-10"
     >
       <TileLayer 
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -57,7 +49,7 @@ export default function LeafletMap({ markers, handleOpenEventCard }: LeafletMapP
             click: () => handleOpenEventCard('event-card-'+marker.EventID)
           }}
         >
-          <Popup><h2>{marker.Description}</h2></Popup>
+          <Popup><h2>{marker.Name}</h2></Popup>
         </Marker>
       ))}
     </MapContainer>
