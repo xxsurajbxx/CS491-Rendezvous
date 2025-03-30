@@ -7,7 +7,8 @@ export const getUserEventData = async (req: Request, res: Response): Promise<Res
         `SELECT 
             e.EventID, 
             e.Name, 
-            e.startDateTime, 
+            e.startDateTime,
+            e.endDateTime, 
             e.Location, 
             e.Description, 
             m.Latitude, 
