@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import authRoutes from "./authRoutes";
 import eventRoutes from "./eventRoutes";
 import friendRoutes from "./friendRoutes";
+import rsvpRoutes from "./rsvpRoutes";
 import { pool } from "./db"; // ensure pool creation is handled in ./db
 import cors from "cors";
 
@@ -46,6 +47,7 @@ testConnection();
 app.use("/api", authRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/friends", friendRoutes);
+app.use("/api/rsvp", rsvpRoutes);
 
 // root route to check if server is running
 app.get("/", (req, res) => {
