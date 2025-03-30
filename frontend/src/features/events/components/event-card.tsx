@@ -8,7 +8,6 @@ import {
   CardTitle
 } from "@/components/ui/card";
 import {
-  Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
@@ -16,7 +15,7 @@ import {
 import { EventCardData } from "../types";
 
 
-export const EventCard: React.FC<EventCardData> = ({title, date, description, where, startTime, endTime, people}) => {
+export const EventCard: React.FC<EventCardData> = ({EventID, Name, Description, Location, startDateTime, people, isOpen}) => {
   const [open, setOpen] = useState(false);
 
   const infoBtnEventHandle = () => {
@@ -27,38 +26,47 @@ export const EventCard: React.FC<EventCardData> = ({title, date, description, wh
     }
   }
 
+  const formatDate = (dateString: Date) => {
+    const date = new Date(dateString);
+    return `${date.toLocaleString('default', {month: 'long', day: 'numeric'})}`
+  };
+
+  const formatStartTime = (startDateTime: Date) => {
+    const startTime = new Date(startDateTime)
+    return `${startTime.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`
+  }
+
   return(
-    <Card>
+    <Card id={'event-card-'+EventID}>
       <CardHeader>
         <CardTitle>
-            <p className="text-xl">{date}</p>
-            <p className="text-3xl">{title}</p>
+            <p className="text-xl">{formatDate(startDateTime)}</p>
+            <p className="text-3xl">{Name}</p>
         </CardTitle>
-        <CardDescription className="py-2">{description}</CardDescription>
+        <CardDescription className="py-2">{Description}</CardDescription>
       </CardHeader>
       <CardContent>
-        <Accordion type="single" collapsible>
-            <AccordionItem value="item-1" className="overflow-hidden">
-              <AccordionContent className="flex flex-col p-0">
-                <div className="mb-3">
-                  <p className="font-bold">Where:</p>
-                  <p>{where}</p>
-                </div>
-                <div className="mb-3">
-                  <p className="font-semibold">Time:</p>
-                  <p><span className="font-semibold">From: </span>{startTime} <span className="font-semibold"> To: </span>{endTime}</p>
-                </div>
-                <div className="mb-3">
-                  <p className="font-bold">People You May Know:</p>
-                  {people.map((person, index) => (
-                    <p key={index}>{person}</p>
-                  ))}
-                </div>
-                <Button className="self-center w-1/2 font-semibold bg-purple-900">RSVP</Button>
-              </AccordionContent>
-              <AccordionTrigger onClick={infoBtnEventHandle}><h3>{open === false ? "More Info" : "Hide Info"}</h3></AccordionTrigger>
-            </AccordionItem>
-          </Accordion>
+        <AccordionItem value={'event-card-'+EventID}>
+          <AccordionContent className="flex flex-col p-0">
+            <div className="mb-3">
+              <p> <span className="font-bold">Where: </span>{Location}</p>
+            </div>
+            <div className="mb-3">
+              <p><span className="font-semibold">Time: </span>{formatStartTime(startDateTime)}</p>
+            </div>
+            { people && people.length > 0 && (
+              <div className="mb-3">
+                <p className="font-bold">People You May Know:</p>
+                {people && people.map((person, index) => (
+                  <p key={index}>{person}</p>
+                ))}
+              </div>
+            )}
+            
+            <Button className="self-center w-1/2 font-semibold bg-purple-900">RSVP</Button>
+          </AccordionContent>
+          <AccordionTrigger onClick={infoBtnEventHandle}><h3>{isOpen('event-card-'+EventID) ? "Hide Info" : "More Info"}</h3></AccordionTrigger>
+        </AccordionItem>
         </CardContent>
     </Card>
   );

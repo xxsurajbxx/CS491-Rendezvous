@@ -11,10 +11,11 @@ import "@geoapify/geocoder-autocomplete/styles/minimal.css"
 import { GeoapifyGeocoderAutocomplete, GeoapifyContext } from "@geoapify/react-geocoder-autocomplete"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { CalendarIcon, LinkIcon, MapPin, Upload, Info, Clock } from "lucide-react"
+import { CalendarIcon, LinkIcon, MapPin, Upload, Info, Clock, Users } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
@@ -29,6 +30,7 @@ const formSchema = z.object({
     .string()
     .min(1, { message: "End date and time are required" })
     .refine((date) => date !== "", { message: "End date and time are required" }),
+  isPublic: z.enum(["true", "false"]).default("true").transform((val) => val === "true"),
   ticketmasterLink: z.string().url({ message: "Please enter a valid URL" }).optional().or(z.literal("")),
   description: z.string().optional(),
   // Add these fields to the schema even though we'll validate them separately
@@ -63,6 +65,7 @@ export const EventForm = () => {
       name: "",
       startDateTime: "",
       endDateTime: "",
+      isPublic: true,
       ticketmasterLink: "",
       description: "",
       location: "",
@@ -105,8 +108,13 @@ export const EventForm = () => {
     }
   }
 
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toISOString().slice(0, 19).replace('T', ' '); // Converts to 'YYYY-MM-DD HH:MM:SS'
+  };
+
   // Form submission handler
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = async (data: FormValues) => {
     // Check if location is valid
     if (!isLocationValid || !location) {
       setLocationTouched(true)
@@ -123,22 +131,52 @@ export const EventForm = () => {
     }
 
     // Form submission logic
-    console.log("Form Submitted Successfully!", {
+    console.log({
       ...data,
       location,
       coordinates,
     })
 
-    // Reset form after successful submission
-    // form.reset()
-    // setLocation("")
-    // setCoordinates({ lat: null, lon: null })
-    // setIsLocationValid(true)
-    // setLocationTouched(false)
-    // setImagePreview(null)
+    // Prepare form data
+    const formData = {
+      ...data,
+      location,
+      latitude: coordinates.lat,
+      longitude: coordinates.lon,
+      hostUserID: 1,
+      startDateTime: formatDate(data.startDateTime),
+      endDateTime: formatDate(data.endDateTime)
+    }
+
+    try {
+      const response = await fetch('http://localhost:8080/api/events/', {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData),
+      });
+      
+      // Reset form after successful submission
+      if (response.ok) {
+        alert("Form submitted successfully!");
+        form.reset();
+        setLocation("");
+        setCoordinates({ lat: null, lon: null });
+        setIsLocationValid(true);
+        setLocationTouched(false);
+        setImagePreview(null);
+      } else {
+        console.log(response)
+        alert("Error submitting form!");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("An error occurred!");
+    }
 
     // For demo purposes, just show a success message
-    alert("Form submitted successfully!")
+    // alert("Form submitted successfully!")
   }
 
   return (
@@ -350,6 +388,36 @@ export const EventForm = () => {
                     )}
                   />
                 </div>
+
+                {/* Event Privacy radio buttons */}
+                <FormField
+                  control={form.control}
+                  name="isPublic"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="flex items-center gap-2">
+                        <Users className="h-4 w-4" />
+                        Privacy
+                      </FormLabel>
+                      <FormControl>
+                        <RadioGroup
+                          className="flex flex-row space-x-1"
+                          value={field.value.toString()}
+                          onValueChange={field.onChange}
+                        >
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="true" id="public" />
+                            <Label htmlFor="public">Public</Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="false" id="private" />
+                            <Label htmlFor="private">Private</Label>
+                          </div>
+                        </RadioGroup>
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
 
                 {/* Ticketmaster Link (Optional) */}
                 <FormField
