@@ -15,7 +15,7 @@ import {
 import { EventCardData } from "../types";
 
 
-export const EventCard: React.FC<EventCardData> = ({id, title, date, description, where, startTime, endTime, people}) => {
+export const EventCard: React.FC<EventCardData> = ({EventID, Name, Description, location, startDateTime, endTime, people}) => {
   const [open, setOpen] = useState(false);
 
   const infoBtnEventHandle = () => {
@@ -27,28 +27,27 @@ export const EventCard: React.FC<EventCardData> = ({id, title, date, description
   }
 
   return(
-    <Card id={'event-card-'+id}>
+    <Card id={'event-card-'+EventID}>
       <CardHeader>
         <CardTitle>
-            <p className="text-xl">{date}</p>
-            <p className="text-3xl">{title}</p>
+            <p className="text-xl">{startDateTime.toLocaleString()}</p>
+            <p className="text-3xl">{Name}</p>
         </CardTitle>
-        <CardDescription className="py-2">{description}</CardDescription>
+        <CardDescription className="py-2">{Description}</CardDescription>
       </CardHeader>
       <CardContent>
-        <AccordionItem value={'event-card-'+id.toString()}>
+        <AccordionItem value={'event-card-'+EventID}>
           <AccordionContent className="flex flex-col p-0">
             <div className="mb-3">
               <p className="font-bold">Where:</p>
-              <p>{where}</p>
+              <p>{location}</p>
             </div>
             <div className="mb-3">
-              <p className="font-semibold">Time:</p>
-              <p><span className="font-semibold">From: </span>{startTime} <span className="font-semibold"> To: </span>{endTime}</p>
+              <p><span className="font-semibold">Time: </span>{startDateTime.toString()}</p>
             </div>
             <div className="mb-3">
               <p className="font-bold">People You May Know:</p>
-              {people.map((person, index) => (
+              {people && people.map((person, index) => (
                 <p key={index}>{person}</p>
               ))}
             </div>

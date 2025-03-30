@@ -12,64 +12,6 @@ import { SidebarProps } from "../types";
 import { Accordion } from "@radix-ui/react-accordion";
 
 export const EventSideBar = ({ events, openEventCards, setOpenEventCards }: SidebarProps) => {
-  // const events = [
-  //   {
-  //     title: 'Prudential Live',
-  //     date: "April 9",
-  //     description: "Cool event happening at Prudential. Bunch of bands playing here.",
-  //     where: "25 Lafayette St, Newark, NJ 07102",
-  //     startTime: "9:00pm",
-  //     endTime: "12:00am",
-  //     people: [
-  //       "Danny Arco",
-  //       "Chad Vincento",
-  //       "Minny Palabi",
-  //       "Marc Hamilton",
-  //     ]
-  //   },
-  //   {
-  //     title: 'Prudential Live',
-  //     date: "April 9",
-  //     description: "Cool event happening at Prudential. Bunch of bands playing here.",
-  //     where: "25 Lafayette St, Newark, NJ 07102",
-  //     startTime: "9:00pm",
-  //     endTime: "12:00am",
-  //     people: [
-  //       "Danny Arco",
-  //       "Chad Vincento",
-  //       "Minny Palabi",
-  //       "Marc Hamilton",
-  //     ]
-  //   },
-  //   {
-  //     title: 'Prudential Live',
-  //     date: "April 9",
-  //     description: "Cool event happening at Prudential. Bunch of bands playing here.",
-  //     where: "25 Lafayette St, Newark, NJ 07102",
-  //     startTime: "9:00pm",
-  //     endTime: "12:00am",
-  //     people: [
-  //       "Danny Arco",
-  //       "Chad Vincento",
-  //       "Minny Palabi",
-  //       "Marc Hamilton",
-  //     ]
-  //   },
-  //   {
-  //     title: 'Prudential Live',
-  //     date: "April 9",
-  //     description: "Cool event happening at Prudential. Bunch of bands playing here.",
-  //     where: "25 Lafayette St, Newark, NJ 07102",
-  //     startTime: "9:00pm",
-  //     endTime: "12:00am",
-  //     people: [
-  //       "Danny Arco",
-  //       "Chad Vincento",
-  //       "Minny Palabi",
-  //       "Marc Hamilton",
-  //     ]
-  //   },
-  // ]
   
   return(
     <Sidebar variant="inset" collapsible="none" className="w-1/4 max-h-screen top-[80px]">
@@ -79,15 +21,14 @@ export const EventSideBar = ({ events, openEventCards, setOpenEventCards }: Side
           <SidebarGroupContent>
             <SidebarMenu className="gap-4">
               <Accordion type="multiple" value={openEventCards} onValueChange={setOpenEventCards} className="flex flex-col gap-y-2">
-                {events.map((event, index) => (
+                {events && events.map((event, index) => (
                   <EventCard
                     key={index}
-                    id={event.id}
-                    title={event.title}
-                    date={event.date}
-                    description={event.description}
-                    where={event.where}
-                    startTime={event.startTime}
+                    EventID={event.EventID}
+                    Name={event.Name}
+                    Description={event.Description}
+                    location={event.location}
+                    startDateTime={event.startDateTime}
                     endTime={event.endTime}
                     people={event.people}
                   />

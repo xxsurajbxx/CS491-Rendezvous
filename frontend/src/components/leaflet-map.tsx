@@ -11,15 +11,15 @@ import { Icon } from "leaflet";
 
 //Defines a marked position on the leaflet map including name of location, coordinates of location, and a popup description that describes that location/event.
 interface LeafletMarker {
-  id: number,
-  title: string,
-  description: string,
-  locationLat: number,
-  locationLong: number
+  EventID: number,
+  Name: string,
+  Description: string,
+  Latitude: number,
+  Longitude: number
 }
 
 type LeafletMapProps = {
-  markers: LeafletMarker[],
+  markers: LeafletMarker[] | undefined,
   handleOpenEventCard(id: string): void
 }
 
@@ -31,20 +31,6 @@ export default function LeafletMap({ markers, handleOpenEventCard }: LeafletMapP
   const currentZoom = 13
   const markerSize = 35
 
-  // const temporaryMarkers: LeafletMarker[] = [
-  //   {
-  //     title: "Prudential Center",
-  //     locationLat: 40.7335,
-  //     locationLong: -74.1711,
-  //     description: "I am prudential center"
-  //   },
-  //   {
-  //     title: "NJIT Campus",
-  //     locationLat: 40.7424,
-  //     locationLong: -74.1784,
-  //     description: "I am NJIT campus."
-  //   }
-  // ]
   const customMarkerIcon = new Icon({
     iconUrl: "/companyLogo.png",
     iconSize: [markerSize, markerSize]
@@ -62,16 +48,16 @@ export default function LeafletMap({ markers, handleOpenEventCard }: LeafletMapP
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       {/* map function to display all the marker locations of events within the given area. */}
-      {markers.map((marker, index) => (
+      {markers?.map((marker, index) => (
         <Marker
           key={index}
-          position={[marker.locationLat, marker.locationLong]}
+          position={[marker.Latitude, marker.Longitude]}
           icon={customMarkerIcon}
           eventHandlers={{
-            click: () => handleOpenEventCard('event-card-'+marker.id)
+            click: () => handleOpenEventCard('event-card-'+marker.EventID)
           }}
         >
-          <Popup><h2>{marker.description}</h2></Popup>
+          <Popup><h2>{marker.Description}</h2></Popup>
         </Marker>
       ))}
     </MapContainer>

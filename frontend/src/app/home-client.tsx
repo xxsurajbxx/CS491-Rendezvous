@@ -28,15 +28,15 @@ export default function HomeClient() {
   
   const getAllEventCardData = async () => {
     try {
-      const response = await fetch('/getAllEventData', {
+      const response = await fetch('http://localhost:8080/api/events/user-events', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
       if (!response.ok) throw new Error('Bad Request. Try Again.')
 
       const result = await response.json();
-      setEventCardsData(result)
-      console.log(result)
+      setEventCardsData(result.events)
+      console.log(result.events)
     } catch (error) {
       console.error('Fetch error:', error)
     }
@@ -58,7 +58,7 @@ export default function HomeClient() {
       </header>
       <SidebarProvider>
         <EventSideBar
-          events={temporaryEventData}
+          events={eventCardsData}
           openEventCards={openEventCards}
           setOpenEventCards={setOpenEventCards}
         />
@@ -77,13 +77,12 @@ export default function HomeClient() {
 
 const temporaryEventData: EventCardData[] = [
   {
-    id: 1,
-    title: 'Newark Museum of Art',
-    date: "April 9",
-    description: "Art event happening at museum. Lots of art sculptures.",
-    where: "51 Park Pl, Newark, NJ 07102",
-    startTime: "9:00pm",
-    endTime: "12:00am",
+    EventID: 1,
+    Name: 'Newark Museum of Art',
+    Description: "Art event happening at museum. Lots of art sculptures.",
+    location: "51 Park Pl, Newark, NJ 07102",
+    startDateTime: new Date("April 9, 1995 03:24:00"),
+    endTime: new Date("April 9, 1995 03:24:00"),
     people: [
       "Danny Arco",
       "Chad Vincento",
@@ -92,13 +91,12 @@ const temporaryEventData: EventCardData[] = [
     ]
   },
   {
-    id: 2,
-    title: 'Branch Brook Park Cherry Blossom Festival',
-    date: "April 9",
-    description: "Lots of cherry blossom trees. good for picnics.",
-    where: "Park Avenue, Lake St, Newark, NJ 07104",
-    startTime: "9:00am",
-    endTime: "12:00pm",
+    EventID: 2,
+    Name: 'Branch Brook Park Cherry Blossom Festival',
+    Description: "Lots of cherry blossom trees. good for picnics.",
+    location: "Park Avenue, Lake St, Newark, NJ 07104",
+    startDateTime: new Date("April 9, 1995 03:24:00"),
+    endTime: new Date("April 9, 1995 03:24:00"),
     people: [
       "Danny Arco",
       "Chad Vincento",
@@ -107,13 +105,12 @@ const temporaryEventData: EventCardData[] = [
     ]
   },
   {
-    id: 3,
-    title: 'Prudential Live',
-    date: "April 9",
-    description: "Cool event happening at Prudential. Bunch of bands playing here.",
-    where: "25 Lafayette St, Newark, NJ 07102",
-    startTime: "9:00pm",
-    endTime: "12:00am",
+    EventID: 3,
+    Name: 'Prudential Live',
+    Description: "Cool event happening at Prudential. Bunch of bands playing here.",
+    location: "25 Lafayette St, Newark, NJ 07102",
+    startDateTime: new Date("April 9, 1995 03:24:00"),
+    endTime: new Date("April 9, 1995 03:24:00"),
     people: [
       "Danny Arco",
       "Chad Vincento",
@@ -122,13 +119,12 @@ const temporaryEventData: EventCardData[] = [
     ]
   },
   {
-    id: 4,
-    title: 'NJIT Freshman Info Session',
-    date: "April 9",
-    description: "Information session for incoming freshman.",
-    where: "323 Dr Martin Luther King Jr Blvd, Newark, NJ 07102",
-    startTime: "9:00pm",
-    endTime: "12:00am",
+    EventID: 4,
+    Name: 'NJIT Freshman Info Session',
+    Description: "Information session for incoming freshman.",
+    location: "323 Dr Martin Luther King Jr Blvd, Newark, NJ 07102",
+    startDateTime: new Date("April 9, 1995 03:24:00"),
+    endTime: new Date("April 9, 1995 03:24:00"),
     people: [
       "Danny Arco",
       "Chad Vincento",
@@ -140,31 +136,31 @@ const temporaryEventData: EventCardData[] = [
 
 const temporaryLeafletMarkers = [
   {
-    id: 1,
-    title: 'Newark Museum of Art',
-    description: "Art event happening at museum. Lots of art sculptures.",
-    locationLat: 40.742651,
-    locationLong: -74.171779
+    EventID: 1,
+    Name: 'Newark Museum of Art',
+    Description: "Art event happening at museum. Lots of art sculptures.",
+    Latitude: 40.742651,
+    Longitude: -74.171779
   },
   {
-    id: 2,
-    title: 'Branch Brook Park Cherry Blossom Festival',
-    description: "Lots of cherry blossom trees. good for picnics.",
-    locationLat: 40.7797,
-    locationLong: -74.1748,
+    EventID: 2,
+    Name: 'Branch Brook Park Cherry Blossom Festival',
+    Description: "Lots of cherry blossom trees. good for picnics.",
+    Latitude: 40.7797,
+    Longitude: -74.1748,
   },
   {
-    id: 3,
-    title: 'Prudential Live',
-    description: "Cool event happening at Prudential. Bunch of bands playing here.",
-    locationLat: 40.7335,
-    locationLong: -74.1711,
+    EventID: 3,
+    Name: 'Prudential Live',
+    Description: "Cool event happening at Prudential. Bunch of bands playing here.",
+    Latitude: 40.7335,
+    Longitude: -74.1711,
   },
   {
-    id: 4,
-    title: 'NJIT Freshman Info Session',
-    description: "Information session for incoming freshman.",
-    locationLat: 40.7424,
-    locationLong: -74.1784,
+    EventID: 4,
+    Name: 'NJIT Freshman Info Session',
+    Description: "Information session for incoming freshman.",
+    Latitude: 40.7424,
+    Longitude: -74.1784,
   },
 ]
