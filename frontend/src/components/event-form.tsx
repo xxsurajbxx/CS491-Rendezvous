@@ -137,8 +137,8 @@ export const EventForm = () => {
       latitude: coordinates.lat,
       longitude: coordinates.lon,
       hostUserID: 1,
-      startDateTime: formatDate(data.startDateTime),
-      endDateTime: formatDate(data.endDateTime)
+      startDateTime: dayjs(data.startDateTime).format('YYYY-MM-DD HH:mm:ss'),
+      endDateTime: dayjs(data.endDateTime).format('YYYY-MM-DD HH:mm:ss')
     })
 
     // Prepare form data
@@ -148,8 +148,8 @@ export const EventForm = () => {
       latitude: coordinates.lat,
       longitude: coordinates.lon,
       hostUserID: 1,
-      startDateTime: (data.startDateTime),
-      endDateTime: (data.endDateTime)
+      startDateTime: dayjs(data.startDateTime).format('YYYY-MM-DD HH:mm:ss'),
+      endDateTime: dayjs(data.endDateTime).format('YYYY-MM-DD HH:mm:ss')
     }
 
     try {
