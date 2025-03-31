@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
@@ -15,12 +15,13 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { CalendarIcon, LinkIcon, MapPin, Upload, Info, Clock, Users } from "lucide-react"
+import { CalendarIcon, LinkIcon, MapPin, Info, Clock, Users } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import Image from 'next/image';
+import { getTokenPayload } from "../../utils/auth"
+// import Image from 'next/image';
 
 // Replace the form schema definition with this updated version that includes all fields
 const formSchema = z.object({
@@ -52,6 +53,7 @@ type SelectedPlace = {
 };
 
 export const EventForm = () => {
+  const [hostId, setHostId] = useState<number | null>(null)
   const [location, setLocation] = useState("")
   const [coordinates, setCoordinates] = useState<{ lat: number | null; lon: number | null }>({ lat: null, lon: null })
   const [isLocationValid, setIsLocationValid] = useState(true)
@@ -108,10 +110,17 @@ export const EventForm = () => {
   //   }
   // }
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toISOString().slice(0, 19).replace('T', ' '); // Converts to 'YYYY-MM-DD HH:MM:SS'
-  };
+  const getUserId = async () => {
+    try {
+      const result = await getTokenPayload()
+      console.log('token payload:', result)
+      if (result) {
+        setHostId(Number(result.userId))
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   // Form submission handler
   const onSubmit = async (data: FormValues) => {
@@ -136,7 +145,7 @@ export const EventForm = () => {
       location,
       latitude: coordinates.lat,
       longitude: coordinates.lon,
-      hostUserID: 1,
+      hostUserID: hostId,
       startDateTime: dayjs(data.startDateTime).format('YYYY-MM-DD HH:mm:ss'),
       endDateTime: dayjs(data.endDateTime).format('YYYY-MM-DD HH:mm:ss')
     })
@@ -147,7 +156,7 @@ export const EventForm = () => {
       location,
       latitude: coordinates.lat,
       longitude: coordinates.lon,
-      hostUserID: 1,
+      hostUserID: hostId,
       startDateTime: dayjs(data.startDateTime).format('YYYY-MM-DD HH:mm:ss'),
       endDateTime: dayjs(data.endDateTime).format('YYYY-MM-DD HH:mm:ss')
     }
@@ -182,6 +191,13 @@ export const EventForm = () => {
     // For demo purposes, just show a success message
     // alert("Form submitted successfully!")
   }
+
+  useEffect(() => {
+
+    if (!hostId) {
+      getUserId()
+    }
+  })
 
   return (
     <div className="container mx-auto py-10 px-4 md:px-6">
