@@ -30,12 +30,12 @@ const formSchema = z.object({
     .string()
     .min(1, { message: "End date and time are required" })
     .refine((date) => date !== "", { message: "End date and time are required" }),
-  isPublic: z.enum(["true", "false"]).default("true").transform((val) => val === "true"),
+  isPublic: z.enum(["true", "false"]).transform((val) => val === "true").default("true"),
   ticketmasterLink: z.string().url({ message: "Please enter a valid URL" }).optional().or(z.literal("")),
   description: z.string().optional(),
   // Add these fields to the schema even though we'll validate them separately
   location: z.string().optional(),
-  image: z.any().optional(), // Using z.any() for the file input
+  // image: z.any().optional(), // Using z.any() for the file input
 })
 
 
@@ -56,7 +56,7 @@ export const EventForm = () => {
   const [coordinates, setCoordinates] = useState<{ lat: number | null; lon: number | null }>({ lat: null, lon: null })
   const [isLocationValid, setIsLocationValid] = useState(true)
   const [locationTouched, setLocationTouched] = useState(false)
-  const [imagePreview, setImagePreview] = useState<string | null>(null)
+  // const [imagePreview, setImagePreview] = useState<string | null>(null)
 
   // Initialize the form
   const form = useForm<FormValues>({
@@ -65,11 +65,11 @@ export const EventForm = () => {
       name: "",
       startDateTime: "",
       endDateTime: "",
-      isPublic: true,
+      isPublic: undefined,
       ticketmasterLink: "",
       description: "",
       location: "",
-      image: null,
+      // image: null,
     },
   })
 
@@ -94,19 +94,19 @@ export const EventForm = () => {
   }
 
   // Handle image preview
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null
+  // const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = e.target.files?.[0] || null
 
-    if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string)
-      }
-      reader.readAsDataURL(file)
-    } else {
-      setImagePreview(null)
-    }
-  }
+  //   if (file) {
+  //     const reader = new FileReader()
+  //     reader.onloadend = () => {
+  //       setImagePreview(reader.result as string)
+  //     }
+  //     reader.readAsDataURL(file)
+  //   } else {
+  //     setImagePreview(null)
+  //   }
+  // }
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -134,7 +134,11 @@ export const EventForm = () => {
     console.log({
       ...data,
       location,
-      coordinates,
+      latitude: coordinates.lat,
+      longitude: coordinates.lon,
+      hostUserID: 1,
+      startDateTime: formatDate(data.startDateTime),
+      endDateTime: formatDate(data.endDateTime)
     })
 
     // Prepare form data
@@ -144,8 +148,8 @@ export const EventForm = () => {
       latitude: coordinates.lat,
       longitude: coordinates.lon,
       hostUserID: 1,
-      startDateTime: formatDate(data.startDateTime),
-      endDateTime: formatDate(data.endDateTime)
+      startDateTime: (data.startDateTime),
+      endDateTime: (data.endDateTime)
     }
 
     try {
@@ -165,7 +169,7 @@ export const EventForm = () => {
         setCoordinates({ lat: null, lon: null });
         setIsLocationValid(true);
         setLocationTouched(false);
-        setImagePreview(null);
+        // setImagePreview(null);
       } else {
         console.log(response)
         alert("Error submitting form!");
@@ -402,8 +406,8 @@ export const EventForm = () => {
                       <FormControl>
                         <RadioGroup
                           className="flex flex-row space-x-1"
-                          value={field.value.toString()}
                           onValueChange={field.onChange}
+                          defaultValue="true"
                         >
                           <div className="flex items-center space-x-2">
                             <RadioGroupItem value="true" id="public" />
@@ -456,7 +460,7 @@ export const EventForm = () => {
                 />
 
                 {/* Image Upload (Optional) */}
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <Label htmlFor="image" className="flex items-center gap-2">
                     <Upload className="h-4 w-4" />
                     Upload Image (Optional)
@@ -482,7 +486,7 @@ export const EventForm = () => {
                       </div>
                     )}
                   </div>
-                </div>
+                </div> */}
                 {/* Submit Button */}
                 <Button type="submit" className="w-full bg-purple-900">
                   Create Event
