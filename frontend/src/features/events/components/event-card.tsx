@@ -12,6 +12,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import dayjs from "dayjs";
 import { EventCardData } from "../types";
 
 
@@ -27,13 +28,11 @@ export const EventCard: React.FC<EventCardData> = ({EventID, Name, Description, 
   }
 
   const formatDate = (dateString: Date) => {
-    const date = new Date(dateString);
-    return `${date.toLocaleString('default', {month: 'long', day: 'numeric'})}`
+    return dayjs(dateString).format('MMMM D');
   };
 
-  const formatStartTime = (startDateTime: Date) => {
-    const startTime = new Date(startDateTime)
-    return `${startTime.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}`
+  const formatTime = (dateTime: Date) => {
+    return dayjs(dateTime).format('h:mm A');
   }
 
   return(
@@ -52,7 +51,7 @@ export const EventCard: React.FC<EventCardData> = ({EventID, Name, Description, 
               <p> <span className="font-bold">Where: </span>{Location}</p>
             </div>
             <div className="mb-3">
-              <p><span className="font-semibold">Time: </span>{formatStartTime(startDateTime)}</p>
+              <p><span className="font-semibold">Time: </span>{formatTime(startDateTime)}</p>
             </div>
             { people && people.length > 0 && (
               <div className="mb-3">
