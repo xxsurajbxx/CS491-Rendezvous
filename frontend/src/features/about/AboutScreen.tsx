@@ -5,6 +5,7 @@ import React from "react"
 import NavigationBar from "@/components/navigation-bar"
 import { Button } from "@/components/ui/button"
 import Image from "next/image"
+import Link from "next/link"
 
 export const AboutScreen = () => {
 
@@ -18,7 +19,9 @@ export const AboutScreen = () => {
           <div className="flex flex-col h-full w-1/2 items-center justify-center space-y-7 text-center">
             <h2 className="w-1/2 font-semibold text-2xl">{aboutUsInfo.info_1}</h2>
             <p className="w-1/2">{aboutUsInfo.info_2}</p>
-            <Button className="w-1/3 h-[60px] bg-purple-900 text-xl">Start Looking</Button>
+            <Button asChild className="w-1/3 h-[60px] bg-purple-900 text-xl">
+              <Link href="/">Start Looking</Link>
+            </Button>
           </div>
           <div className="flex flex-col w-1/2 h-full justify-center items-center">
             <Image src="/cityImage.png" alt="photo" width={600} height={100} className="rounded-md" />
