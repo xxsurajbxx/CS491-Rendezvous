@@ -1,6 +1,7 @@
 import express from "express";
 import { createEvent } from "./createEventsEndpoint";
 import { getUserEventData } from "./getUserEventDataEndpoint";
+import { searchEvents } from "./searchEventsEndpoint";
 
 
 const router = express.Router();
@@ -13,4 +14,10 @@ router.post("/", async (req, res) => {
 router.get("/user-events", async (req, res) => {
     await getUserEventData(req, res);
 });
+
+// event searching
+router.get("/search", async (req, res) => {
+    await searchEvents(req, res);
+  });
+  
 export default router;
