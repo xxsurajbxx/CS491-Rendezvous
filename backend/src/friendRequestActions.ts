@@ -11,14 +11,16 @@ export const respondToRequest = async (req: Request, res: Response): Promise<voi
   }
 
   try {
-    const status = action === "accept" ? "Accepted" : "Rejected";
-
-    await pool.query(
-      `UPDATE Friends SET Status = ?, Since = CURRENT_TIMESTAMP WHERE FriendID = ?`,
-      [status, friendId]
-    );
-
-    res.json({ status: "success", message: `Friend request ${status.toLowerCase()}` });
+    if (action === "reject") {
+      await pool.query(`DELETE FROM Friends WHERE FriendID = ?`, [friendId]);
+      res.json({ status: "success", message: "Friend request rejected and removed" });
+    } else {
+      await pool.query(
+        `UPDATE Friends SET Status = 'Accepted', Since = CURRENT_TIMESTAMP WHERE FriendID = ?`,
+        [friendId]
+      );
+      res.json({ status: "success", message: "Friend request accepted" });
+    }
   } catch (error) {
     console.error("Error updating friend request:", error);
     res.status(500).json({ status: "fail", message: "Server error" });
