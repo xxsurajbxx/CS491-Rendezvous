@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import NavigationBar from "@/components/navigation-bar";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
@@ -11,9 +11,56 @@ import { RsvpWindow } from "./rsvp-window";
 import { CommunityWindow } from "./community-window";
 import { RequestsWindow } from "./requests-window";
 
+interface FriendsScreenProps {
+  userId: number;
+  //email: string;
+  //name: string;
+}
 
-export const FriendsScreen = () => {
+interface FriendRequest {
+  FriendID: number; // This is an integer in the database, you can keep it as a number
+  UserID: number;   // Similarly, UserID will be an integer
+  Name: string;     // Name is a string
+  Email: string;    // Email is a string
+}
+
+
+export const FriendsScreen = ({userId}: FriendsScreenProps ) => {
   const [tabType, setTabType] = useState<FriendsTabType>('COMMUNITY');
+  const [friendRequests, setFriendRequests] = useState<FriendRequest[]>([]);
+
+  
+
+  // This function will be passed down to the RequestsWindow to update the count
+
+  const updateFriendRequests = (requests: FriendRequest[]) => {
+    setFriendRequests(requests);
+  };
+
+
+    // Function to get the friend requests
+    const getFriendRequests = useCallback(async () => {
+      try {
+        const response = await fetch(`http://localhost:8080/api/friends/requests/${userId}`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+        });
+  
+        if (!response.ok) throw new Error('Failed to fetch friend requests');
+  
+        const result = await response.json();
+        setFriendRequests(result.data);
+        console.log(friendRequests)
+
+      } catch (error) {
+        console.error('Error fetching friend requests:', error);
+      }
+    }, [userId, friendRequests]);
+  
+    // UseEffect to fetch friend requests when the userId changes
+    useEffect(() => {
+      getFriendRequests();
+    }, [userId, getFriendRequests]);
 
   return(
     <div>
@@ -21,12 +68,12 @@ export const FriendsScreen = () => {
         <NavigationBar />
       </header>
       <SidebarProvider>
-        <FriendsSideBar setWindow={setTabType} />
+        <FriendsSideBar setWindow={setTabType} friendRequests={friendRequests}/>
         <SidebarInset>
           <div className="h-full bg-gray-100 p-6">
             {tabType === 'COMMUNITY' && <CommunityWindow personProfiles={placeholderPersonProfiles} />}
             {tabType === 'RSVP' && <RsvpWindow rsvpCards={placeholderRsvpCards} />}
-            {tabType === 'REQUESTS' && <RequestsWindow personProfiles={placeholderPersonProfiles} />}
+            {tabType === 'REQUESTS' && <RequestsWindow userId={userId} friendRequests={friendRequests} updateFriendRequests={updateFriendRequests} />}
           </div>
         </SidebarInset>
       </SidebarProvider>
