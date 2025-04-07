@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import NavigationBar from "@/components/navigation-bar";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
@@ -24,12 +24,19 @@ interface FriendRequest {
   Email: string;    // Email is a string
 }
 
+interface Friend {
+  FriendID: number;
+  UserID: number;
+  Name: string;
+  Email: string;
+  Since: string;
+}
+
 
 export const FriendsScreen = ({userId}: FriendsScreenProps ) => {
   const [tabType, setTabType] = useState<FriendsTabType>('COMMUNITY');
   const [friendRequests, setFriendRequests] = useState<FriendRequest[]>([]);
-
-  
+  const [friends, setFriends] = useState<Friend[]>([]);
 
   // This function will be passed down to the RequestsWindow to update the count
 
@@ -37,30 +44,71 @@ export const FriendsScreen = ({userId}: FriendsScreenProps ) => {
     setFriendRequests(requests);
   };
 
+  const updateFriends = (friends: Friend[]) => {
+    setFriends(friends);
+  };
 
-    // Function to get the friend requests
-    const getFriendRequests = useCallback(async () => {
-      try {
-        const response = await fetch(`http://localhost:8080/api/friends/requests/${userId}`, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
-        });
-  
-        if (!response.ok) throw new Error('Failed to fetch friend requests');
-  
-        const result = await response.json();
-        setFriendRequests(result.data);
-        console.log(friendRequests)
 
-      } catch (error) {
-        console.error('Error fetching friend requests:', error);
-      }
-    }, [userId, friendRequests]);
+  // Function to get the friend requests
+  const getFriendRequests = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/friends/requests/${userId}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (!response.ok) throw new Error('Failed to fetch friend requests');
+
+      const result = await response.json();
+      setFriendRequests(result.data);
+      console.log(friendRequests)
+
+    } catch (error) {
+      console.error('Error fetching friend requests:', error);
+    }
+  };
+
+
+  const getFriends = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/friends/all/${userId}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (!response.ok) throw new Error('Failed to fetch friend requests');
+
+      const result = await response.json();
+      setFriends(result.data);
+      console.log(friends)
+
+    } catch (error) {
+      console.error('Error fetching friend requests:', error);
+    }
+  };
+
   
     // UseEffect to fetch friend requests when the userId changes
     useEffect(() => {
+      getFriends();
       getFriendRequests();
-    }, [userId, getFriendRequests]);
+    }, []);
+
+  // Set up polling for friend requests every minute
+  useEffect(() => {
+    // Initial fetch
+    getFriendRequests()
+
+    // Set up interval to check every minute (60000 milliseconds)
+    // NOTE: for the future, implement WebSockets 
+    const intervalId = setInterval(() => {
+      console.log("Checking for new friend requests...")
+      getFriendRequests()
+    }, 60000)
+
+    // Clean up the interval when the component unmounts
+    return () => clearInterval(intervalId)
+  }, [])
 
   return(
     <div>
@@ -71,9 +119,9 @@ export const FriendsScreen = ({userId}: FriendsScreenProps ) => {
         <FriendsSideBar setWindow={setTabType} friendRequests={friendRequests}/>
         <SidebarInset>
           <div className="h-full bg-gray-100 p-6">
-            {tabType === 'COMMUNITY' && <CommunityWindow personProfiles={placeholderPersonProfiles} />}
+            {tabType === 'COMMUNITY' && <CommunityWindow userId={userId} friends={friends} updateFriends={updateFriends} personProfiles={placeholderPersonProfiles}/>}
             {tabType === 'RSVP' && <RsvpWindow rsvpCards={placeholderRsvpCards} />}
-            {tabType === 'REQUESTS' && <RequestsWindow userId={userId} friendRequests={friendRequests} updateFriendRequests={updateFriendRequests} />}
+            {tabType === 'REQUESTS' && <RequestsWindow userId={userId} friendRequests={friendRequests} updateFriendRequests={updateFriendRequests} updateFriends={updateFriends}/>}
           </div>
         </SidebarInset>
       </SidebarProvider>
