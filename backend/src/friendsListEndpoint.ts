@@ -7,7 +7,11 @@ export const getFriends = async (req: Request, res: Response): Promise<void> => 
   try {
     const [friends] = await pool.query(
       `SELECT 
-        u.UserID, u.Name, u.Email, f.Since 
+        f.FriendID, 
+        u.UserID, 
+        u.Name, 
+        u.Email, 
+        f.Since 
        FROM Friends f 
        JOIN Users u ON (u.UserID = f.User1ID OR u.UserID = f.User2ID)
        WHERE (f.User1ID = ? OR f.User2ID = ?) 
