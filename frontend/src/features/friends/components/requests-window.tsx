@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+//import { useCallback } from "react";
 //import { PersonProfiles } from "../types";
 
 import { Card, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -10,6 +10,7 @@ interface RequestsWindowProps {
   userId: number; // UserID passed from parent
   friendRequests: FriendRequest[];
   updateFriendRequests: (requests: FriendRequest[]) => void;
+  updateFriends: (requests: Friend[]) => void;
 }
 
 interface FriendRequest {
@@ -18,12 +19,37 @@ interface FriendRequest {
   Name: string;     // Name is a string
   Email: string;    // Email is a string
 }
+interface Friend {
+  FriendID: number;
+  UserID: number;
+  Name: string;
+  Email: string;
+  Since: string;
+}
 
-export const RequestsWindow= ({ userId, friendRequests, updateFriendRequests }: RequestsWindowProps) => {
+export const RequestsWindow= ({ userId, friendRequests, updateFriendRequests, updateFriends }: RequestsWindowProps) => {
+
+  const getFriends = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/friends/all/${userId}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (!response.ok) throw new Error('Failed to fetch friend requests');
+
+      const result = await response.json();
+
+      // Update the count in the parent component
+      updateFriends(result.data);
+    } catch (error) {
+      console.error('Error fetching friends:', error);
+    }
+  };
 
 
   // Function to get the friend requests
-  const getFriendRequests = useCallback(async () => {
+  const getFriendRequests = async () => {
     try {
       const response = await fetch(`http://localhost:8080/api/friends/requests/${userId}`, {
         method: 'GET',
@@ -40,7 +66,7 @@ export const RequestsWindow= ({ userId, friendRequests, updateFriendRequests }: 
     } catch (error) {
       console.error('Error fetching friend requests:', error);
     }
-  }, [userId, friendRequests, updateFriendRequests]);
+  };
 
   // Handle accepting or denying a friend request
   const handleRequest = async (action: "accept" | "reject", friendId: number) => {
@@ -56,6 +82,7 @@ export const RequestsWindow= ({ userId, friendRequests, updateFriendRequests }: 
 
       // Refresh the friend requests after accepting/denying
       getFriendRequests();
+      getFriends();
     } catch (error) {
       console.error('Error processing friend request:', error);
     }
