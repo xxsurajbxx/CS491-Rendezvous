@@ -88,11 +88,13 @@ export const FriendsScreen = ({userId}: FriendsScreenProps ) => {
   };
 
   
-    // UseEffect to fetch friend requests when the userId changes
-    useEffect(() => {
-      getFriends();
-      getFriendRequests();
-    }, []);
+  useEffect(() => {
+    if (tabType === "COMMUNITY") {
+      getFriends(); // Fetch friends when the "Community" tab is active
+    } else if (tabType === "REQUESTS") {
+      getFriendRequests(); // Fetch friend requests when the "Requests" tab is active
+    }
+  }, [tabType]); // Runs when `tabType` changes
 
   // Set up polling for friend requests every minute
   useEffect(() => {
@@ -105,7 +107,7 @@ export const FriendsScreen = ({userId}: FriendsScreenProps ) => {
       console.log("Checking for new friend requests...")
       getFriends();
       getFriendRequests();
-    }, 60000)
+    }, 60000);
 
     // Clean up the interval when the component unmounts
     return () => clearInterval(intervalId)
