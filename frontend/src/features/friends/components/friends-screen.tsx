@@ -103,7 +103,8 @@ export const FriendsScreen = ({userId}: FriendsScreenProps ) => {
     // NOTE: for the future, implement WebSockets 
     const intervalId = setInterval(() => {
       console.log("Checking for new friend requests...")
-      getFriendRequests()
+      getFriends();
+      getFriendRequests();
     }, 60000)
 
     // Clean up the interval when the component unmounts
