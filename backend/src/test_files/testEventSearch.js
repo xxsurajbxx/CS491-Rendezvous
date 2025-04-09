@@ -1,4 +1,4 @@
-fetch("http://localhost:8080/api/events/search?query=test", {
+fetch("http://localhost:8080/api/events/search?query=shoprite", {
     method: "GET",
     headers: { "Content-Type": "application/json" }
   })
