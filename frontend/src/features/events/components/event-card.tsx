@@ -13,7 +13,9 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import dayjs from "dayjs";
+import { getTokenPayload } from "../../../../utils/auth";
 import { EventCardData } from "../types";
+import { error } from "console";
 
 
 export const EventCard: React.FC<EventCardData> = ({EventID, Name, Description, Location, startDateTime, people, isOpen}) => {
@@ -33,6 +35,31 @@ export const EventCard: React.FC<EventCardData> = ({EventID, Name, Description, 
 
   const formatTime = (dateTime: Date) => {
     return dayjs(dateTime).format('h:mm A');
+  }
+
+  const handleEventRsvp = async () => {
+    try {
+      const token = await getTokenPayload();
+      const response = await fetch(`http://localhost:8080/api/rsvp/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: token?.userId,
+          eventId: EventID
+        })
+      });
+      if (!token) throw new Error('Failed to retrieve token from cookies.')
+      // if (!response.ok) throw new Error('Failed to post event rsvp request.');
+
+      const result = await response.json();
+      if (response.status === 409) {
+        alert(result.message)
+      } else if (response.status === 201) {
+        alert(result.message)
+      }
+    } catch (error) {
+      console.error('Error rsvping for event.', error);
+    }
   }
 
   return(
@@ -62,7 +89,7 @@ export const EventCard: React.FC<EventCardData> = ({EventID, Name, Description, 
               </div>
             )}
             
-            <Button className="self-center w-1/2 font-semibold bg-purple-900">RSVP</Button>
+            <Button onClick={handleEventRsvp} className="self-center w-1/2 font-semibold bg-purple-900">RSVP</Button>
           </AccordionContent>
           <AccordionTrigger onClick={infoBtnEventHandle}><h3>{isOpen('event-card-'+EventID) ? "Hide Info" : "More Info"}</h3></AccordionTrigger>
         </AccordionItem>
