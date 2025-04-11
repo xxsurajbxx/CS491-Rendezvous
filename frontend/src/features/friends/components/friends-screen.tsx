@@ -100,7 +100,7 @@ export const FriendsScreen = ({userId}: FriendsScreenProps ) => {
 
       const result = await response.json();
       setRsvps(result.data);
-      console.log(rsvps)
+      console.log('List of RSVPs', rsvps)
     } catch (error) {
       console.error('Error fetching Rsvps request.', error);
     }
@@ -112,7 +112,7 @@ export const FriendsScreen = ({userId}: FriendsScreenProps ) => {
       getFriends(); // Fetch friends when the "Community" tab is active
     } else if (tabType === "REQUESTS") {
       getFriendRequests(); // Fetch friend requests when the "Requests" tab is active
-    } else {
+    } else {    // tabType === 'RSVP'
       getRsvps(); // fetch rsvp request when "RSVP" tab is active
     }
   }, [tabType]); // Runs when `tabType` changes
