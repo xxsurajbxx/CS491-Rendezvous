@@ -14,7 +14,7 @@ import { RequestsWindow } from "./requests-window";
 interface FriendsScreenProps {
   userId: number;
   //email: string;
-  //name: string;
+  name: string;
 }
 
 interface FriendRequest {
@@ -33,7 +33,7 @@ interface Friend {
 }
 
 
-export const FriendsScreen = ({userId}: FriendsScreenProps ) => {
+export const FriendsScreen = ({userId, name}: FriendsScreenProps ) => {
   const [tabType, setTabType] = useState<FriendsTabType>('COMMUNITY');
   const [friendRequests, setFriendRequests] = useState<FriendRequest[]>([]);
   const [friends, setFriends] = useState<Friend[]>([]);
@@ -140,7 +140,7 @@ export const FriendsScreen = ({userId}: FriendsScreenProps ) => {
         <NavigationBar />
       </header>
       <SidebarProvider>
-        <FriendsSideBar setWindow={setTabType} friendRequests={friendRequests}/>
+        <FriendsSideBar name={name} setWindow={setTabType} friendRequests={friendRequests}/>
         <SidebarInset>
           <div className="h-full bg-gray-100 p-6">
             {tabType === 'COMMUNITY' && <CommunityWindow userId={userId} friends={friends} updateFriends={updateFriends} personProfiles={placeholderPersonProfiles}/>}

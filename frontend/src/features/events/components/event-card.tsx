@@ -15,7 +15,6 @@ import {
 import dayjs from "dayjs";
 import { getTokenPayload } from "../../../../utils/auth";
 import { EventCardData } from "../types";
-import { error } from "console";
 
 
 export const EventCard: React.FC<EventCardData> = ({EventID, Name, Description, Location, startDateTime, people, isOpen}) => {
