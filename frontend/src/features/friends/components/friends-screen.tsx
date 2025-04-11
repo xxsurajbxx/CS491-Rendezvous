@@ -37,6 +37,7 @@ export const FriendsScreen = ({userId}: FriendsScreenProps ) => {
   const [tabType, setTabType] = useState<FriendsTabType>('COMMUNITY');
   const [friendRequests, setFriendRequests] = useState<FriendRequest[]>([]);
   const [friends, setFriends] = useState<Friend[]>([]);
+  const [rsvps, setRsvps] = useState<RsvpCard[]>([]);
 
   // This function will be passed down to the RequestsWindow to update the count
 
@@ -87,12 +88,32 @@ export const FriendsScreen = ({userId}: FriendsScreenProps ) => {
     }
   };
 
+  // function to get all rsvp events
+  const getRsvps = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/rsvp?userId=${userId}&eventId=${null}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (!response.ok) throw new Error('Failed to fetch rsvps request');
+
+      const result = await response.json();
+      setRsvps(result.data);
+      console.log(rsvps)
+    } catch (error) {
+      console.error('Error fetching Rsvps request.', error);
+    }
+  }
+
   
   useEffect(() => {
     if (tabType === "COMMUNITY") {
       getFriends(); // Fetch friends when the "Community" tab is active
     } else if (tabType === "REQUESTS") {
       getFriendRequests(); // Fetch friend requests when the "Requests" tab is active
+    } else {
+      getRsvps(); // fetch rsvp request when "RSVP" tab is active
     }
   }, [tabType]); // Runs when `tabType` changes
 
