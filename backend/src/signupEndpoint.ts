@@ -9,11 +9,17 @@ interface SignupResponse {
     message: string;
 }
 
-export const registerUser = async (firstName: string, lastName: string, email: string, password: string, address: string): Promise<SignupResponse> => {
+export const registerUser = async (firstName: string, lastName: string, username: string, email: string, password: string, address: string): Promise<SignupResponse> => {
     try {
-        const [existing] = await pool.query("SELECT * FROM Users WHERE Email = ?", [email]);
-        if (Array.isArray(existing) && existing.length > 0) {
-            return { status: "fail", message: "Email is already registered" };
+        const [emailCheck] = await pool.query("SELECT * FROM Users WHERE Email = ?", [email]);
+        if (Array.isArray(emailCheck) && emailCheck.length > 0) {
+          return { status: "fail", message: "Email is already registered" };
+        }
+    
+        // check if username already exists
+        const [usernameCheck] = await pool.query("SELECT * FROM Users WHERE Username = ?", [username]);
+        if (Array.isArray(usernameCheck) && usernameCheck.length > 0) {
+          return { status: "fail", message: "Username is already taken" };
         }
 
         // combining first and last name with a space
@@ -24,8 +30,8 @@ export const registerUser = async (firstName: string, lastName: string, email: s
 
         // putting user into db
         await pool.query(
-            "INSERT INTO Users (Name, Email, HashedPassword, Address) VALUES (?, ?, ?, ?)",
-            [fullName, email, hashedPassword, address]
+            "INSERT INTO Users (Name, Username, Email, HashedPassword, Address) VALUES (?, ?, ?, ?, ?)",
+            [fullName, username, email, hashedPassword, address]
         );
 
         return { status: "success", message: "User registered successfully" };
