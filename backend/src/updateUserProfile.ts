@@ -7,7 +7,7 @@ const JWT_SECRET = process.env.JWT_SECRET as string;
 
 export const updateUserProfile = async (req: Request, res: Response): Promise<void> => {
   const { userId } = req.params;
-  const { name, address, description, currentPassword, newPassword } = req.body;
+  const { username, address, description, currentPassword, newPassword } = req.body;
 
   if (!userId) {
     res.status(400).json({ status: "fail", message: "Missing userId" });
@@ -16,7 +16,7 @@ export const updateUserProfile = async (req: Request, res: Response): Promise<vo
 
   try {
     // getting current user data
-    const [rows] = await pool.query("SELECT Name, Address, Description, Email, HashedPassword FROM Users WHERE UserID = ?", [userId]);
+    const [rows] = await pool.query("SELECT Username, Name, Address, Description, Email, HashedPassword FROM Users WHERE UserID = ?", [userId]);
     if (!Array.isArray(rows) || rows.length === 0) {
       res.status(404).json({ status: "fail", message: "User not found" });
       return;
@@ -27,12 +27,12 @@ export const updateUserProfile = async (req: Request, res: Response): Promise<vo
     // tracking changes
     const updates: string[] = [];
     const params: any[] = [];
-    let nameChanged = false;
+    let usernameChanged = false;
 
-    if (name && name !== user.Name) {
-      updates.push("Name = ?");
-      params.push(name);
-      nameChanged = true;
+    if (username && username !== user.Username) {
+      updates.push("Username = ?");
+      params.push(username);
+      usernameChanged = true;
     }
 
     if (address && address !== user.Address) {
@@ -65,9 +65,9 @@ export const updateUserProfile = async (req: Request, res: Response): Promise<vo
       await pool.query(updateQuery, params);
     }
 
-    if (nameChanged) {
+    if (usernameChanged) {
       const token = jwt.sign(
-        { userId: userId, email: user.Email, name: name },
+        { userId: userId, email: user.Email, name: user.Name },
         JWT_SECRET,
         { expiresIn: "1h" }
       );
