@@ -13,8 +13,10 @@ interface LoginRequestBody {
 interface SignupRequestBody {
     firstName: string;
     lastName: string;
+    username: string;
     email: string;
     password: string;
+    address: string;
 }
 
 // login
@@ -37,14 +39,14 @@ router.post("/login", async (req: Request<{}, {}, LoginRequestBody>, res: Respon
 
 //signup
 router.post("/signup", async (req: Request<{}, {}, SignupRequestBody>, res: Response): Promise<void> => {
-    const { firstName, lastName, email, password } = req.body;
+    const { firstName, lastName, username, email, password, address } = req.body;
 
-    if (!firstName || !lastName || !email || !password) {
+    if (!firstName || !lastName || !username || !email || !password || !address) {
         res.status(400).json({ status: "fail", message: "Missing name, email, or password" });
         return;
     }
 
-    const result = await registerUser(firstName, lastName, email, password);
+    const result = await registerUser(firstName, lastName, username, email, password, address);
 
     if (result.status === "success") {
         res.status(201).json({ message: result.message });

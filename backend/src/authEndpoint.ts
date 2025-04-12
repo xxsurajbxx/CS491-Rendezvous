@@ -13,7 +13,7 @@ interface AuthResponse {
 }
 
 // function to authenticate user login and generate a JWT
-export const authenticateUser = async (email: string, password: string): Promise<AuthResponse> => {
+export const authenticateUser = async (email: string, password: string, existingToken?: string): Promise<AuthResponse> => {
     try {
         const [rows] = await pool.query("SELECT * FROM Users WHERE Email = ?", [email]);
 
@@ -28,10 +28,22 @@ export const authenticateUser = async (email: string, password: string): Promise
             return { status: "fail", message: "Invalid password" };
         }
 
+        let expiresIn: jwt.SignOptions["expiresIn"] = "1h";
+
+        if (existingToken) {
+            const decoded = jwt.decode(existingToken) as { exp?: number } | null;
+            const now = Math.floor(Date.now() / 1000);
+      
+            if (decoded?.exp && decoded.exp > now) {
+              const remainingTime = decoded.exp - now;
+              expiresIn = `${remainingTime}s`;
+            }
+          }
+
         const token = jwt.sign(
             { userId: user.UserID, email: user.Email, name: user.Name },
             JWT_SECRET,
-            { expiresIn: "1h" }
+            { expiresIn }
         );
 
         return { status: "success", token };
