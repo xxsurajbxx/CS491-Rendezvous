@@ -4,8 +4,8 @@ fetch("http://localhost:8080/api/friends/add", {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      userId: 2,       // replace with a valid UserID
-      friendId: 3      // replace with a valid FriendID
+      userId: 15,       // replace with a valid UserID
+      friendId: 14      // replace with a valid FriendID
     }),
   })
     .then((response) => response.json())

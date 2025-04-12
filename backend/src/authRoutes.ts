@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import { authenticateUser } from "./authEndpoint";
 import { registerUser } from "./signupEndpoint";
+import { updateUserProfile } from "./updateUserProfile";
 
 const router = express.Router();
 
@@ -51,5 +52,10 @@ router.post("/signup", async (req: Request<{}, {}, SignupRequestBody>, res: Resp
         res.status(400).json(result);
     }
 });
+
+// update user profile
+router.put("/update-profile/:userId", async (req, res) => {
+    await updateUserProfile(req, res);
+  });
 
 export default router;
