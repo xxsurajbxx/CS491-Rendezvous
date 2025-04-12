@@ -28,7 +28,7 @@ export const EditProfileForm = () => {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [address, setAddress] = useState("");
     const [description, setDescription] = useState("");
-    const [error, setError] = useState("");
+    // const [error, setError] = useState("");
 
     // const [isLocationValid, setIsLocationValid] = useState(true)
     // const [locationTouched, setLocationTouched] = useState(false)
@@ -53,11 +53,11 @@ export const EditProfileForm = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if(password !== confirmPassword){
-            setError("Passwords do not match");
+            // setError("Passwords do not match");
             return;
         }
         if(password !== "" && password.length < 8){
-            setError("Password must have at least 8 characters");
+            // setError("Password must have at least 8 characters");
             return;
         }
 

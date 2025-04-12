@@ -1,13 +1,14 @@
 "use client"
 
-import React, { useState } from "react"
+import React from "react"
 
 import NavigationBar from "@/components/navigation-bar"
 import { EditProfileForm } from "./edit-profile-form"
-import { Popup } from "@/components/popup"
+// import { Popup } from "@/components/popup"
+// import { ProfileCard } from "./profile-card"
 
 export const ProfileScreen = () => {
-  const [isOpen, setIsOpen] = useState<boolean>(true)
+  // const [isOpen, setIsOpen] = useState<boolean>(true);
 
   return(
     <div>
