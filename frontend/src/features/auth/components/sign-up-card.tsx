@@ -14,8 +14,7 @@ interface SignUpCardProps {
 }
 
 export const SignUpCard = ({setState}: SignUpCardProps) => {
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
+    const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -26,12 +25,8 @@ export const SignUpCard = ({setState}: SignUpCardProps) => {
 
     const onPasswordSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if(!firstName){
-            setError("First name is required");
-            return;
-        }
-        if(!lastName){
-            setError("Last name is required");
+        if(!username){
+            setError("Username is required");
             return;
         }
         if(password !== confirmPassword){
@@ -53,7 +48,7 @@ export const SignUpCard = ({setState}: SignUpCardProps) => {
             const response = await fetch("http://localhost:8080/api/signup", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ firstName, lastName, email, password }),
+                body: JSON.stringify({ username, email, password }),
             });
             const data = await response.json();
             if(data.status === "fail" || !response.ok){
@@ -115,10 +110,7 @@ export const SignUpCard = ({setState}: SignUpCardProps) => {
             )}
             <CardContent className="space-y-5 px-0 pb-0">
                 <form onSubmit={onPasswordSignUp} className="space-y-2.5">
-                    <div className="grid grid-cols-2 gap-2.5">
-                        <Input disabled={pending} value={firstName} onChange={(e) => { setFirstName(e.target.value)}} placeholder="First name" required/>
-                        <Input disabled={pending} value={lastName} onChange={(e) => { setLastName(e.target.value)}} placeholder="Last name" required/>
-                    </div>
+                    <Input disabled={pending} value={username} onChange={(e) => { setUsername(e.target.value)}} placeholder="Username" required/>
                     <Input disabled={pending} value={email} onChange={(e) => {setEmail(e.target.value)}} placeholder="Email" type="email" required/>
                     <Input disabled={pending} value={password} onChange={(e) => {setPassword(e.target.value)}} placeholder="Password" type="password" required/>
                     <Input disabled={pending} value={confirmPassword} onChange={(e) => {setConfirmPassword(e.target.value)}} placeholder="Confirm password" type="password" required/>
