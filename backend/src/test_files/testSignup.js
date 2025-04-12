@@ -4,8 +4,9 @@ fetch("http://localhost:8080/api/signup", {
     body: JSON.stringify({
         firstName: "John",
         lastName: "Test3",
-        email: "john3@test.com",
-        password: "testpassword"
+        email: "john4@test.com",
+        password: "testpassword",
+        address: "42 wilsey street, newark, new jersey"
     })
 })
 .then(response => response.json())
