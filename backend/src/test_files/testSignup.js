@@ -3,8 +3,9 @@ fetch("http://localhost:8080/api/signup", {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
         firstName: "John",
-        lastName: "Test3",
-        email: "john4@test.com",
+        lastName: "Test",
+        username: "johnistesting",
+        email: "john5@test.com",
         password: "testpassword",
         address: "42 wilsey street, newark, new jersey"
     })
