@@ -9,7 +9,7 @@ interface SignupResponse {
     message: string;
 }
 
-export const registerUser = async (firstName: string, lastName: string, email: string, password: string): Promise<SignupResponse> => {
+export const registerUser = async (firstName: string, lastName: string, email: string, password: string, address: string): Promise<SignupResponse> => {
     try {
         const [existing] = await pool.query("SELECT * FROM Users WHERE Email = ?", [email]);
         if (Array.isArray(existing) && existing.length > 0) {
@@ -24,8 +24,8 @@ export const registerUser = async (firstName: string, lastName: string, email: s
 
         // putting user into db
         await pool.query(
-            "INSERT INTO Users (Name, Email, HashedPassword) VALUES (?, ?, ?)",
-            [fullName, email, hashedPassword]
+            "INSERT INTO Users (Name, Email, HashedPassword, Address) VALUES (?, ?, ?, ?)",
+            [fullName, email, hashedPassword, address]
         );
 
         return { status: "success", message: "User registered successfully" };
