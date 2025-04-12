@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 
-type PopupProps = {
+interface PopupProps {
   isOpen: boolean
-  setIsOpen(status :boolean): void
+  setIsOpen(status: boolean): void
   message: string
 }
 
@@ -11,7 +11,7 @@ export const Popup = ({message}: PopupProps) => {
 
   return(
     <Card>
-      <Button onClick={}>X</Button>
+      <Button>X</Button>
       {message}
     </Card>
   )

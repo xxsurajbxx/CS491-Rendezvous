@@ -18,7 +18,7 @@ export const ProfileScreen = () => {
         <div className = "md:h-auto md:w-[420px]">
           <EditProfileForm />  
         </div>
-        {isOpen === true ? <Popup message="Profile information changed successfully." /> : null}
+        {/* {isOpen === true ? <Popup message="Profile information changed successfully." /> : null} */}
       </main>
     </div>
   )
