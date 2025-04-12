@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import { pool } from "./db";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+
+const JWT_SECRET = process.env.JWT_SECRET as string;
 
 export const updateUserProfile = async (req: Request, res: Response): Promise<void> => {
   const { userId } = req.params;
@@ -13,7 +16,7 @@ export const updateUserProfile = async (req: Request, res: Response): Promise<vo
 
   try {
     // getting current user data
-    const [rows] = await pool.query("SELECT Name, Address, Description, HashedPassword FROM Users WHERE UserID = ?", [userId]);
+    const [rows] = await pool.query("SELECT Name, Address, Description, Email, HashedPassword FROM Users WHERE UserID = ?", [userId]);
     if (!Array.isArray(rows) || rows.length === 0) {
       res.status(404).json({ status: "fail", message: "User not found" });
       return;
@@ -24,10 +27,12 @@ export const updateUserProfile = async (req: Request, res: Response): Promise<vo
     // tracking changes
     const updates: string[] = [];
     const params: any[] = [];
+    let nameChanged = false;
 
     if (name && name !== user.Name) {
       updates.push("Name = ?");
       params.push(name);
+      nameChanged = true;
     }
 
     if (address && address !== user.Address) {
@@ -58,6 +63,17 @@ export const updateUserProfile = async (req: Request, res: Response): Promise<vo
       const updateQuery = `UPDATE Users SET ${updates.join(", ")} WHERE UserID = ?`;
       params.push(userId);
       await pool.query(updateQuery, params);
+    }
+
+    if (nameChanged) {
+      const token = jwt.sign(
+        { userId: userId, email: user.Email, name: name },
+        JWT_SECRET,
+        { expiresIn: "1h" }
+      );
+
+      res.json({ status: "success", message: "Profile updated successfully", token });
+      return;
     }
 
     res.json({ status: "success", message: "Profile updated successfully" });
