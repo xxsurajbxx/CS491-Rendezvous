@@ -112,15 +112,17 @@ export const EditProfileForm = () => {
                         <Input value={password} onChange={(e) => {setPassword(e.target.value)}} placeholder="New password" type="password" />
                         <Input value={confirmPassword} onChange={(e) => {setConfirmPassword(e.target.value)}} placeholder="Confirm new password" type="password" />
                         <Separator className="my-5" />
-                        <div className="geocoder-container w-full">
-                            <GeoapifyGeocoderAutocomplete
-                                placeholder="Enter address here"
-                                lang="en"
-                                value={address}
-                                limit={5}
-                                onUserInput={handleInputChange}
-                                placeSelect={handlePlaceSelect}
-                            />
+                        <div className="space-y-2 relative">
+                            <div className="geocoder-container w-full relative">
+                                <GeoapifyGeocoderAutocomplete
+                                    placeholder="Enter address here"
+                                    lang="en"
+                                    value={address}
+                                    limit={5}
+                                    onUserInput={handleInputChange}
+                                    placeSelect={handlePlaceSelect}
+                                />
+                            </div>
                         </div>
                         <Textarea value={description} onChange={(e) => {setDescription(e.target.value)}} placeholder="Write a new about me description." className="min-h-[120px]" />
                         <Button type="submit" className="w-full" size="lg" disabled={false}>
