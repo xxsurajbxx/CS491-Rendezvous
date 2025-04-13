@@ -65,9 +65,10 @@ export const updateUserProfile = async (req: Request, res: Response): Promise<vo
       await pool.query(updateQuery, params);
     }
 
-    if (usernameChanged) {
+    if (usernameChanged || address) {
+      const newAddress = address || user.Address;
       const token = jwt.sign(
-        { userId: userId, email: user.Email, name: user.Name },
+        { userId: userId, email: user.Email, name: user.Name, address: newAddress },
         JWT_SECRET,
         { expiresIn: "1h" }
       );
