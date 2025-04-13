@@ -91,7 +91,7 @@ export const FriendsScreen = ({userId, name}: FriendsScreenProps ) => {
   // function to get all rsvp events
   const getRsvps = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/rsvp?userId=${userId}&eventId=${null}`, {
+      const response = await fetch(`http://localhost:8080/api/rsvp?userId=${userId}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
