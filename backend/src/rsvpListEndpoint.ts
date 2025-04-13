@@ -36,15 +36,21 @@ export const listRSVPs = async (req: Request, res: Response) => {
 
     const params: any[] = [];
 
-    if (userId && eventId) {
+
+    if (userId && eventId && eventId !== 'null') {
       query += ` AND r.UserID = ? AND r.EventID = ?`;
       params.push(userId, eventId);
+    } else if (userId && eventId === 'null') {
+      query += ` AND r.UserID = ? AND r.EventID IS NULL`;
+      params.push(userId);
     } else if (userId) {
       query += ` AND r.UserID = ?`;
       params.push(userId);
-    } else if (eventId) {
+    } else if (eventId && eventId !== 'null') {
       query += ` AND r.EventID = ?`;
       params.push(eventId);
+    } else if (eventId === 'null') {
+      query += ` AND r.EventID IS NULL`;
     }
 
     const [rows] = await pool.query(query, params);
