@@ -7,16 +7,29 @@ import { useState } from "react";
 import { TriangleAlert } from "lucide-react";
 import { setTokenCookie } from "../../../../utils/auth";
 import { useRouter } from "next/navigation";
+import { GeoapifyGeocoderAutocomplete, GeoapifyContext } from "@geoapify/react-geocoder-autocomplete"
+import { GeocoderAutocomplete } from "@geoapify/geocoder-autocomplete";
 //import { useAuthActions } from "@convex-dev/auth/react";
 
 interface SignUpCardProps {
     setState: (state: SignInFlow) => void;
 }
 
+type SelectedPlace = {
+    geometry?: {
+      coordinates?: [number, number]; // [longitude, latitude]
+    };
+    properties: {
+      formatted: string;
+    };
+  };
+
 export const SignUpCard = ({setState}: SignUpCardProps) => {
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
+    const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
+    const [address, setAddress] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState("");
@@ -24,15 +37,33 @@ export const SignUpCard = ({setState}: SignUpCardProps) => {
     const router = useRouter();
     //const { signIn } = useAuthActions();
 
+    // Handle location input
+    const handleInputChange = (input: string) => {
+        setAddress(input);
+    }
+
+    // Handle place selection from Geoapify
+    const handlePlaceSelect = (selectedPlace: SelectedPlace) => {
+        if (selectedPlace?.geometry?.coordinates) {
+            setAddress(selectedPlace.properties.formatted)
+        }
+    }
+
     const onPasswordSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if(!firstName){
+        if (!firstName){
             setError("First name is required");
-            return;
+            return
         }
         if(!lastName){
             setError("Last name is required");
+        }
+        if(!username){
+            setError("Username is required");
             return;
+        }
+        if(!address){
+            setError("Address is required")
         }
         if(password !== confirmPassword){
             setError("Passwords do not match");
@@ -53,7 +84,7 @@ export const SignUpCard = ({setState}: SignUpCardProps) => {
             const response = await fetch("http://localhost:8080/api/signup", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ firstName, lastName, email, password }),
+                body: JSON.stringify({ firstName, lastName, username, email, address, password }),
             });
             const data = await response.json();
             if(data.status === "fail" || !response.ok){
@@ -63,7 +94,7 @@ export const SignUpCard = ({setState}: SignUpCardProps) => {
                     const response = await fetch("http://localhost:8080/api/login", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ email, password }),
+                        body: JSON.stringify({ email, username, address, password }),
                     });
                     const data = await response.json();
                     if(data.status === "fail" || !response.ok){
@@ -114,22 +145,38 @@ export const SignUpCard = ({setState}: SignUpCardProps) => {
                 </div>
             )}
             <CardContent className="space-y-5 px-0 pb-0">
-                <form onSubmit={onPasswordSignUp} className="space-y-2.5">
-                    <div className="grid grid-cols-2 gap-2.5">
-                        <Input disabled={pending} value={firstName} onChange={(e) => { setFirstName(e.target.value)}} placeholder="First name" required/>
-                        <Input disabled={pending} value={lastName} onChange={(e) => { setLastName(e.target.value)}} placeholder="Last name" required/>
-                    </div>
-                    <Input disabled={pending} value={email} onChange={(e) => {setEmail(e.target.value)}} placeholder="Email" type="email" required/>
-                    <Input disabled={pending} value={password} onChange={(e) => {setPassword(e.target.value)}} placeholder="Password" type="password" required/>
-                    <Input disabled={pending} value={confirmPassword} onChange={(e) => {setConfirmPassword(e.target.value)}} placeholder="Confirm password" type="password" required/>
-                    <Button type="submit" className="w-full" size="lg" disabled={false}>
-                        Continue
-                    </Button>
-                    <Separator/>
-                    <p className="text-xs text-muted-foreground">
-                        Already have an account? <span onClick={() => {setState("signIn")}} className="text-sky-700 hover:underline cursor-pointer">Sign in</span>
-                    </p>
-                </form>
+                <GeoapifyContext apiKey="26de8e62cc3b4b849f60c43d5b4e82a7">
+                    <form onSubmit={onPasswordSignUp} className="space-y-2.5">
+                        <div className="grid grid-cols-2 gap-2.5">
+                            <Input disabled={pending} value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="First Name" required />
+                            <Input disabled={pending} value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last Name" required />
+                        </div>
+                        <Input disabled={pending} value={username} onChange={(e) => { setUsername(e.target.value)}} placeholder="Username" required/>
+                        <Input disabled={pending} value={email} onChange={(e) => {setEmail(e.target.value)}} placeholder="Email" type="email" required/>
+                        <div className="relative space-y-2">
+                            <div className="geocoder-container w-full rel">
+                                <GeoapifyGeocoderAutocomplete
+                                    placeholder="Address"
+                                    lang="en"
+                                    value={address}
+                                    limit={5}
+                                    onUserInput={handleInputChange}
+                                    placeSelect={handlePlaceSelect}
+                                />
+                            </div>
+                        </div>
+                        
+                        <Input disabled={pending} value={password} onChange={(e) => {setPassword(e.target.value)}} placeholder="Password" type="password" required/>
+                        <Input disabled={pending} value={confirmPassword} onChange={(e) => {setConfirmPassword(e.target.value)}} placeholder="Confirm password" type="password" required/>
+                        <Button type="submit" className="w-full" size="lg" disabled={false}>
+                            Continue
+                        </Button>
+                        <Separator/>
+                        <p className="text-xs text-muted-foreground">
+                            Already have an account? <span onClick={() => {setState("signIn")}} className="text-sky-700 hover:underline cursor-pointer">Sign in</span>
+                        </p>
+                    </form>
+                </GeoapifyContext>
             </CardContent>
         </Card>
     );
