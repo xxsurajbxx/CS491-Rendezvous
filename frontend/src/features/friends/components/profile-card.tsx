@@ -3,8 +3,6 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import Image from "next/image";
-import { getTokenPayload } from "../../../../utils/auth";
-import { useState } from "react";
 
 interface ProfileCardProps {
   name: string,

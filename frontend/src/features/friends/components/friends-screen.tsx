@@ -112,7 +112,7 @@ export const FriendsScreen = ({userId, name}: FriendsScreenProps ) => {
       getFriends(); // Fetch friends when the "Community" tab is active
     } else if (tabType === "REQUESTS") {
       getFriendRequests(); // Fetch friend requests when the "Requests" tab is active
-    } else {    // tabType === 'RSVP'
+    } else if (tabType === "RSVP"){    // tabType === 'RSVP'
       getRsvps(); // fetch rsvp request when "RSVP" tab is active
     }
   }, [tabType]); // Runs when `tabType` changes
@@ -132,7 +132,7 @@ export const FriendsScreen = ({userId, name}: FriendsScreenProps ) => {
 
     // Clean up the interval when the component unmounts
     return () => clearInterval(intervalId)
-  })
+  }, [])
 
   return(
     <div>
