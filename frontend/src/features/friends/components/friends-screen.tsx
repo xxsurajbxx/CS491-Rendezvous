@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import NavigationBar from "@/components/navigation-bar";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { FriendsSideBar } from "./sidebar";
-import { FriendsTabType, PersonProfile, RsvpCard } from "../types";
+import { FriendsTabType, PersonProfile, RsvpData } from "../types";
 
 import { RsvpWindow } from "./rsvp-window";
 import { CommunityWindow } from "./community-window";
@@ -37,7 +37,7 @@ export const FriendsScreen = ({userId, name}: FriendsScreenProps ) => {
   const [tabType, setTabType] = useState<FriendsTabType>('COMMUNITY');
   const [friendRequests, setFriendRequests] = useState<FriendRequest[]>([]);
   const [friends, setFriends] = useState<Friend[]>([]);
-  const [rsvps, setRsvps] = useState<RsvpCard[]>([]);
+  const [rsvps, setRsvps] = useState<RsvpData[]>([]);
 
   // This function will be passed down to the RequestsWindow to update the count
 
@@ -144,7 +144,7 @@ export const FriendsScreen = ({userId, name}: FriendsScreenProps ) => {
         <SidebarInset>
           <div className="h-full bg-gray-100 p-6">
             {tabType === 'COMMUNITY' && <CommunityWindow userId={userId} friends={friends} updateFriends={updateFriends} personProfiles={placeholderPersonProfiles}/>}
-            {tabType === 'RSVP' && <RsvpWindow rsvpCards={placeholderRsvpCards} />}
+            {tabType === 'RSVP' && <RsvpWindow rsvpsData={rsvps} />}
             {tabType === 'REQUESTS' && <RequestsWindow userId={userId} friendRequests={friendRequests} updateFriendRequests={updateFriendRequests} updateFriends={updateFriends}/>}
           </div>
         </SidebarInset>
@@ -205,180 +205,180 @@ const placeholderPersonProfiles: PersonProfile[] = [
   
 ]
 
-const placeholderRsvpCards: RsvpCard[] = [
-  {
-    eventName: "Green Day Live",
-    host: "John Deere",
-    location: "23 Westford Ave, Newark, NJ",
-    date: new Date(2025, 5, 10),
-    startTime: "8:00pm",
-    endTime: "10:00pm",
-    maxRSVP: 8,
-    rsvpList: [
-      {
-        name: "John Green",
-        photo: "/profileIcon.png"
-      },
-      {
-        name: "Michelle Lee",
-        photo: "/profileIcon.png"
-      },
-      {
-        name: "Christy Glassman",
-        photo: "/profileIcon.png"
-      },
-      {
-        name: "Leah Wan",
-        photo: "/profileIcon.png"
-      },
-      {
-        name: "Michael Creaton",
-        photo: "/profileIcon.png"
-      },
-      {
-        name: "Keeanu Reeves",
-        photo: "/profileIcon.png"
-      },
-    ]
-  },
-  {
-    eventName: "Green Day Live",
-    host: "John Deere",
-    location: "123 Fordham Place, Newark, NJ",
-    date: new Date(2025, 6, 23),
-    startTime: "8:00pm",
-    endTime: "10:00pm",
-    maxRSVP: 8,
-    rsvpList: [
-      {
-        name: "John Green",
-        photo: "/profileIcon.png"
-      },
-      {
-        name: "Michelle Lee",
-        photo: "/profileIcon.png"
-      },
-      {
-        name: "Christy Glassman",
-        photo: "/profileIcon.png"
-      },
-      {
-        name: "Leah Wan",
-        photo: "/profileIcon.png"
-      },
-      {
-        name: "Michael Creaton",
-        photo: "/profileIcon.png"
-      },
-      {
-        name: "Keeanu Reeves",
-        photo: "/profileIcon.png"
-      },
-    ]
-  },
-  {
-    eventName: "Green Day Live",
-    host: "John Deere",
-    location: "68 Westhel Drive, Newark, NJ",
-    date: new Date(2025, 8, 1),
-    startTime: "8:00pm",
-    endTime: "10:00pm",
-    maxRSVP: 8,
-    rsvpList: [
-      {
-        name: "John Green",
-        photo: "/profileIcon.png"
-      },
-      {
-        name: "Michelle Lee",
-        photo: "/profileIcon.png"
-      },
-      {
-        name: "Christy Glassman",
-        photo: "/profileIcon.png"
-      },
-      {
-        name: "Leah Wan",
-        photo: "/profileIcon.png"
-      },
-      {
-        name: "Michael Creaton",
-        photo: "/profileIcon.png"
-      },
-      {
-        name: "Keeanu Reeves",
-        photo: "/profileIcon.png"
-      },
-    ]
-  },
-  {
-    eventName: "Green Day Live",
-    host: "John Deere",
-    location: "3 Place Park, Newark, NJ",
-    date: new Date(2025, 7, 28),
-    startTime: "8:00pm",
-    endTime: "10:00pm",
-    maxRSVP: 8,
-    rsvpList: [
-      {
-        name: "John Green",
-        photo: "/profileIcon.png"
-      },
-      {
-        name: "Michelle Lee",
-        photo: "/profileIcon.png"
-      },
-      {
-        name: "Christy Glassman",
-        photo: "/profileIcon.png"
-      },
-      {
-        name: "Leah Wan",
-        photo: "/profileIcon.png"
-      },
-      {
-        name: "Michael Creaton",
-        photo: "/profileIcon.png"
-      },
-      {
-        name: "Keeanu Reeves",
-        photo: "/profileIcon.png"
-      },
-    ]
-  },
-  {
-    eventName: "Green Day Live",
-    host: "John Deere",
-    location: "8 Jamaica Avenue, Newark, NJ",
-    date: new Date(2025, 7, 1),
-    startTime: "8:00pm",
-    endTime: "10:00pm",
-    maxRSVP: 8,
-    rsvpList: [
-      {
-        name: "John Green",
-        photo: "/profileIcon.png"
-      },
-      {
-        name: "Michelle Lee",
-        photo: "/profileIcon.png"
-      },
-      {
-        name: "Christy Glassman",
-        photo: "/profileIcon.png"
-      },
-      {
-        name: "Leah Wan",
-        photo: "/profileIcon.png"
-      },
-      {
-        name: "Michael Creaton",
-        photo: "/profileIcon.png"
-      },
-      {
-        name: "Keeanu Reeves",
-        photo: "/profileIcon.png"
-      },
-    ]
-  },
-]
+// const placeholderRsvpCards: RsvpData[] = [
+//   {
+//     eventName: "Green Day Live",
+//     host: "John Deere",
+//     location: "23 Westford Ave, Newark, NJ",
+//     date: new Date(2025, 5, 10),
+//     startTime: "8:00pm",
+//     endTime: "10:00pm",
+//     maxRSVP: 8,
+//     rsvpList: [
+//       {
+//         name: "John Green",
+//         photo: "/profileIcon.png"
+//       },
+//       {
+//         name: "Michelle Lee",
+//         photo: "/profileIcon.png"
+//       },
+//       {
+//         name: "Christy Glassman",
+//         photo: "/profileIcon.png"
+//       },
+//       {
+//         name: "Leah Wan",
+//         photo: "/profileIcon.png"
+//       },
+//       {
+//         name: "Michael Creaton",
+//         photo: "/profileIcon.png"
+//       },
+//       {
+//         name: "Keeanu Reeves",
+//         photo: "/profileIcon.png"
+//       },
+//     ]
+//   },
+//   {
+//     eventName: "Green Day Live",
+//     host: "John Deere",
+//     location: "123 Fordham Place, Newark, NJ",
+//     date: new Date(2025, 6, 23),
+//     startTime: "8:00pm",
+//     endTime: "10:00pm",
+//     maxRSVP: 8,
+//     rsvpList: [
+//       {
+//         name: "John Green",
+//         photo: "/profileIcon.png"
+//       },
+//       {
+//         name: "Michelle Lee",
+//         photo: "/profileIcon.png"
+//       },
+//       {
+//         name: "Christy Glassman",
+//         photo: "/profileIcon.png"
+//       },
+//       {
+//         name: "Leah Wan",
+//         photo: "/profileIcon.png"
+//       },
+//       {
+//         name: "Michael Creaton",
+//         photo: "/profileIcon.png"
+//       },
+//       {
+//         name: "Keeanu Reeves",
+//         photo: "/profileIcon.png"
+//       },
+//     ]
+//   },
+//   {
+//     eventName: "Green Day Live",
+//     host: "John Deere",
+//     location: "68 Westhel Drive, Newark, NJ",
+//     date: new Date(2025, 8, 1),
+//     startTime: "8:00pm",
+//     endTime: "10:00pm",
+//     maxRSVP: 8,
+//     rsvpList: [
+//       {
+//         name: "John Green",
+//         photo: "/profileIcon.png"
+//       },
+//       {
+//         name: "Michelle Lee",
+//         photo: "/profileIcon.png"
+//       },
+//       {
+//         name: "Christy Glassman",
+//         photo: "/profileIcon.png"
+//       },
+//       {
+//         name: "Leah Wan",
+//         photo: "/profileIcon.png"
+//       },
+//       {
+//         name: "Michael Creaton",
+//         photo: "/profileIcon.png"
+//       },
+//       {
+//         name: "Keeanu Reeves",
+//         photo: "/profileIcon.png"
+//       },
+//     ]
+//   },
+//   {
+//     eventName: "Green Day Live",
+//     host: "John Deere",
+//     location: "3 Place Park, Newark, NJ",
+//     date: new Date(2025, 7, 28),
+//     startTime: "8:00pm",
+//     endTime: "10:00pm",
+//     maxRSVP: 8,
+//     rsvpList: [
+//       {
+//         name: "John Green",
+//         photo: "/profileIcon.png"
+//       },
+//       {
+//         name: "Michelle Lee",
+//         photo: "/profileIcon.png"
+//       },
+//       {
+//         name: "Christy Glassman",
+//         photo: "/profileIcon.png"
+//       },
+//       {
+//         name: "Leah Wan",
+//         photo: "/profileIcon.png"
+//       },
+//       {
+//         name: "Michael Creaton",
+//         photo: "/profileIcon.png"
+//       },
+//       {
+//         name: "Keeanu Reeves",
+//         photo: "/profileIcon.png"
+//       },
+//     ]
+//   },
+//   {
+//     eventName: "Green Day Live",
+//     host: "John Deere",
+//     location: "8 Jamaica Avenue, Newark, NJ",
+//     date: new Date(2025, 7, 1),
+//     startTime: "8:00pm",
+//     endTime: "10:00pm",
+//     maxRSVP: 8,
+//     rsvpList: [
+//       {
+//         name: "John Green",
+//         photo: "/profileIcon.png"
+//       },
+//       {
+//         name: "Michelle Lee",
+//         photo: "/profileIcon.png"
+//       },
+//       {
+//         name: "Christy Glassman",
+//         photo: "/profileIcon.png"
+//       },
+//       {
+//         name: "Leah Wan",
+//         photo: "/profileIcon.png"
+//       },
+//       {
+//         name: "Michael Creaton",
+//         photo: "/profileIcon.png"
+//       },
+//       {
+//         name: "Keeanu Reeves",
+//         photo: "/profileIcon.png"
+//       },
+//     ]
+//   },
+// ]
