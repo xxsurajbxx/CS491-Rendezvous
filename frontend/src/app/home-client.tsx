@@ -6,7 +6,6 @@ import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
 import { EventSideBar } from "@/features/events/components/event-sidebar"
 import { EventData, EventCardData, LeafletMarker } from "@/features/events/types"
 import { useEffect, useState } from "react"
-import { getTokenPayload } from "../../utils/auth"
 
 interface HomeClientProps {
   address: string;
@@ -41,7 +40,6 @@ export default function HomeClient({ address }: HomeClientProps) {
   
   const getAllEventsData = async () => {
     try {
-      const token = await getTokenPayload();
       const response = await fetch('http://localhost:8080/api/events/user-events', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
@@ -101,8 +99,8 @@ export default function HomeClient({ address }: HomeClientProps) {
       if (data.features && data.features.length > 0) {
         const { lat, lon } = data.features[0].properties;
         setCoordinates({ lat, lon });
-        console.log(coordinates)
-        console.log(lat, lon)
+        // console.log(coordinates)
+        // console.log(lat, lon)
       } else {
         console.warn("No coordinates found for address");
       }
