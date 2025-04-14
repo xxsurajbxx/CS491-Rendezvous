@@ -4,7 +4,6 @@ import { getVisibleCarpools } from "./getVisibleCarpools";
 import { joinCarpool } from "./joinCarpool";
 import { leaveCarpool } from "./leaveCarpool";
 import { viewCarpoolMembers } from "./viewCarpoolMembers";
-import { inviteToCarpool } from "./inviteToCarpool";
 import { removeFromCarpool } from "./removeFromCarpool";
 import { deleteCarpool } from "./deleteCarpool";
 
@@ -33,11 +32,6 @@ router.post("/leave", async (req, res) => {
 // view members of a carpool
 router.get("/:carpoolId/members", async (req, res) => {
     await viewCarpoolMembers(req, res);
-  });
-
-// invite user to carpool
-router.post("/:carpoolId/invite", async (req, res) => {
-    await inviteToCarpool(req, res);
   });
 
 // remove user from carpool
