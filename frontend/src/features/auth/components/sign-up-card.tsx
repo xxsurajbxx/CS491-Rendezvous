@@ -8,7 +8,6 @@ import { TriangleAlert } from "lucide-react";
 import { setTokenCookie } from "../../../../utils/auth";
 import { useRouter } from "next/navigation";
 import { GeoapifyGeocoderAutocomplete, GeoapifyContext } from "@geoapify/react-geocoder-autocomplete"
-import { GeocoderAutocomplete } from "@geoapify/geocoder-autocomplete";
 //import { useAuthActions } from "@convex-dev/auth/react";
 
 interface SignUpCardProps {

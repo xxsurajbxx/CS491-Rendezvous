@@ -6,20 +6,36 @@
 
 //leaflet imports here
 import "leaflet/dist/leaflet.css";
-import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
+import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import { Icon } from "leaflet";
 import { LeafletMarker } from "@/features/events/types";
+import { useEffect } from "react";
 
 type LeafletMapProps = {
+  userCoordinates: {lat: number, lon: number},
   markers: LeafletMarker[] | undefined,
   handleOpenEventCard(id: string): void
 }
 
+type RecenterMapProps = {
+  lat: number;
+  lon: number;
+};
 
-export default function LeafletMap({ markers, handleOpenEventCard }: LeafletMapProps){
-  //coordinates for Newark, NJ
-  const newarkLat = 40.73566
-  const newarkLong = -74.17237
+const RecenterMap = ({ lat, lon }: RecenterMapProps) => {
+  const map = useMap();
+
+  useEffect(() => {
+    map.setView([lat, lon], map.getZoom(), {
+      animate: true,
+    });
+  }, [lat, lon, map]);
+
+  return null;
+};
+
+export default function LeafletMap({ userCoordinates, markers, handleOpenEventCard }: LeafletMapProps){
+  //coordinates based on user's address
   const currentZoom = 13
   const markerSize = 45
 
@@ -27,10 +43,14 @@ export default function LeafletMap({ markers, handleOpenEventCard }: LeafletMapP
     iconUrl: "/companyLogo.png",
     iconSize: [markerSize, markerSize]
   })
+
+  useEffect(() => {
+    
+  },[])
   
   return(
     <MapContainer
-      center={[newarkLat,newarkLong]}
+      center={[userCoordinates.lat, userCoordinates.lon]}
       zoom={currentZoom}
       scrollWheelZoom={true}
       className="h-full w-full rounded-lg z-10"
@@ -39,6 +59,10 @@ export default function LeafletMap({ markers, handleOpenEventCard }: LeafletMapP
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
+
+      {/* Recenter map when coordinates change */}
+      <RecenterMap lat={userCoordinates.lat} lon={userCoordinates.lon} />
+
       {/* map function to display all the marker locations of events within the given area. */}
       {markers?.map((marker, index) => (
         <Marker

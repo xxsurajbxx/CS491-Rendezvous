@@ -111,7 +111,7 @@ export const FriendsScreen = ({userId}: FriendsScreenProps ) => {
 
     // Clean up the interval when the component unmounts
     return () => clearInterval(intervalId)
-  }, [])
+  })
 
   return(
     <div>
