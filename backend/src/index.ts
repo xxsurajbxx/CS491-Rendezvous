@@ -4,6 +4,7 @@ import authRoutes from "./authRoutes";
 import eventRoutes from "./eventRoutes";
 import friendRoutes from "./friendRoutes";
 import rsvpRoutes from "./rsvpRoutes";
+import carpoolRoutes from "./carpoolRoutes"
 import { pool } from "./db"; // ensure pool creation is handled in ./db
 import cors from "cors";
 
@@ -48,6 +49,7 @@ app.use("/api", authRoutes);
 app.use("/api/events", eventRoutes);
 app.use("/api/friends", friendRoutes);
 app.use("/api/rsvp", rsvpRoutes);
+app.use("/api/carpool", carpoolRoutes);
 
 // root route to check if server is running
 app.get("/", (req, res) => {
