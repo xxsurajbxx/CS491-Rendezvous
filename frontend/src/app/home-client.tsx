@@ -6,13 +6,22 @@ import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
 import { EventSideBar } from "@/features/events/components/event-sidebar"
 import { EventData, EventCardData, LeafletMarker } from "@/features/events/types"
 import { useEffect, useState } from "react"
+import { getTokenPayload } from "../../utils/auth"
+
+interface HomeClientProps {
+  address: string;
+}
 
 // Dynamically load LeafletMap
 const LeafletMap = dynamic(() => import("../components/leaflet-map"), {
   ssr: false,
 })
 
-export default function HomeClient() {
+export default function HomeClient({ address }: HomeClientProps) {
+  const [coordinates, setCoordinates] = useState<{ lat: number; lon: number }>({
+    lat: 40.7128,
+    lon: -74.006,
+  });
   const [eventsData, setEventsData] = useState<EventData[] | undefined>(undefined)
   const [openEventCards, setOpenEventCards] = useState<string[]>([])
 
@@ -32,6 +41,7 @@ export default function HomeClient() {
   
   const getAllEventsData = async () => {
     try {
+      const token = await getTokenPayload();
       const response = await fetch('http://localhost:8080/api/events/user-events', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
@@ -79,9 +89,32 @@ export default function HomeClient() {
     return leafletMarkersData.length > 0 ? leafletMarkersData : undefined;
   }
 
+  const getCoordinatesFromAddress = async () => {
+    
+    const GEOAPIFY_API_KEY = "26de8e62cc3b4b849f60c43d5b4e82a7"; // geoapify apikey
+    const url = `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(address)}&apiKey=${GEOAPIFY_API_KEY}`;
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (data.features && data.features.length > 0) {
+        const { lat, lon } = data.features[0].properties;
+        setCoordinates({ lat, lon });
+        console.log(coordinates)
+        console.log(lat, lon)
+      } else {
+        console.warn("No coordinates found for address");
+      }
+    } catch (error) {
+      console.error("Error fetching coordinates:", error);
+    }
+  }
+
   useEffect(() => {
     
-    getAllEventsData()
+    getAllEventsData();
+    getCoordinatesFromAddress();
   }, [])
 
   return (
@@ -99,6 +132,7 @@ export default function HomeClient() {
         <SidebarInset>
           <main className="flex min-h-screen items-center justify-center bg-gray-100 p-6">
             <LeafletMap
+              userCoordinates={coordinates}
               markers={getLeafletMarkersData()}
               handleOpenEventCard={handleOpenEventCard}
             />

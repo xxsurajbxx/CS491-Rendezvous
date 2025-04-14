@@ -10,6 +10,7 @@ export interface DecodedToken {
   email: string;
   name: string;
   exp: number;
+  address: string;
 }
 
 
