@@ -6,18 +6,20 @@ import {
   SidebarGroupLabel,
   SidebarMenu,
 } from "@/components/ui/sidebar"
-
 import { EventCard } from "./event-card";
 import { SidebarProps } from "../types";
 import { Accordion } from "@radix-ui/react-accordion";
+import SearchBar from "./search-bar";
 
-export const EventSideBar = ({ events, openEventCards, setOpenEventCards, isOpen }: SidebarProps) => {
+
+export const EventSideBar = ({ events, openEventCards, setOpenEventCards, isOpen, handleSearch }: SidebarProps) => {
   
   return(
     <Sidebar variant="inset" collapsible="none" className="w-1/4 max-h-screen top-[80px]">
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel className="text-xl py-7">Events</SidebarGroupLabel>
+          <SearchBar handleSearch={handleSearch} />
           <SidebarGroupContent>
             <SidebarMenu className="gap-4">
               <Accordion type="multiple" value={openEventCards} onValueChange={setOpenEventCards} className="flex flex-col gap-y-2">
