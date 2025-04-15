@@ -21,6 +21,7 @@ export const EventSideBar = ({ events, openEventCards, setOpenEventCards, isOpen
           <SidebarGroupLabel className="text-xl py-7">Events</SidebarGroupLabel>
           <SearchBar handleSearch={handleSearch} />
           <SidebarGroupContent>
+            {events && <p>{`${events?.length} event(s) found`}</p>}
             <SidebarMenu className="gap-4">
               <Accordion type="multiple" value={openEventCards} onValueChange={setOpenEventCards} className="flex flex-col gap-y-2">
                 {events && events.map((event, index) => (

@@ -123,7 +123,7 @@ export default function HomeClient({ address }: HomeClientProps) {
 
       if (!response.ok || results.status === "fail") throw new Error("Error occured while searching for events")
       if (results.data.length > 0) {
-        
+        setEventsData(results.data)
       } else {
         // search results returned no events based on given search query from user
         console.log("No event results matched the user's query.")
