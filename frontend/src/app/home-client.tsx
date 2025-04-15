@@ -113,7 +113,7 @@ export default function HomeClient({ address }: HomeClientProps) {
     
     getAllEventsData();
     getCoordinatesFromAddress();
-  })
+  },[])
 
   return (
     <div>
