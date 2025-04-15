@@ -8,7 +8,7 @@ export default async function FriendsPage() {
       }
       else{
         return(
-          <FriendsScreen userId={token.userId}/>
+          <FriendsScreen userId={token.userId} name={token.name}/>
         );
       }
 }

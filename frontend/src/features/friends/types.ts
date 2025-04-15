@@ -20,20 +20,23 @@ export interface PersonProfiles {
     personProfiles: PersonProfile[]
 }
 
-export interface RsvpCard {
-    eventName: string,
-    host: string,
-    location: string,
-    date: Date,
-    startTime: string,
-    endTime: string,
-    maxRSVP: number,
-    rsvpList?: PersonProfile[]
+export type RsvpStatus = {
+    status: 'Attending' | 'Cancelled'
+}
+
+export interface RsvpData {
+    EventID: number,
+    EventName: string,
+    EventDate: Date,
+    Status: string,
+    RSVPTimestamp: Date,
+    rsvpList?: PersonProfile[],
+    // handleRsvpCancel(): void,
 }
 export interface RsvpCards {
-    rsvpCards: RsvpCard[]
+    rsvpCards: RsvpData[]
 }
 
 export interface RsvpWindowProps {
-    rsvpCards: RsvpCard[]
+    rsvpsData: RsvpData[]
 }

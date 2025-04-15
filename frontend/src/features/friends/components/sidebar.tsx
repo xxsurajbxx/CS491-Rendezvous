@@ -12,9 +12,7 @@ import {
 import {
   Card,
 } from "@/components/ui/card";
-
 import Image from "next/image";
-
 import { ProfileCard } from "./profile-card";
 import { Tab, TabProps } from "../types";
 
@@ -26,19 +24,20 @@ interface FriendRequest {
 }
 
 interface FriendsSideBarProps extends TabProps {
+  name: string,
   friendRequests: FriendRequest[];  // Add the count prop
 }
 
 
 
 
-export const FriendsSideBar: React.FC<FriendsSideBarProps> = ({ setWindow, friendRequests }) => {
+export const FriendsSideBar: React.FC<FriendsSideBarProps> = ({ name, setWindow, friendRequests }) => {
 
   return(
     <Sidebar variant="inset" collapsible="none" className="w-1/4 max-h-screen top-[80px]">
       <SidebarContent>
         <SidebarGroup>
-          <ProfileCard />
+          <ProfileCard name={name} />
         </SidebarGroup>
         <SidebarGroup>
           <SidebarGroupLabel className="text-xl py-7">Friends</SidebarGroupLabel>
