@@ -19,7 +19,8 @@ export const getUserHostedEventData = async (req: Request, res: Response): Promi
           e.startDateTime,
           e.endDateTime, 
           e.Location, 
-          e.Description, 
+          e.Description,
+          e.IsPublic, 
           m.Latitude, 
           m.Longitude
        FROM Events e
