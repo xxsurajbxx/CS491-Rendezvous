@@ -5,6 +5,7 @@ import { respondToRequest } from "./friendRequestActions";
 import { getFriends } from "./friendsListEndpoint";
 import { deleteFriend } from "./deleteFriendEndpoint";
 import { countIncomingFriendRequests } from "./incomingFriendRequests";
+import { getFriendRequestStatus } from "./getFriendRequestStatus";
 const router = express.Router();
 
 // add friend
@@ -36,5 +37,10 @@ router.delete("/delete/:friendId", async (req, res) => {
 router.get("/requests/count/:userId", async (req, res) => {
     await countIncomingFriendRequests(req, res);
   });
+
+// friend request status
+router.get("/status", async (req, res) => {
+    await getFriendRequestStatus(req, res);
+});
 
 export default router;
