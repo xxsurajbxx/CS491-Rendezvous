@@ -21,8 +21,8 @@ export default function HomeClient({ address }: HomeClientProps) {
     lat: 40.7128,
     lon: -74.006,
   });
-  const [eventsData, setEventsData] = useState<EventData[] | undefined>(undefined)
-  const [openEventCards, setOpenEventCards] = useState<string[]>([])
+  const [eventsData, setEventsData] = useState<EventData[] | undefined>(undefined);
+  const [openEventCards, setOpenEventCards] = useState<string[]>([]);
 
   const isOpen = (eventCardId: string): boolean => {
     return openEventCards.includes(eventCardId)
@@ -87,6 +87,7 @@ export default function HomeClient({ address }: HomeClientProps) {
     return leafletMarkersData.length > 0 ? leafletMarkersData : undefined;
   }
 
+  // function for getting the latitude and longitude coordinates from user's address using geoapify
   const getCoordinatesFromAddress = async () => {
     
     const GEOAPIFY_API_KEY = "26de8e62cc3b4b849f60c43d5b4e82a7"; // geoapify apikey
@@ -109,11 +110,35 @@ export default function HomeClient({ address }: HomeClientProps) {
     }
   }
 
+  // function for handling search results using search api endpoint
+  const handleSearch = async (query: string) => {
+    const url = `http://localhost:8080/api/events/search?query=${encodeURIComponent(query)}`
+
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const results = await response.json();
+
+      if (!response.ok || results.status === "fail") throw new Error("Error occured while searching for events")
+      if (results.data.length > 0) {
+        setEventsData(results.data)
+      } else {
+        // search results returned no events based on given search query from user
+        console.log("No event results matched the user's query.")
+      }
+      console.log(results)
+    } catch(error) {
+      console.warn(error)
+    }
+  }
+
   useEffect(() => {
     
     getAllEventsData();
     getCoordinatesFromAddress();
-  },[])
+  }, [])
 
   return (
     <div>
@@ -126,6 +151,7 @@ export default function HomeClient({ address }: HomeClientProps) {
           openEventCards={openEventCards}
           setOpenEventCards={setOpenEventCards}
           isOpen={isOpen}
+          handleSearch={handleSearch}
         />
         <SidebarInset>
           <main className="flex min-h-screen items-center justify-center bg-gray-100 p-6">
