@@ -10,7 +10,7 @@ export const cancelRSVP = async (req: Request, res: Response) => {
 
   try {
     await pool.query(
-      `UPDATE RSVP SET Status = 'Cancelled' WHERE UserID = ? AND EventID = ?;`,
+      `DELETE FROM RSVP WHERE UserID = ? AND EventID = ?;`,
       [userId, eventId]
     );
 
