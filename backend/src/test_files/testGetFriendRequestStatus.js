@@ -1,5 +1,5 @@
 const userId1 = 19;
-const userId2 = 18; 
+const userId2 = 21; 
 
 fetch(`http://localhost:8080/api/friends/status?userId1=${userId1}&userId2=${userId2}`)
   .then(async response => {
