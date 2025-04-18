@@ -1,7 +1,6 @@
-const userId1 = 19;
-const userId2 = 21; 
+const eventId = 20;
 
-fetch(`http://localhost:8080/api/friends/status?userId1=${userId1}&userId2=${userId2}`)
+fetch(`http://localhost:8080/api/events/${eventId}/full`)
   .then(async response => {
     const text = await response.text();
     console.log("Raw Response:", text);
