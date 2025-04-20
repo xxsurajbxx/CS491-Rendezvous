@@ -1,0 +1,9 @@
+CREATE TABLE `EmailVerifications` (
+  `VerificationID` int(11) NOT NULL AUTO_INCREMENT,
+  `UserID` int(11) NOT NULL,
+  `Code` varchar(10) NOT NULL,
+  `ExpiresAt` datetime NOT NULL,
+  `Used` tinyint(1) DEFAULT '0',
+  `CreatedAt` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`VerificationID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
