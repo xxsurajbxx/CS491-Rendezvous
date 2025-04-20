@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { removeTokenCookieWithRedirect } from "../../utils/auth";
+import { removeTokenCookieWithRedirect, getTokenPayload, DecodedToken } from "../../utils/auth";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -11,11 +11,8 @@ import {
 
 import Image from "next/image";
 import Link from "next/link";
-import { getTokenPayload } from "../../utils/auth";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { DecodedToken } from "../../utils/auth";
-
 
 export default function NavigationBar() {
   const [token, setToken] = useState<DecodedToken | null>(null);
@@ -25,14 +22,20 @@ export default function NavigationBar() {
   useEffect(() => {
     async function fetchToken() {
       const payload = await getTokenPayload();
-      setToken(payload);
+      if (!payload || payload === null) {
+        router.push("/auth");
+      } else {
+        setToken(payload);
+      }
     }
     fetchToken();
-  }, []);
+  }, [router]);
+
   async function handleLogout() {
     await removeTokenCookieWithRedirect();
     router.push("/auth"); 
   }
+
   return (
     <NavigationMenu className="bg-purple-900 h-20">
       <NavigationMenuList className="flex justify-between w-screen px-7">
@@ -69,17 +72,32 @@ export default function NavigationBar() {
           {/* end of navigation menu items for different app pages */}
         </div>
         <div className="flex flex-row">
-          {/* login button */}
+          {/* login/logout button */}
           <NavigationMenuItem>
-            {token ?
-            <Button className="bg-black rounded-md h-10 w-40 text-xl text-white font-semibold" onClick={handleLogout}>Logout</Button>
-            :
-            <Button className="bg-black rounded-md h-10 w-40 text-xl text-white font-semibold"><Link href="/auth">Login</Link></Button>
-            }
+            {token ? (
+              <Button
+                className="bg-black rounded-md h-10 w-40 text-xl text-white font-semibold"
+                onClick={handleLogout}
+              >
+                Logout
+              </Button>
+            ) : (
+              <Button className="bg-black rounded-md h-10 w-40 text-xl text-white font-semibold">
+                <Link href="/auth">Login</Link>
+              </Button>
+            )}
           </NavigationMenuItem>
+
+          {/* profile icon */}
           <Button className="bg-inherit shadow-none hover:bg-inherit">
-            <Link href="/profile">
-              <Image src="/profileIcon.png" height={45} width={45} alt="profile icon" className="bg-gray-600 rounded-full" />
+            <Link href={token?.userId ? `/users/${token.userId}` : "/profile"}>
+              <Image
+                src="/profileIcon.png"
+                height={45}
+                width={45}
+                alt="profile icon"
+                className="bg-gray-600 rounded-full"
+              />
             </Link>
           </Button>
         </div>
