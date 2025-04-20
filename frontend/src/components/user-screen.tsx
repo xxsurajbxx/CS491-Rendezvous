@@ -35,7 +35,7 @@ interface Event {
   EventName: string
   startDateTime: string
   endDateTime: string
-  isPublic: number
+  IsPublic: number
   RSVPStatus: string
   RSVPTimestamp: string
 }
@@ -159,14 +159,11 @@ export default function UserScreen({ id }: { id: number }) {
   }, [userId, isOwnProfile])
 
   useEffect(() => {
-    // Filter events based on isPublic flag and friendStatus
     const filtered = events.filter((event) => {
-      // If viewing own profile, show all events
       if (isOwnProfile) {
-        return true
+        return true;
       }
-      // Otherwise, show event if it's public OR if they are friends (friendStatus is "Accepted")
-      return event.isPublic === 1 || friendStatus === "Unfriend" // "Unfriend" means they are friends
+      return event.IsPublic === 1 || friendStatus === "Unfriend"
     })
     setFilteredEvents(filtered)
   }, [events, friendStatus, isOwnProfile])
