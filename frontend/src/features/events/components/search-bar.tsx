@@ -21,7 +21,10 @@ const SearchBar = ({ handleSearch }: SearchBarProps) => {
         type="text"
         placeholder="Search..."
         value={query}
-        onChange={(e) => {setQuery(e.target.value), handleSearch(e.target.value)}}
+        onChange={(e) => {
+          setQuery(e.target.value);
+          handleSearch(e.target.value);
+        }}        
         className="px-4 py-2 w-full outline-none"
       />
       <button type="submit" className="bg-purple-900 hover:bg-gray-700 text-white px-4 h-full flex items-center justify-center">
