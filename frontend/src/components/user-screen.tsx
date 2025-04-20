@@ -145,9 +145,6 @@ export default function UserScreen({ id }: { id: number }) {
         setUserData(json.data.user)
         setFriends(json.data.friends)
         setEvents(json.data.events)
-        console.log("hi");
-        console.log(events)
-        console.log("hi");
       } catch (error) {
         console.error("Error fetching user data:", error)
       } finally {
@@ -172,7 +169,6 @@ export default function UserScreen({ id }: { id: number }) {
       return event.isPublic === 1 || friendStatus === "Unfriend" // "Unfriend" means they are friends
     })
     setFilteredEvents(filtered)
-    console.log(filteredEvents);
   }, [events, friendStatus, isOwnProfile])
 
   if (isLoading) {
