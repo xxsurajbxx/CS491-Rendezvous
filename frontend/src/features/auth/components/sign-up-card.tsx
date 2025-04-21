@@ -144,7 +144,7 @@ export const SignUpCard = ({setState}: SignUpCardProps) => {
                 </div>
             )}
             <CardContent className="space-y-5 px-0 pb-0">
-                <GeoapifyContext apiKey="26de8e62cc3b4b849f60c43d5b4e82a7">
+                <GeoapifyContext apiKey={process.env.NEXT_PUBLIC_GEOAPIFY_KEY}>
                     <form onSubmit={onPasswordSignUp} className="space-y-2.5">
                         <div className="grid grid-cols-2 gap-2.5">
                             <Input disabled={pending} value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="First Name" required />

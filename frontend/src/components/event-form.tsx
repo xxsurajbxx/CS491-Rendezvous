@@ -207,7 +207,7 @@ export const EventForm = () => {
           <CardDescription>Fill in the details below to create a new event.</CardDescription>
         </CardHeader>
         <CardContent>
-          <GeoapifyContext apiKey="26de8e62cc3b4b849f60c43d5b4e82a7">
+          <GeoapifyContext apiKey={process.env.NEXT_PUBLIC_GEOAPIFY_KEY}>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 {/* Name Field */}

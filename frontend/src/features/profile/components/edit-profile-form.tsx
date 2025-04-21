@@ -101,7 +101,7 @@ export const EditProfileForm = () => {
                 </CardDescription>
             </CardHeader>
             <CardContent className="space-y-5 px-0 pb-0">
-                <GeoapifyContext apiKey="26de8e62cc3b4b849f60c43d5b4e82a7">
+                <GeoapifyContext apiKey={process.env.NEXT_PUBLIC_GEOAPIFY_KEY}>
                     <form onSubmit={handleSubmit} className="space-y-2.5">
                         <div className="grid grid-cols-2 gap-2.5">
                             <Input value={firstName} onChange={(e) => {setFirstName(e.target.value)}} placeholder="New first name" />
