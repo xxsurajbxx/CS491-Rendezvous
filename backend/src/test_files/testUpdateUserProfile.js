@@ -3,9 +3,7 @@ fetch("http://localhost:8080/api/update-profile/18", {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       username: "",
-      firstName: "John2",
-      lastName: "Test2",
-      address: "", // leave fields empty if you dont want to change them
+      address: "newark, new jersey", // leave fields empty if you dont want to change them
       description: "", // or you can leave it to what its currently set to and it wont change it because it detects
       currentPassword: "",
       newPassword: ""

@@ -16,7 +16,7 @@ export const updateUserProfile = async (req: Request, res: Response): Promise<vo
 
   try {
     // getting current user data
-    const [rows] = await pool.query("SELECT Username, Name, Address, Description, Email, HashedPassword FROM Users WHERE UserID = ?", [userId]);
+    const [rows] = await pool.query("SELECT Username, Name, Address, Description, Email, HashedPassword, IsVerified FROM Users WHERE UserID = ?", [userId]);
     if (!Array.isArray(rows) || rows.length === 0) {
       res.status(404).json({ status: "fail", message: "User not found" });
       return;
@@ -83,7 +83,7 @@ export const updateUserProfile = async (req: Request, res: Response): Promise<vo
 
     if (usernameChanged || addressChanged || nameChanged) {
       const token = jwt.sign(
-        { userId: userId, email: user.Email, name: user.Name, address: address || user.Address, },
+        { userId: userId, email: user.Email, name: user.Name, address: address || user.Address, verified: user.IsVerified },
         JWT_SECRET,
         { expiresIn: "1h" }
       );

@@ -16,35 +16,13 @@ const LeafletMap = dynamic(() => import("../components/leaflet-map"), {
   ssr: false,
 })
 
-const getCoordinatesFromAddress = async (
-  address: string,
-  setCoordinates: React.Dispatch<React.SetStateAction<{ lat: number; lon: number }>>
-) => {
-  const GEOAPIFY_API_KEY = "26de8e62cc3b4b849f60c43d5b4e82a7"
-  const url = `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(address)}&apiKey=${GEOAPIFY_API_KEY}`
-
-  try {
-    const response = await fetch(url)
-    const data = await response.json()
-
-    if (data.features && data.features.length > 0) {
-      const { lat, lon } = data.features[0].properties
-      setCoordinates({ lat, lon })
-    } else {
-      console.warn("No coordinates found for address")
-    }
-  } catch (error) {
-    console.error("Error fetching coordinates:", error)
-  }
-}
-
 export default function HomeClient({ address }: HomeClientProps) {
   const [coordinates, setCoordinates] = useState<{ lat: number; lon: number }>({
     lat: 40.7128,
     lon: -74.006,
   });
-  const [eventsData, setEventsData] = useState<EventData[] | undefined>(undefined);
-  const [openEventCards, setOpenEventCards] = useState<string[]>([]);
+  const [eventsData, setEventsData] = useState<EventData[] | undefined>(undefined)
+  const [openEventCards, setOpenEventCards] = useState<string[]>([])
 
   const isOpen = (eventCardId: string): boolean => {
     return openEventCards.includes(eventCardId)
@@ -109,34 +87,33 @@ export default function HomeClient({ address }: HomeClientProps) {
     return leafletMarkersData.length > 0 ? leafletMarkersData : undefined;
   }
 
-  // function for handling search results using search api endpoint
-  const handleSearch = async (query: string) => {
-    const url = `http://localhost:8080/api/events/search?query=${encodeURIComponent(query)}`
+  const getCoordinatesFromAddress = async () => {
+    
+    const GEOAPIFY_API_KEY = "26de8e62cc3b4b849f60c43d5b4e82a7"; // geoapify apikey
+    const url = `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(address)}&apiKey=${GEOAPIFY_API_KEY}`;
 
     try {
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      });
-      const results = await response.json();
+      const response = await fetch(url);
+      const data = await response.json();
 
-      if (!response.ok || results.status === "fail") throw new Error("Error occured while searching for events")
-      if (results.data.length > 0) {
-        setEventsData(results.data)
+      if (data.features && data.features.length > 0) {
+        const { lat, lon } = data.features[0].properties;
+        setCoordinates({ lat, lon });
+        // console.log(coordinates)
+        // console.log(lat, lon)
       } else {
-        // search results returned no events based on given search query from user
-        console.log("No event results matched the user's query.")
+        console.warn("No coordinates found for address");
       }
-      console.log(results)
-    } catch(error) {
-      console.warn(error)
+    } catch (error) {
+      console.error("Error fetching coordinates:", error);
     }
   }
 
   useEffect(() => {
+    
     getAllEventsData();
-    getCoordinatesFromAddress(address, setCoordinates);
-  }, [address]);  
+    getCoordinatesFromAddress();
+  },[])
 
   return (
     <div>
@@ -149,7 +126,6 @@ export default function HomeClient({ address }: HomeClientProps) {
           openEventCards={openEventCards}
           setOpenEventCards={setOpenEventCards}
           isOpen={isOpen}
-          handleSearch={handleSearch}
         />
         <SidebarInset>
           <main className="flex min-h-screen items-center justify-center bg-gray-100 p-6">
