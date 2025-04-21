@@ -22,17 +22,22 @@ export const getUserData = async (req: Request, res: Response): Promise<void> =>
     // getting RSVPd events
     const [eventRows] = await pool.query(`
       SELECT 
-      e.EventID,
-      e.Name AS EventName,
-      e.startDateTime,
-      e.endDateTime,
-      e.IsPublic,
-      r.Status AS RSVPStatus,
-      r.Timestamp AS RSVPTimestamp
-    FROM RSVP r
-    JOIN Events e ON r.EventID = e.EventID
-    WHERE r.UserID = ?
-
+        e.EventID,
+        e.Name AS EventName,
+        e.startDateTime,
+        e.endDateTime,
+        e.IsPublic,
+        r.Status AS RSVPStatus,
+        r.Timestamp AS RSVPTimestamp,
+        CASE
+          WHEN NOW() < e.startDateTime THEN 'Upcoming'
+          WHEN NOW() >= e.startDateTime AND NOW() <= e.endDateTime THEN 'Ongoing'
+          WHEN NOW() > e.endDateTime THEN 'Over'
+          ELSE 'Unknown'
+        END AS EventState
+      FROM RSVP r
+      JOIN Events e ON r.EventID = e.EventID
+      WHERE r.UserID = ?
     `, [userId]);
 
     // getting friends
