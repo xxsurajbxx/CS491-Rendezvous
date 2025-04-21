@@ -7,7 +7,7 @@ const JWT_SECRET = process.env.JWT_SECRET as string;
 
 export const updateUserProfile = async (req: Request, res: Response): Promise<void> => {
   const { userId } = req.params;
-  const { username, address, description, currentPassword, newPassword } = req.body;
+  const { username, address, description, currentPassword, newPassword, firstName, lastName } = req.body;
 
   if (!userId) {
     res.status(400).json({ status: "fail", message: "Missing userId" });
@@ -28,6 +28,8 @@ export const updateUserProfile = async (req: Request, res: Response): Promise<vo
     const updates: string[] = [];
     const params: any[] = [];
     let usernameChanged = false;
+    let nameChanged = false;
+    let addressChanged = false;
 
     if (username && username !== user.Username) {
       updates.push("Username = ?");
@@ -38,11 +40,25 @@ export const updateUserProfile = async (req: Request, res: Response): Promise<vo
     if (address && address !== user.Address) {
       updates.push("Address = ?");
       params.push(address);
+      addressChanged = true;
     }
 
     if (description && description !== user.Description) {
       updates.push("Description = ?");
       params.push(description);
+    }
+
+    const [currentFirst, ...rest] = user.Name.split(" ");
+    const currentLast = rest.join(" ");
+
+    let updatedFirstName = firstName || currentFirst;
+    let updatedLastName = lastName || currentLast;
+    const newFullName = `${updatedFirstName} ${updatedLastName}`.trim();
+
+    if (newFullName !== user.Name) {
+      updates.push("Name = ?");
+      params.push(newFullName);
+      nameChanged = true;
     }
 
     // update password if provided and correct
@@ -65,10 +81,9 @@ export const updateUserProfile = async (req: Request, res: Response): Promise<vo
       await pool.query(updateQuery, params);
     }
 
-    if (usernameChanged || address) {
-      const newAddress = address || user.Address;
+    if (usernameChanged || addressChanged || nameChanged) {
       const token = jwt.sign(
-        { userId: userId, email: user.Email, name: user.Name, address: newAddress, verified: user.IsVerified },
+        { userId: userId, email: user.Email, name: user.Name, address: address || user.Address, verified: user.IsVerified },
         JWT_SECRET,
         { expiresIn: "1h" }
       );
