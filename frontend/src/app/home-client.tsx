@@ -20,7 +20,7 @@ const getCoordinatesFromAddress = async (
   address: string,
   setCoordinates: React.Dispatch<React.SetStateAction<{ lat: number; lon: number }>>
 ) => {
-  const GEOAPIFY_API_KEY = "26de8e62cc3b4b849f60c43d5b4e82a7"
+  const GEOAPIFY_API_KEY = process.env.NEXT_PUBLIC_GEOAPIFY_KEY;
   const url = `https://api.geoapify.com/v1/geocode/search?text=${encodeURIComponent(address)}&apiKey=${GEOAPIFY_API_KEY}`
 
   try {
