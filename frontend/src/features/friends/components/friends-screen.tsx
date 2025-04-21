@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 
 import NavigationBar from "@/components/navigation-bar";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
@@ -50,89 +50,75 @@ export const FriendsScreen = ({userId, name}: FriendsScreenProps ) => {
   };
 
 
-  // Function to get the friend requests
-  const getFriendRequests = async () => {
+  const getFriendRequests = useCallback(async () => {
     try {
       const response = await fetch(`http://localhost:8080/api/friends/requests/${userId}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
-
       if (!response.ok) throw new Error('Failed to fetch friend requests');
-
       const result = await response.json();
       setFriendRequests(result.data);
-      console.log(friendRequests)
-
+      console.log(result.data);
     } catch (error) {
       console.error('Error fetching friend requests:', error);
     }
-  };
-
-
-  const getFriends = async () => {
+  }, [userId]);
+  
+  const getFriends = useCallback(async () => {
     try {
       const response = await fetch(`http://localhost:8080/api/friends/all/${userId}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
-
-      if (!response.ok) throw new Error('Failed to fetch friend requests');
-
+      if (!response.ok) throw new Error('Failed to fetch friends');
       const result = await response.json();
       setFriends(result.data);
-      console.log(friends)
-
+      console.log(result.data);
     } catch (error) {
-      console.error('Error fetching friend requests:', error);
+      console.error('Error fetching friends:', error);
     }
-  };
-
-  // function to get all rsvp events
-  const getRsvps = async () => {
+  }, [userId]);
+  
+  const getRsvps = useCallback(async () => {
     try {
       const response = await fetch(`http://localhost:8080/api/rsvp?userId=${userId}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
-
-      if (!response.ok) throw new Error('Failed to fetch rsvps request');
-
+      if (!response.ok) throw new Error('Failed to fetch RSVPs');
       const result = await response.json();
       setRsvps(result.data);
-      console.log('List of RSVPs', rsvps)
+      console.log('List of RSVPs', result.data);
     } catch (error) {
-      console.error('Error fetching Rsvps request.', error);
+      console.error('Error fetching RSVPs.', error);
     }
-  }
+  }, [userId]);
+  
 
   
   useEffect(() => {
     if (tabType === "COMMUNITY") {
-      getFriends(); // Fetch friends when the "Community" tab is active
+      getFriends();
     } else if (tabType === "REQUESTS") {
-      getFriendRequests(); // Fetch friend requests when the "Requests" tab is active
-    } else if (tabType === "RSVP"){    // tabType === 'RSVP'
-      getRsvps(); // fetch rsvp request when "RSVP" tab is active
+      getFriendRequests();
+    } else if (tabType === "RSVP") {
+      getRsvps();
     }
-  }, [tabType]); // Runs when `tabType` changes
-
-  // Set up polling for friend requests every minute
+  }, [tabType, getFriends, getFriendRequests, getRsvps]);
+  
   useEffect(() => {
-    // Initial fetch
-    getFriendRequests()
-
-    // Set up interval to check every minute (60000 milliseconds)
-    // NOTE: for the future, implement WebSockets 
+    getFriendRequests();
+  
     const intervalId = setInterval(() => {
-      console.log("Checking for new friend requests...")
+      console.log("Checking for new friend requests...");
       getFriends();
       getFriendRequests();
     }, 60000);
-
-    // Clean up the interval when the component unmounts
-    return () => clearInterval(intervalId)
-  }, [])
+  
+    return () => clearInterval(intervalId);
+  }, [getFriendRequests, getFriends]);
+  
 
   return(
     <div>
