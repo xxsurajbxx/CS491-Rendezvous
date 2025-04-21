@@ -1,37 +1,45 @@
+import { Request, Response } from "express";
 import { pool } from "./db";
 
-interface FriendsAttendingResult {
-    EventID: number;
-    EventName?: string;
-    FriendsAttending: number;
+export const getFriendsAttending = async (req: Request, res: Response) => {
+  const { userId, eventId } = req.query;
+
+  if (!userId || !eventId) {
+    return res.status(400).json({ status: "fail", message: "Missing userId or eventId" });
   }
 
-// function get to get the count of friends RSVPing for an event
-const getFriendsAttending = async (eventId: number): Promise<FriendsAttendingResult | null> => {
+  try {
     const query = `
-      SELECT
+      SELECT 
         e.EventID,
         e.Name AS EventName,
-        COUNT(DISTINCT f.FriendID) AS FriendsAttending
+        u.UserID,
+        u.Name,
+        u.Username,
+        u.Email
       FROM Events e
       JOIN RSVP r ON e.EventID = r.EventID
-      JOIN Friends f ON (f.User1ID = r.UserID OR f.User2ID = r.UserID)
+      JOIN Users u ON r.UserID = u.UserID
+      JOIN Friends f ON (
+          (f.User1ID = ? AND f.User2ID = u.UserID)
+          OR
+          (f.User2ID = ? AND f.User1ID = u.UserID)
+      )
       WHERE e.EventID = ?
-      GROUP BY e.EventID, e.Name;
+        AND r.Status = 'Attending'
+        AND f.Status = 'Accepted'
     `;
-  
-    try {
-      const [rows] = await pool.query(query, [eventId]);
-      const result = Array.isArray(rows) && rows.length > 0 ? (rows[0] as FriendsAttendingResult) : null;
-      return result ?? { EventID: eventId, FriendsAttending: 0 };
-    } catch (error: any) {
-      console.error("Error fetching friends attending:", error.message);
-      return null;
-    }
-  };
 
-    // run the function for an example EventID (replace 1 with a real event ID)
-    getFriendsAttending(1).then((result) => {
-        console.log("Friends Attending:", result);
-        process.exit();
-      });
+    const [rows] = await pool.query(query, [userId, userId, eventId]);
+
+    res.status(200).json({
+      status: "success",
+      eventId: Number(eventId),
+      friends: rows
+    });
+
+  } catch (error) {
+    console.error("Error fetching friends attending:", error);
+    res.status(500).json({ status: "fail", message: "Internal server error" });
+  }
+};
