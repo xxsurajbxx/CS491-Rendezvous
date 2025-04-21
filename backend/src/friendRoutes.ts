@@ -6,6 +6,7 @@ import { getFriends } from "./friendsListEndpoint";
 import { deleteFriend } from "./deleteFriendEndpoint";
 import { countIncomingFriendRequests } from "./incomingFriendRequests";
 import { getFriendRequestStatus } from "./getFriendRequestStatus";
+import { getFriendsAttending } from "./getFriendsAttending";
 const router = express.Router();
 
 // add friend
@@ -41,6 +42,11 @@ router.get("/requests/count/:userId", async (req, res) => {
 // friend request status
 router.get("/status", async (req, res) => {
     await getFriendRequestStatus(req, res);
+});
+
+// get friends attending a specific event
+router.get("/attending", async (req, res) => {
+    await getFriendsAttending(req, res);
 });
 
 export default router;

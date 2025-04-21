@@ -21,12 +21,19 @@ export const getFullEventData = async (req: Request, res: Response): Promise<Res
          e.Description, 
          e.IsPublic,
          m.Latitude, 
-         m.Longitude
+         m.Longitude,
+         CASE
+           WHEN NOW() < e.startDateTime THEN 'Upcoming'
+           WHEN NOW() BETWEEN e.startDateTime AND e.endDateTime THEN 'Ongoing'
+           WHEN NOW() > e.endDateTime THEN 'Over'
+           ELSE 'Unknown'
+         END AS EventState
        FROM Events e
        LEFT JOIN Map m ON e.EventID = m.EventID
        WHERE e.EventID = ?`,
       [eventId]
     );
+    
 
     const eventResult = eventRows as any[];
     if (eventResult.length === 0) {

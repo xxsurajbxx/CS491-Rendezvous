@@ -35,6 +35,12 @@ export const createEvent = async (req: Request, res: Response): Promise<Response
             [eventID, latitude, longitude]
           );
 
+          // auto RSVP for host
+          await pool.query(
+            `INSERT INTO RSVP (UserID, EventID, Status) VALUES (?, ?, 'Attending')`,
+            [hostUserID, eventID]
+        );
+
         return res.status(201).json({
             status: "success",
             message: "Event and map coordinates created successfully",
