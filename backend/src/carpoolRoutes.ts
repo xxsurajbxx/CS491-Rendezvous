@@ -6,6 +6,7 @@ import { leaveCarpool } from "./leaveCarpool";
 import { viewCarpoolMembers } from "./viewCarpoolMembers";
 import { removeFromCarpool } from "./removeFromCarpool";
 import { deleteCarpool } from "./deleteCarpool";
+import { findFriendCarpool } from "./findFriendCarpool";
 
 const router = express.Router();
 
@@ -43,4 +44,10 @@ router.delete("/:carpoolId/remove/:userId", async (req, res) => {
 router.delete("/delete", async (req, res) => {
     await deleteCarpool(req, res);
   });
+
+// find a friend's carpool for a specific event
+router.get("/friends/:userId/event/:eventId", async (req, res) => {
+  await findFriendCarpool(req, res);
+});
+
 export default router;
