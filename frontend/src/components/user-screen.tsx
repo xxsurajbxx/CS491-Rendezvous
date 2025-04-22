@@ -37,7 +37,8 @@ interface Event {
   endDateTime: string
   IsPublic: number
   RSVPStatus: string
-  RSVPTimestamp: string
+  RSVPTimestamp: string,
+  EventState: string,
 }
 
 interface ApiResponse {
@@ -326,15 +327,15 @@ export default function UserScreen({ id }: { id: number }) {
                             <Badge
                               className={`
                                 ${
-                                  event.RSVPStatus === "Going"
+                                  event.EventState === "Upcoming"
                                     ? "bg-green-100 text-green-800 hover:bg-green-100"
-                                    : event.RSVPStatus === "Maybe"
+                                    : event.EventState === "Ongoing"
                                       ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-100"
                                       : "bg-red-100 text-red-800 hover:bg-red-100"
                                 }
                               `}
                             >
-                              {event.RSVPStatus}
+                              {event.EventState}
                             </Badge>
                           </div>
                           <div className="mt-3 space-y-1">
