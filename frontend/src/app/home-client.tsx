@@ -131,8 +131,6 @@ export default function HomeClient({ address }: HomeClientProps) {
         setEventsData(results.data)
       } else {
         // search results returned no events based on given search query from user
-        // set the eventData useState to all events
-        getAllEventsData();
         console.log("No event results matched the user's query.")
       }
       console.log(results)
