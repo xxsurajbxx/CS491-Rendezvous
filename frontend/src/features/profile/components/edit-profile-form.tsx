@@ -22,6 +22,7 @@ type SelectedPlace = {
 export const EditProfileForm = () => {
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
+    const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [currentPassword, setCurrentPassword] = useState("");
     const [password, setPassword] = useState("");
@@ -73,6 +74,7 @@ export const EditProfileForm = () => {
                 },
                 body: JSON.stringify({
                     name: `${firstName} ${lastName}`,
+                    username: username,
                     address: address,
                     description: description,
                     currentPassword: password,
@@ -107,6 +109,7 @@ export const EditProfileForm = () => {
                             <Input value={firstName} onChange={(e) => {setFirstName(e.target.value)}} placeholder="New first name" />
                             <Input value={lastName} onChange={(e) => {setLastName(e.target.value)}} placeholder="New last name" />
                         </div>
+                        <Input value={username} onChange={(e) => {setUsername(e.target.value)}} placeholder="New username" type="text" />
                         <Input value={email} onChange={(e) => {setEmail(e.target.value)}} placeholder="New email" type="email" />
                         <Input value={currentPassword} onChange={(e) => {setCurrentPassword(e.target.value)}} placeholder="Current password" type="password" />
                         <Input value={password} onChange={(e) => {setPassword(e.target.value)}} placeholder="New password" type="password" />
