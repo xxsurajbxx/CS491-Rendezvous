@@ -111,6 +111,12 @@ export default function HomeClient({ address }: HomeClientProps) {
 
   // function for handling search results using search api endpoint
   const handleSearch = async (query: string) => {
+    // If query is empty, reload original data using the fetch function that gets all eventsData
+    if (!query.trim()) {
+      getAllEventsData();
+      return;
+    }
+
     const url = `http://localhost:8080/api/events/search?query=${encodeURIComponent(query)}`
 
     try {
