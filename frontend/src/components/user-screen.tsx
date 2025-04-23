@@ -37,8 +37,8 @@ interface Event {
   endDateTime: string
   IsPublic: number
   RSVPStatus: string
-  RSVPTimestamp: string,
-  EventState: string,
+  RSVPTimestamp: string
+  EventState: string
 }
 
 interface ApiResponse {
@@ -50,10 +50,18 @@ interface ApiResponse {
   }
 }
 
+interface FriendRequest {
+  FriendID: number
+  UserID: number
+  Name: string
+  Email: string
+}
+
 export default function UserScreen({ id }: { id: number }) {
   const { userId } = useParams<{ userId: string }>()
   const [userData, setUserData] = useState<User | null>(null)
   const [friends, setFriends] = useState<Friend[]>([])
+  const [friendRequests, setFriendRequests] = useState<FriendRequest[]>([])
   const [events, setEvents] = useState<Event[]>([])
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([])
   const [friendStatus, setFriendStatus] = useState<string>("Pending")
@@ -65,6 +73,18 @@ export default function UserScreen({ id }: { id: number }) {
 
   // Check if user is viewing their own profile
   const isOwnProfile = id === Number(userId)
+
+  async function fetchFriendRequests() {
+    if (!isOwnProfile || !userId || !id) return
+    try {
+      const response = await fetch(`http://localhost:8080/api/friends/requests/${userId}`)
+      if (!response.ok) throw new Error("Failed the retrieve incoming friend requests")
+      const json = await response.json()
+      setFriendRequests(json.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   async function fetchRelationship() {
     if (!userId || !id || isOwnProfile) return
@@ -131,7 +151,28 @@ export default function UserScreen({ id }: { id: number }) {
     } catch (error) {
       console.error("Error processing friend request:", error)
     } finally {
-      await fetchRelationship()
+      // Always update the friend requests list
+      await fetchFriendRequests()
+
+      // If accepting a friend request, also update the friends list
+      if (action === "accept") {
+        // Reuse the fetchUserData function to update friends list
+        if (userId) {
+          try {
+            const response = await fetch(`http://localhost:8080/api/user/${userId}/data`)
+            if (!response.ok) throw new Error("Failed to fetch user data")
+            const json: ApiResponse = await response.json()
+            setFriends(json.data.friends)
+          } catch (error) {
+            console.error("Error fetching updated friends list:", error)
+          }
+        }
+      }
+
+      // Update relationship status if not viewing own profile
+      if (!isOwnProfile) {
+        await fetchRelationship()
+      }
     }
   }
 
@@ -160,9 +201,15 @@ export default function UserScreen({ id }: { id: number }) {
   }, [userId, isOwnProfile])
 
   useEffect(() => {
+    if (isOwnProfile) {
+      fetchFriendRequests()
+    }
+  }, [userId, isOwnProfile])
+
+  useEffect(() => {
     const filtered = events.filter((event) => {
       if (isOwnProfile) {
-        return true;
+        return true
       }
       return event.IsPublic === 1 || friendStatus === "Unfriend"
     })
@@ -285,6 +332,48 @@ export default function UserScreen({ id }: { id: number }) {
             <div className="mt-6 flex items-start">
               <Info className="h-5 w-5 mr-2 text-gray-500 flex-shrink-0 mt-0.5" />
               <p className="text-gray-600">{userData.Description}</p>
+            </div>
+          )}
+
+          {isOwnProfile && friendRequests.length > 0 && (
+            <div className="mt-6 border-t pt-4 border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">Friend Requests</h3>
+              <div className="grid gap-3">
+                {friendRequests.map((request) => (
+                  <div key={request.FriendID} className="flex items-center justify-between bg-purple-50 p-3 rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <Avatar>
+                        <AvatarFallback className="bg-purple-100 text-purple-800">
+                          {request.Name.split(" ")
+                            .map((n) => n[0])
+                            .join("")}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="font-medium">{request.Name}</p>
+                        <p className="text-sm text-gray-600">{request.Email}</p>
+                      </div>
+                    </div>
+                    <div className="flex space-x-2">
+                      <Button
+                        onClick={() => handleFriendRequest("accept", request.FriendID)}
+                        size="sm"
+                        className="bg-purple-600 hover:bg-purple-700"
+                      >
+                        Accept
+                      </Button>
+                      <Button
+                        onClick={() => handleFriendRequest("reject", request.FriendID)}
+                        size="sm"
+                        variant="outline"
+                        className="border-gray-300 text-gray-700 hover:bg-gray-100"
+                      >
+                        Decline
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
