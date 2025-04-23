@@ -2,11 +2,11 @@ import { Request, Response } from "express";
 import { pool } from "./db";
 
 export const getFullEventData = async (req: Request, res: Response): Promise<Response> => {
-  const { eventId } = req.params;
+  const { eventId, userId } = req.params;
 
   // make sure eventId is provided
-  if (!eventId) {
-    return res.status(400).json({ status: "fail", message: "Missing eventId" });
+  if (!eventId || !userId) {
+    return res.status(400).json({ status: "fail", message: "Missing eventId or userid" });
   }
 
   try {
@@ -20,6 +20,7 @@ export const getFullEventData = async (req: Request, res: Response): Promise<Res
          e.Location, 
          e.Description, 
          e.IsPublic,
+         e.HostUserID,
          m.Latitude, 
          m.Longitude,
          CASE
@@ -33,7 +34,7 @@ export const getFullEventData = async (req: Request, res: Response): Promise<Res
        WHERE e.EventID = ?`,
       [eventId]
     );
-    
+
 
     const eventResult = eventRows as any[];
     if (eventResult.length === 0) {
@@ -42,7 +43,38 @@ export const getFullEventData = async (req: Request, res: Response): Promise<Res
 
     const event = eventResult[0];
 
-    // get RSVP list
+    // get host user info
+    let hostInfo = null;
+    if (event.HostUserID) {
+      const [hostRows] = await pool.query(
+        `SELECT UserID, Name, Username, Email, Address, Description
+             FROM Users
+             WHERE UserID = ?`,
+        [event.HostUserID]
+      );
+      if (Array.isArray(hostRows) && hostRows.length > 0) {
+        hostInfo = hostRows[0];
+      }
+    }
+
+    // get list of friend IDs
+    const [friendRows] = await pool.query(
+      `SELECT 
+           CASE 
+             WHEN User1ID = ? THEN User2ID 
+             ELSE User1ID 
+           END AS FriendID
+         FROM Friends
+         WHERE (User1ID = ? OR User2ID = ?) AND Status = 'Accepted'`,
+      [userId, userId, userId]
+    );
+
+    const friendIds = (friendRows as any[]).map(row => row.FriendID);
+    friendIds.push(Number(userId)); // include self
+
+    const placeholders = friendIds.map(() => '?').join(',');
+
+    // get RSVPs for user and their friends
     const [rsvpRows] = await pool.query(
       `SELECT 
          r.RSVP_ID,
@@ -51,30 +83,38 @@ export const getFullEventData = async (req: Request, res: Response): Promise<Res
          u.Name AS UserName
        FROM RSVP r
        JOIN Users u ON r.UserID = u.UserID
-       WHERE r.EventID = ? AND (r.Status = 'Attending' OR r.Status = 'Cancelled')`,
-      [eventId]
+       WHERE r.EventID = ?
+         AND r.Status IN ('Attending', 'Cancelled')
+         AND r.UserID IN (${placeholders})`,
+      [eventId, ...friendIds]
     );
 
     const rsvps = rsvpRows as any[];
 
-    // get carpools for the event
+    // get carpools created or joined by user or friends
     const [carpoolRows] = await pool.query(
-      `SELECT 
+      `SELECT DISTINCT
          c.CarpoolID,
          c.EventID,
          c.HostUserID,
-         u.Name AS HostName
+         u.Name AS HostName,
+         c.AvailableSeats
        FROM Carpools c
        JOIN Users u ON u.UserID = c.HostUserID
-       WHERE c.EventID = ?`,
-      [eventId]
+       LEFT JOIN CarpoolParticipants cp ON cp.CarpoolID = c.CarpoolID
+       WHERE c.EventID = ?
+         AND (
+           c.HostUserID IN (${placeholders})
+           OR cp.UserID IN (${placeholders})
+         )`,
+      [eventId, ...friendIds, ...friendIds]
     );
 
     const carpools = carpoolRows as any[];
 
     // get carpool participants
     const [participantRows] = await pool.query(
-        `SELECT 
+      `SELECT 
            cp.CarpoolID,
            u.UserID,
            u.Name AS UserName
@@ -83,18 +123,19 @@ export const getFullEventData = async (req: Request, res: Response): Promise<Res
          WHERE cp.CarpoolID IN (
            SELECT CarpoolID FROM Carpools WHERE EventID = ?
          )`,
-        [eventId]
-      );
-  
-      const participants = participantRows as any[];
-  
-      // attach participants to each carpool
-      for (const carpool of carpools) {
-        carpool.participants = participants.filter(p => p.CarpoolID === carpool.CarpoolID);
-      }
+      [eventId]
+    );
+
+    const participants = participantRows as any[];
+
+    // attach participants to each carpool
+    for (const carpool of carpools) {
+      carpool.participants = participants.filter(p => p.CarpoolID === carpool.CarpoolID);
+    }
 
     return res.status(200).json({
       event,
+      host: hostInfo,
       rsvps,
       carpools
     });
