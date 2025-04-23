@@ -43,6 +43,26 @@ export const getFullEventData = async (req: Request, res: Response): Promise<Res
 
     const event = eventResult[0];
 
+    // if private, check if user is friends with hpst
+    if (!event.IsPublic && Number(userId) !== event.HostUserID) {
+      const [friendCheck] = await pool.query(
+        `SELECT 1 FROM Friends
+         WHERE Status = 'Accepted'
+         AND (
+           (User1ID = ? AND User2ID = ?)
+           OR
+           (User1ID = ? AND User2ID = ?)
+         )`,
+        [userId, event.HostUserID, event.HostUserID, userId]
+      );
+
+      if ((friendCheck as any[]).length === 0) {
+        return res.status(403).json({
+          status: "fail",
+          message: "This is a private event. You must be friends with the host."
+        });
+      }
+    }
     // get host user info
     let hostInfo = null;
     if (event.HostUserID) {
