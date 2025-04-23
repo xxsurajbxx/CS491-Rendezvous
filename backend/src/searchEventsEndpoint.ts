@@ -22,7 +22,8 @@ export const searchEvents = async (req: Request, res: Response): Promise<Respons
         m.Longitude
        FROM Events e
        LEFT JOIN Map m ON e.EventID = m.EventID
-       WHERE e.HostUserID IS NOT NULL`
+       WHERE e.HostUserID IS NOT NULL
+       AND e.endDateTime > NOW()`
     );
 
     const events = raw as any[]; // telling typescript to treat it as a normal array of objects
