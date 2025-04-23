@@ -22,8 +22,9 @@ router.get("/search", async (req, res) => {
   });
 
 // full event data
-router.get("/:eventId/full", async (req, res) => {
+router.get("/full/:eventId/:userId", async (req, res) => {
     await getFullEventData(req, res);
-});
+  });
+  
   
 export default router;
