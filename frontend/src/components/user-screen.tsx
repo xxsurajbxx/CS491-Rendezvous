@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { CalendarIcon, Users, Clock, MapPin, Mail, Info } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { getTokenPayload } from "../../utils/auth"
 
 interface User {
   UserID: number
@@ -107,6 +108,10 @@ export default function UserScreen({ id }: { id: number }) {
   async function sendFriendRequest() {
     if (!userId || !id) return
     try {
+      const token = await getTokenPayload();
+      if (!token) throw new Error("Error occurred while getting jwt token");
+      if (!token.isVerified) throw new Error("User cannot add friend because user is not verified");
+
       await fetch("http://localhost:8080/api/friends/add", {
         method: "POST",
         headers: {
