@@ -17,8 +17,9 @@ import { getTokenPayload } from "../../../../utils/auth";
 import { EventCardData } from "../types";
 
 
-export const EventCard: React.FC<EventCardData> = ({EventID, Name, Description, Location, startDateTime, people, isOpen}) => {
+export const EventCard: React.FC<EventCardData> = ({EventID, Name, Description, Location, startDateTime, people, attending, isOpen}) => {
   const [open, setOpen] = useState(false);
+  const [attendingStatus, setAttendingStatus] = useState<boolean>(attending);
 
   const infoBtnEventHandle = () => {
     if (open === false){
@@ -39,6 +40,8 @@ export const EventCard: React.FC<EventCardData> = ({EventID, Name, Description, 
   const handleEventRsvp = async () => {
     try {
       const token = await getTokenPayload();
+      if (!token) throw new Error('Failed to retrieve token from cookies.');
+
       const response = await fetch(`http://localhost:8080/api/rsvp/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -47,8 +50,7 @@ export const EventCard: React.FC<EventCardData> = ({EventID, Name, Description, 
           eventId: EventID
         })
       });
-      if (!token) throw new Error('Failed to retrieve token from cookies.')
-      // if (!response.ok) throw new Error('Failed to post event rsvp request.');
+      if (!response.ok) throw new Error('Failed to post event rsvp request.');
 
       const result = await response.json();
       if (response.status === 409) {
@@ -56,6 +58,7 @@ export const EventCard: React.FC<EventCardData> = ({EventID, Name, Description, 
       } else if (response.status === 201) {
         alert(result.message)
       }
+      setAttendingStatus(true);
     } catch (error) {
       console.error('Error rsvping for event.', error);
     }
@@ -87,8 +90,21 @@ export const EventCard: React.FC<EventCardData> = ({EventID, Name, Description, 
                 ))}
               </div>
             )}
-            
-            <Button onClick={handleEventRsvp} className="self-center w-1/2 font-semibold bg-purple-900">RSVP</Button>
+            {attendingStatus === true ? (
+              <Button
+                disabled
+                className="self-center w-1/2 font-semibold bg-gray-400 cursor-not-allowed"
+              >
+                Cancel
+              </Button>
+            ) : (
+              <Button
+                onClick={handleEventRsvp}
+                className="self-center w-1/2 font-semibold bg-purple-900 hover:bg-purple-800"
+              >
+                RSVP
+              </Button>
+            )}
           </AccordionContent>
           <AccordionTrigger onClick={infoBtnEventHandle}><h3>{isOpen('event-card-'+EventID) ? "Hide Info" : "More Info"}</h3></AccordionTrigger>
         </AccordionItem>

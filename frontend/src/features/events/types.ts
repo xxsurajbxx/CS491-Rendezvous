@@ -7,7 +7,8 @@ export interface EventData {
     Location: string,
     Latitude?: number,
     Longitude?: number,
-    people?: string[]
+    people?: string[],
+    attending: boolean,
 }
 
 export interface EventCardData {
@@ -18,6 +19,7 @@ export interface EventCardData {
     Description: string
     Location: string,
     people?: string[],
+    attending: boolean,
     isOpen(eventCardId: string): boolean
 }
 
