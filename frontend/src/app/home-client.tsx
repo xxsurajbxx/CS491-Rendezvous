@@ -5,7 +5,7 @@ import dynamic from "next/dynamic"
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
 import { EventSideBar } from "@/features/events/components/event-sidebar"
 import { EventData, EventCardData, LeafletMarker } from "@/features/events/types"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { getTokenPayload } from "../../utils/auth"
 import { RsvpData } from "@/features/friends/types"
 
@@ -105,23 +105,22 @@ export default function HomeClient({ address }: HomeClientProps) {
     }
   }
 
-  const getEventCardsData = () => {
-    const eventCardsData: EventCardData[] = []
-    eventsData?.forEach(event => {
-      eventCardsData.push({
-        EventID: event.EventID,
-        Name: event.Name,
-        startDateTime: event.startDateTime,
-        endDateTime: event.endDateTime,
-        Description: event.Description,
-        Location: event.Location,
-        people: event.people,
-        attending: event.attending,
-        isOpen: isOpen
-      })
-    })
+  const getEventCardsData = useCallback(() => {
+    if (!eventsData) return;
+
+    const eventCardsData: EventCardData[] = eventsData.map(event => ({
+      EventID: event.EventID,
+      Name: event.Name,
+      startDateTime: event.startDateTime,
+      endDateTime: event.endDateTime,
+      Description: event.Description,
+      Location: event.Location,
+      people: event.people,
+      attending: event.attending,
+      isOpen: (eventCardId: string) => openEventCards.includes(eventCardId),
+    }));
     setEventCards(eventCardsData);
-  }
+  }, [eventsData, openEventCards])
 
   const getLeafletMarkersData = (): LeafletMarker[] | undefined => {
     const leafletMarkersData: LeafletMarker[] = []
@@ -170,13 +169,15 @@ export default function HomeClient({ address }: HomeClientProps) {
   }
 
   useEffect(() => {
+    
     getAllEventsData();
     getCoordinatesFromAddress(address, setCoordinates);
   }, [address]);  
 
   useEffect(() => {
+    
     getEventCardsData();
-  }, [eventsData])
+  }, [getEventCardsData])
 
   return (
     <div>
