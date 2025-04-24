@@ -5,7 +5,9 @@ import dynamic from "next/dynamic"
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
 import { EventSideBar } from "@/features/events/components/event-sidebar"
 import { EventData, EventCardData, LeafletMarker } from "@/features/events/types"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
+import { getTokenPayload } from "../../utils/auth"
+import { RsvpData } from "@/features/friends/types"
 
 interface HomeClientProps {
   address: string;
@@ -44,6 +46,7 @@ export default function HomeClient({ address }: HomeClientProps) {
     lon: -74.006,
   });
   const [eventsData, setEventsData] = useState<EventData[] | undefined>(undefined);
+  const [eventCards, setEventCards] = useState<EventCardData[] | undefined>(undefined);
   const [openEventCards, setOpenEventCards] = useState<string[]>([]);
 
   const isOpen = (eventCardId: string): boolean => {
@@ -62,36 +65,62 @@ export default function HomeClient({ address }: HomeClientProps) {
   
   const getAllEventsData = async () => {
     try {
-      const response = await fetch('http://localhost:8080/api/events/user-events', {
+      // getting jwt token
+      const token = await getTokenPayload();
+      if (!token) throw new Error("Error occurred while fetching jwt token.");
+
+      // fetching all events
+      let response = await fetch('http://localhost:8080/api/events/user-events', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
-      if (!response.ok) throw new Error('Bad Request. Try Again.')
+      if (!response.ok) throw new Error('Error occurred while fetching all event data. Try Again.')
 
-      const result = await response.json();
-      setEventsData(result.events)
-      console.log(result.events)
+      let result = await response.json();
+      const events = result.events;
+      // console.log(events);
+
+      // fetching events that user RSVP'ed to
+      response = await fetch(`http://localhost:8080/api/rsvp?userId=${token.userId}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      })
+      if (!response.ok) throw new Error("Error occurred while fetching rsvp data.");
+
+      result = await response.json();
+      const rsvps = result.data;
+      // console.log(rsvps);
+
+      // setting attending status based on if the eventId is in the list of rsvp's
+      const rsvpEventIds = rsvps.map((r: RsvpData) => r.EventID); // array of unique rsvp event id's
+      
+      events.forEach((event: EventData) => {
+        event.attending = rsvpEventIds.includes(event.EventID) ? true : false
+      });
+      setEventsData(events)
+      console.log(events)
+
     } catch (error) {
       console.error('Fetch error:', error)
     }
   }
 
-  const getEventCardsData = (): EventCardData[] | undefined => {
-    const eventCardsData: EventCardData[] = []
-    eventsData?.forEach(event => {
-      eventCardsData.push({
-        EventID: event.EventID,
-        Name: event.Name,
-        startDateTime: event.startDateTime,
-        endDateTime: event.endDateTime,
-        Description: event.Description,
-        Location: event.Location,
-        people: event.people,
-        isOpen: isOpen
-      })
-    })
-    return eventCardsData.length > 0 ? eventCardsData : undefined;
-  }
+  const getEventCardsData = useCallback(() => {
+    if (!eventsData) return;
+
+    const eventCardsData: EventCardData[] = eventsData.map(event => ({
+      EventID: event.EventID,
+      Name: event.Name,
+      startDateTime: event.startDateTime,
+      endDateTime: event.endDateTime,
+      Description: event.Description,
+      Location: event.Location,
+      people: event.people,
+      attending: event.attending,
+      isOpen: (eventCardId: string) => openEventCards.includes(eventCardId),
+    }));
+    setEventCards(eventCardsData);
+  }, [eventsData, openEventCards])
 
   const getLeafletMarkersData = (): LeafletMarker[] | undefined => {
     const leafletMarkersData: LeafletMarker[] = []
@@ -140,9 +169,15 @@ export default function HomeClient({ address }: HomeClientProps) {
   }
 
   useEffect(() => {
+    
     getAllEventsData();
     getCoordinatesFromAddress(address, setCoordinates);
   }, [address]);  
+
+  useEffect(() => {
+    
+    getEventCardsData();
+  }, [getEventCardsData])
 
   return (
     <div>
@@ -151,7 +186,7 @@ export default function HomeClient({ address }: HomeClientProps) {
       </header>
       <SidebarProvider>
         <EventSideBar
-          events={getEventCardsData()}
+          events={eventCards}
           openEventCards={openEventCards}
           setOpenEventCards={setOpenEventCards}
           isOpen={isOpen}
@@ -170,93 +205,3 @@ export default function HomeClient({ address }: HomeClientProps) {
     </div>
   )
 }
-
-// const temporaryEventData: EventCardData[] = [
-//   {
-//     EventID: 1,
-//     Name: 'Newark Museum of Art',
-//     Description: "Art event happening at museum. Lots of art sculptures.",
-//     location: "51 Park Pl, Newark, NJ 07102",
-//     startDateTime: new Date("April 9, 1995 03:24:00"),
-//     endTime: new Date("April 9, 1995 03:24:00"),
-//     people: [
-//       "Danny Arco",
-//       "Chad Vincento",
-//       "Minny Palabi",
-//       "Marc Hamilton",
-//     ]
-//   },
-//   {
-//     EventID: 2,
-//     Name: 'Branch Brook Park Cherry Blossom Festival',
-//     Description: "Lots of cherry blossom trees. good for picnics.",
-//     location: "Park Avenue, Lake St, Newark, NJ 07104",
-//     startDateTime: new Date("April 9, 1995 03:24:00"),
-//     endTime: new Date("April 9, 1995 03:24:00"),
-//     people: [
-//       "Danny Arco",
-//       "Chad Vincento",
-//       "Minny Palabi",
-//       "Marc Hamilton",
-//     ]
-//   },
-//   {
-//     EventID: 3,
-//     Name: 'Prudential Live',
-//     Description: "Cool event happening at Prudential. Bunch of bands playing here.",
-//     location: "25 Lafayette St, Newark, NJ 07102",
-//     startDateTime: new Date("April 9, 1995 03:24:00"),
-//     endTime: new Date("April 9, 1995 03:24:00"),
-//     people: [
-//       "Danny Arco",
-//       "Chad Vincento",
-//       "Minny Palabi",
-//       "Marc Hamilton",
-//     ]
-//   },
-//   {
-//     EventID: 4,
-//     Name: 'NJIT Freshman Info Session',
-//     Description: "Information session for incoming freshman.",
-//     location: "323 Dr Martin Luther King Jr Blvd, Newark, NJ 07102",
-//     startDateTime: new Date("April 9, 1995 03:24:00"),
-//     endTime: new Date("April 9, 1995 03:24:00"),
-//     people: [
-//       "Danny Arco",
-//       "Chad Vincento",
-//       "Minny Palabi",
-//       "Marc Hamilton",
-//     ]
-//   },
-// ]
-
-// const temporaryLeafletMarkers = [
-//   {
-//     EventID: 1,
-//     Name: 'Newark Museum of Art',
-//     Description: "Art event happening at museum. Lots of art sculptures.",
-//     Latitude: 40.742651,
-//     Longitude: -74.171779
-//   },
-//   {
-//     EventID: 2,
-//     Name: 'Branch Brook Park Cherry Blossom Festival',
-//     Description: "Lots of cherry blossom trees. good for picnics.",
-//     Latitude: 40.7797,
-//     Longitude: -74.1748,
-//   },
-//   {
-//     EventID: 3,
-//     Name: 'Prudential Live',
-//     Description: "Cool event happening at Prudential. Bunch of bands playing here.",
-//     Latitude: 40.7335,
-//     Longitude: -74.1711,
-//   },
-//   {
-//     EventID: 4,
-//     Name: 'NJIT Freshman Info Session',
-//     Description: "Information session for incoming freshman.",
-//     Latitude: 40.7424,
-//     Longitude: -74.1784,
-//   },
-// ]
