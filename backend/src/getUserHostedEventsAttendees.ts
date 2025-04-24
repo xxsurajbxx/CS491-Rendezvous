@@ -19,12 +19,17 @@ export const getUserEventAttendees = async (req: Request, res: Response): Promis
           e.startDateTime,
           e.endDateTime,
           r.RSVP_ID,
-          r.Status AS RSVPStatus,
           r.Timestamp AS RSVPTimestamp,
           u.UserID,
           u.Name AS UserName,
           u.Username,
-          u.Email
+          u.Email,
+          CASE
+            WHEN NOW() < e.startDateTime THEN 'Upcoming'
+            WHEN NOW() BETWEEN e.startDateTime AND e.endDateTime THEN 'Ongoing'
+            WHEN NOW() > e.endDateTime THEN 'Over'
+            ELSE 'Unknown'
+          END AS RSVPStatus
        FROM Events e
        JOIN RSVP r ON e.EventID = r.EventID
        JOIN Users u ON r.UserID = u.UserID

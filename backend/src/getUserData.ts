@@ -27,7 +27,6 @@ export const getUserData = async (req: Request, res: Response): Promise<void> =>
         e.startDateTime,
         e.endDateTime,
         e.IsPublic,
-        r.Status AS RSVPStatus,
         r.Timestamp AS RSVPTimestamp,
         CASE
           WHEN NOW() < e.startDateTime THEN 'Upcoming'

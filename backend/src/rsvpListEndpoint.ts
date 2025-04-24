@@ -9,29 +9,26 @@ export const listRSVPs = async (req: Request, res: Response) => {
   }
 
   try {
-    // mark rsvps as 'Over' if the event has already happened
-    await pool.query(`
-      UPDATE RSVP r
-      JOIN Events e ON r.EventID = e.EventID
-      SET r.Status = 'Over'
-      WHERE e.startDateTime < NOW() AND r.Status = 'Attending'
-    `);
-
     // query for attendees
     let query = `
       SELECT 
         r.RSVP_ID,
-        r.Status,
         u.UserID,
         u.Name AS UserName,
         e.EventID,
         e.Name AS EventName,
         e.startDateTime AS EventDate,
-        r.Timestamp AS RSVPTimestamp
+        r.Timestamp AS RSVPTimestamp,
+        CASE
+          WHEN NOW() < e.startDateTime THEN 'Upcoming'
+          WHEN NOW() BETWEEN e.startDateTime AND e.endDateTime THEN 'Ongoing'
+          WHEN NOW() > e.endDateTime THEN 'Over'
+          ELSE 'Unknown'
+        END AS RSVPStatus
       FROM RSVP r
       JOIN Users u ON r.UserID = u.UserID
       JOIN Events e ON r.EventID = e.EventID
-      WHERE (r.Status = 'Attending' OR r.Status = 'Cancelled')
+      WHERE 1 = 1
     `;
 
     const params: any[] = [];

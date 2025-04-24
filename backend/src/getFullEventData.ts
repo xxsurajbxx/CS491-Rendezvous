@@ -98,14 +98,20 @@ export const getFullEventData = async (req: Request, res: Response): Promise<Res
     const [rsvpRows] = await pool.query(
       `SELECT 
          r.RSVP_ID,
-         r.Status,
          u.UserID,
-         u.Name AS UserName
-       FROM RSVP r
-       JOIN Users u ON r.UserID = u.UserID
-       WHERE r.EventID = ?
-         AND r.Status IN ('Attending', 'Cancelled')
-         AND r.UserID IN (${placeholders})`,
+         u.Name AS UserName,
+         r.Timestamp AS RSVPTimestamp,
+        CASE
+            WHEN NOW() < e.startDateTime THEN 'Upcoming'
+            WHEN NOW() BETWEEN e.startDateTime AND e.endDateTime THEN 'Ongoing'
+            WHEN NOW() > e.endDateTime THEN 'Over'
+            ELSE 'Unknown'
+          END AS EventState
+        FROM RSVP r
+        JOIN Users u ON r.UserID = u.UserID
+        JOIN Events e ON r.EventID = e.EventID
+        WHERE r.EventID = ?
+     AND r.UserID IN (${placeholders})`,
       [eventId, ...friendIds]
     );
 

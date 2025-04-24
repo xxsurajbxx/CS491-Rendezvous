@@ -16,7 +16,14 @@ export const getFriendsAttending = async (req: Request, res: Response) => {
         u.UserID,
         u.Name,
         u.Username,
-        u.Email
+        u.Email,
+        r.Timestamp AS RSVPTimestamp,
+        CASE
+          WHEN NOW() < e.startDateTime THEN 'Upcoming'
+          WHEN NOW() BETWEEN e.startDateTime AND e.endDateTime THEN 'Ongoing'
+          WHEN NOW() > e.endDateTime THEN 'Over'
+          ELSE 'Unknown'
+        END AS RSVPStatus
       FROM Events e
       JOIN RSVP r ON e.EventID = r.EventID
       JOIN Users u ON r.UserID = u.UserID
@@ -26,7 +33,6 @@ export const getFriendsAttending = async (req: Request, res: Response) => {
           (f.User2ID = ? AND f.User1ID = u.UserID)
       )
       WHERE e.EventID = ?
-        AND r.Status = 'Attending'
         AND f.Status = 'Accepted'
     `;
 
