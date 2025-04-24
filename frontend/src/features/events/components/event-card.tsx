@@ -64,6 +64,31 @@ export const EventCard: React.FC<EventCardData> = ({EventID, Name, Description, 
     }
   }
 
+  const handleCancelRsvp = async () => {
+    try {
+      const token = await getTokenPayload();
+      if (!token) throw new Error('Failed to retrieve token from cookies.');
+
+      const response = await fetch(`http://localhost:8080/api/rsvp/`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: token?.userId,
+          eventId: EventID
+        })
+      });
+      if (!response.ok) throw new Error('Failed to cancel RSVP.');
+
+      const result = await response.json();
+      if (response.status === 200) {
+        alert(result.message);
+        setAttendingStatus(false);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return(
     <Card id={'event-card-'+EventID}>
       <CardHeader>
@@ -92,8 +117,8 @@ export const EventCard: React.FC<EventCardData> = ({EventID, Name, Description, 
             )}
             {attendingStatus === true ? (
               <Button
-                disabled
-                className="self-center w-1/2 font-semibold bg-gray-400 cursor-not-allowed"
+              onClick={handleCancelRsvp}
+                className="self-center w-1/2 font-semibold bg-gray-700"
               >
                 Cancel
               </Button>
