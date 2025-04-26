@@ -7,6 +7,7 @@ import rsvpRoutes from "./rsvpRoutes";
 import carpoolRoutes from "./carpoolRoutes";
 import userDataRoutes from "./userDataRoutes";
 import emailRoutes from "./emailRoutes";
+import transportRoutes from "./transportRoutes"
 import { pool } from "./db"; // ensure pool creation is handled in ./db
 import cors from "cors";
 
@@ -54,6 +55,7 @@ app.use("/api/rsvp", rsvpRoutes);
 app.use("/api/carpool", carpoolRoutes);
 app.use("/api", userDataRoutes);
 app.use("/api/verify", emailRoutes);
+app.use("/api/transport", transportRoutes);
 
 // root route to check if server is running
 app.get("/", (req, res) => {
