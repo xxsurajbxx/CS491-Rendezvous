@@ -3,6 +3,7 @@ import { createEvent } from "./createEventsEndpoint";
 import { getUserEventData } from "./getUserEventDataEndpoint";
 import { searchEvents } from "./searchEventsEndpoint";
 import { getFullEventData } from "./getFullEventData";
+import { scrapeTicketmasterEvents } from "./fetchTicketmasterEvents";
 
 
 const router = express.Router();
@@ -25,6 +26,10 @@ router.get("/search", async (req, res) => {
 router.get("/full/:eventId/:userId", async (req, res) => {
     await getFullEventData(req, res);
   });
-  
+
+  // admin scrape Ticketmaster events
+router.post("/scrape-ticketmaster", async (req, res) => {
+  await scrapeTicketmasterEvents(req, res);
+});
   
 export default router;
