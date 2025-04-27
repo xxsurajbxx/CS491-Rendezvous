@@ -34,6 +34,8 @@ import {
   LogOut,
   Trash2,
   Lock,
+  Ticket,
+  ExternalLink,
 } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
@@ -53,6 +55,7 @@ interface Event {
   Description: string | null
   IsPublic: number // 1 or 0
   HostUserID: number
+  TicketmasterLink: string | null
   Latitude: string
   Longitude: string
   EventState: string
@@ -475,11 +478,25 @@ export const EventScreen = ({ id }: { id: number }) => {
                   <User className="h-5 w-5 mr-2 text-purple-600" />
                   <span>
                     Hosted by:{" "}
-                    <a href={`/users/${host.UserID}`} className="text-purple-600 hover:underline">
+                    <Link href={`/users/${host.UserID}`} className="text-purple-600 hover:underline">
                       {host.Name}
-                    </a>
+                    </Link>
                   </span>
                 </div>
+                {event.TicketmasterLink && (
+                  <div className="flex items-center text-gray-600">
+                    <Ticket className="h-5 w-5 mr-2 text-purple-600" />
+                    <a
+                      href={event.TicketmasterLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-purple-600 hover:underline flex items-center"
+                    >
+                      Buy tickets on Ticketmaster
+                      <ExternalLink className="h-3.5 w-3.5 ml-1" />
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
 
