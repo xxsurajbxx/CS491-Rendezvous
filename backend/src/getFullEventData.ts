@@ -124,6 +124,7 @@ export const getFullEventData = async (req: Request, res: Response): Promise<Res
          c.EventID,
          c.HostUserID,
          u.Name AS HostName,
+         c.MaxSeats,
          c.AvailableSeats,
          c.Notes AS Description
        FROM Carpools c

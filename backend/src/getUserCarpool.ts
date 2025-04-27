@@ -29,10 +29,30 @@ export const getUserCarpool = async (req: Request, res: Response): Promise<Respo
       [userId, eventId]
     );
 
-    // if theyre in a carpool, return its details; otherwise null
-    const carpool = Array.isArray(rows) && rows.length > 0
-      ? (rows as any[])[0]
-      : null;
+      const userCarpools = rows as any[];
+      if (userCarpools.length === 0) {
+          return res.json({ status: "success", carpool: null });
+      }
+
+      const carpool = userCarpools[0];
+
+      // load participants for that carpool
+      const [memberRows] = await pool.query(
+          `SELECT
+         cp.CarpoolID,
+         u.UserID,
+         u.Name AS UserName
+       FROM CarpoolParticipants cp
+       JOIN Users u ON u.UserID = cp.UserID
+       WHERE cp.CarpoolID = ?`,
+          [carpool.CarpoolID]
+      );
+
+      carpool.participants = (memberRows as any[]).map(r => ({
+          CarpoolID: carpool.CarpoolID,
+          UserID: r.UserID,
+          UserName: r.UserName
+      }));
 
     return res.json({ status: "success", carpool });
   } catch (err) {
