@@ -5,6 +5,7 @@ import { Card, CardDescription, CardHeader, CardTitle, CardFooter } from "@/comp
 import { Button } from "@/components/ui/button";
 
 import Image from "next/image";
+import { getTokenPayload } from "../../../../utils/auth";
 
 interface RequestsWindowProps {
   userId: number; // UserID passed from parent
@@ -72,6 +73,10 @@ export const RequestsWindow= ({ userId, friendRequests, updateFriendRequests, up
   const handleRequest = async (action: "accept" | "reject", friendId: number) => {
     console.log(friendId);
     try {
+      const token = await getTokenPayload();
+      if (!token) throw new Error("Error occurred while getting jwt token");
+      if (!token.isVerified) throw new Error("User cannot add friend because user is not verified")
+
       const response = await fetch(`http://localhost:8080/api/friends/respond/${friendId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

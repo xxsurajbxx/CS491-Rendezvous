@@ -162,6 +162,10 @@ export const EventForm = () => {
     }
 
     try {
+      const token = await getTokenPayload();
+      if (!token) throw new Error("Error occured while fetching the jwt token");
+      if (!token.isVerified) throw new Error("User cannot create event becuase they are not verified")
+
       const response = await fetch('http://localhost:8080/api/events/', {
         method: "POST",
         headers: {
