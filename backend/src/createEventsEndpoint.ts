@@ -37,7 +37,7 @@ export const createEvent = async (req: Request, res: Response): Promise<Response
 
           // auto RSVP for host
           await pool.query(
-            `INSERT INTO RSVP (UserID, EventID, Status) VALUES (?, ?, 'Attending')`,
+            `INSERT INTO RSVP (UserID, EventID) VALUES (?, ?)`,
             [hostUserID, eventID]
         );
 
