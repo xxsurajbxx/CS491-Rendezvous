@@ -11,7 +11,7 @@ export default async function EventPage() {
         return (
             <div>
                 <NavigationBar />
-                <EventScreen />
+                <EventScreen id={token.userId}/>
             </div>
         )
     }

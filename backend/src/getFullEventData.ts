@@ -21,6 +21,7 @@ export const getFullEventData = async (req: Request, res: Response): Promise<Res
          e.Description, 
          e.IsPublic,
          e.HostUserID,
+         e.TicketmasterLink,
          m.Latitude, 
          m.Longitude,
          CASE
