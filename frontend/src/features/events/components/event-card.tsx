@@ -15,7 +15,7 @@ import {
 import dayjs from "dayjs";
 import { getTokenPayload } from "../../../../utils/auth";
 import { EventCardData } from "../types";
-
+import { toast } from "sonner";
 
 export const EventCard: React.FC<EventCardData> = ({EventID, Name, Description, Location, startDateTime, people, attending, isOpen}) => {
   const [open, setOpen] = useState(false);
@@ -53,14 +53,12 @@ export const EventCard: React.FC<EventCardData> = ({EventID, Name, Description, 
       if (!response.ok) throw new Error('Failed to post event rsvp request.');
 
       const result = await response.json();
-      if (response.status === 409) {
-        alert(result.message)
-      } else if (response.status === 201) {
-        alert(result.message)
-      }
       setAttendingStatus(true);
+      toast.success("Successfully RSVP'd for event.", );
     } catch (error) {
       console.error('Error rsvping for event.', error);
+      toast.error("Failed to RSVP for event.");
+
     }
   }
 
@@ -69,23 +67,20 @@ export const EventCard: React.FC<EventCardData> = ({EventID, Name, Description, 
       const token = await getTokenPayload();
       if (!token) throw new Error('Failed to retrieve token from cookies.');
 
-      const response = await fetch(`http://localhost:8080/api/rsvp/`, {
+      const response = await fetch(`http://localhost:8080/api/rsvp/${token.userId}/${EventID}`, {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: token?.userId,
-          eventId: EventID
-        })
       });
       if (!response.ok) throw new Error('Failed to cancel RSVP.');
 
       const result = await response.json();
       if (response.status === 200) {
-        alert(result.message);
+        //alert(result.message);
         setAttendingStatus(false);
+        toast.success("Successfully UnRSVP'd from event.")
       }
     } catch (error) {
       console.error(error);
+      toast.error("Failed to UnRSVP from event.");
     }
   }
 
