@@ -55,10 +55,10 @@ interface Event {
   Description: string | null
   IsPublic: number // 1 or 0
   HostUserID: number
-  TicketmasterLink: string | null
   Latitude: string
   Longitude: string
   EventState: string
+  TicketmasterLink: string | null
 }
 
 interface Host {
@@ -410,7 +410,7 @@ export const EventScreen = ({ id }: { id: number }) => {
           <Lock className="h-16 w-16 mx-auto text-purple-600 mb-4" />
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h2>
           <p className="text-gray-600 mb-6">
-            You don&apos;t have permission to view this event. This event might be private and only visible to the host and
+            You don't have permission to view this event. This event might be private and only visible to the host and
             their friends.
           </p>
           <Button asChild className="bg-purple-600 hover:bg-purple-700">
@@ -426,7 +426,7 @@ export const EventScreen = ({ id }: { id: number }) => {
       <div className="flex justify-center items-center min-h-[60vh]">
         <Alert variant="destructive" className="max-w-md">
           <AlertCircle className="h-4 w-4" />
-          <AlertDescription>Event not found or you don&apos;t have permission to view it.</AlertDescription>
+          <AlertDescription>Event not found or you don't have permission to view it.</AlertDescription>
         </Alert>
       </div>
     )
@@ -457,7 +457,7 @@ export const EventScreen = ({ id }: { id: number }) => {
                   {event.IsPublic === 1 ? "Public" : "Private"}
                 </Badge>
                 {isEventHost && (
-                  <Badge className="ml-2 bg-blue-100 text-blue-800 hover:bg-blue-100">You&apos;re the host</Badge>
+                  <Badge className="ml-2 bg-blue-100 text-blue-800 hover:bg-blue-100">You're the host</Badge>
                 )}
               </div>
 
@@ -502,22 +502,17 @@ export const EventScreen = ({ id }: { id: number }) => {
 
             <div className="mt-6 md:mt-0">
               {!rsvpStatus ? (
-                <Button onClick={rsvpToEvent} className="bg-purple-600 hover:bg-purple-700">
+                <Button onClick={rsvpToEvent} className="bg-purple-600 hover:bg-purple-700 mt-10">
                   RSVP to Event
                 </Button>
               ) : (
-                <div className="space-y-3">
-                  <Badge className="bg-green-100 text-green-800 hover:bg-green-100 px-3 py-1 text-sm">
-                    You&apos;re attending
-                  </Badge>
-                  <Button
-                    onClick={unrsvpFromEvent}
-                    variant="outline"
-                    className="border-red-300 text-red-600 hover:bg-red-50 w-full"
-                  >
-                    Cancel RSVP
-                  </Button>
-                </div>
+                <Button
+                  onClick={unrsvpFromEvent}
+                  variant="outline"
+                  className="border-red-300 text-red-600 hover:bg-red-50 mt-10"
+                >
+                  Cancel RSVP
+                </Button>
               )}
             </div>
           </div>
@@ -541,7 +536,7 @@ export const EventScreen = ({ id }: { id: number }) => {
             </TabsTrigger>
             <TabsTrigger value="attendees" className="text-base">
               <Users className="h-4 w-4 mr-2" />
-              Friends Attending ({rsvps.length})
+              Friends Attending ({rsvps.filter((rsvp) => rsvp.UserID !== id).length})
             </TabsTrigger>
           </TabsList>
 
@@ -646,7 +641,7 @@ export const EventScreen = ({ id }: { id: number }) => {
                     ) : (
                       <div className="text-center py-8 bg-gray-50 rounded-lg border border-dashed border-gray-300">
                         <Car className="h-10 w-10 mx-auto text-gray-400" />
-                        <h4 className="mt-2 text-base font-medium text-gray-900">You&apos;re not in a carpool yet</h4>
+                        <h4 className="mt-2 text-base font-medium text-gray-900">You're not in a carpool yet</h4>
                         <p className="mt-1 text-sm text-gray-500">Join an existing carpool below or create your own.</p>
                         <Dialog open={isCreateCarpoolOpen} onOpenChange={setIsCreateCarpoolOpen}>
                           <DialogTrigger asChild>
@@ -767,11 +762,11 @@ export const EventScreen = ({ id }: { id: number }) => {
 
           {/* Attendees Tab */}
           <TabsContent value="attendees">
-            {rsvps.length === 0 ? (
+            {rsvps.filter((rsvp) => rsvp.UserID !== id).length === 0 ? (
               <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
                 <Users className="h-12 w-12 mx-auto text-gray-400" />
                 <h3 className="mt-4 text-lg font-medium text-gray-900">No Friends Attending Yet</h3>
-                <p className="mt-2 text-sm text-gray-500">None of your friends have RSVP&apos;d to this event yet.</p>
+                <p className="mt-2 text-sm text-gray-500">None of your friends have RSVP'd to this event yet.</p>
                 {!rsvpStatus && (
                   <Button onClick={rsvpToEvent} className="mt-4 bg-purple-600 hover:bg-purple-700">
                     RSVP to Event
@@ -781,32 +776,34 @@ export const EventScreen = ({ id }: { id: number }) => {
             ) : (
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 <div className="px-6 py-5">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Friends Attending ({rsvps.length})</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Friends Attending ({rsvps.filter((rsvp) => rsvp.UserID !== id).length})</h3>
                   <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
-                    {rsvps.map((rsvp) => (
-                      <Link
-                        href={`/users/${rsvp.UserID}`}
-                        key={rsvp.RSVP_ID}
-                        className="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50 hover:border-purple-300 transition-all"
-                      >
-                        <Avatar className="h-10 w-10 mr-3">
-                          <AvatarFallback className="bg-purple-100 text-purple-800">
-                            {rsvp.UserName.charAt(0)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="font-medium text-gray-900 group-hover:text-purple-700">{rsvp.UserName}</p>
-                          <p className="text-xs text-gray-500">
-                            RSVP&apos;d{" "}
-                            {new Date(rsvp.RSVPTimestamp).toLocaleString(undefined, {
-                              month: "short",
-                              day: "numeric",
-                              year: "numeric",
-                            })}
-                          </p>
-                        </div>
-                      </Link>
-                    ))}
+                    {rsvps
+                      .filter((rsvp) => rsvp.UserID !== id) // Filter out the current user
+                      .map((rsvp) => (
+                        <Link
+                          href={`/users/${rsvp.UserID}`}
+                          key={rsvp.RSVP_ID}
+                          className="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50 hover:border-purple-300 transition-all"
+                        >
+                          <Avatar className="h-10 w-10 mr-3">
+                            <AvatarFallback className="bg-purple-100 text-purple-800">
+                              {rsvp.UserName.charAt(0)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="font-medium text-gray-900 group-hover:text-purple-700">{rsvp.UserName}</p>
+                            <p className="text-xs text-gray-500">
+                              RSVP'd{" "}
+                              {new Date(rsvp.RSVPTimestamp).toLocaleString(undefined, {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              })}
+                            </p>
+                          </div>
+                        </Link>
+                      ))}
                   </div>
                 </div>
               </div>
