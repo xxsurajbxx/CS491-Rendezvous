@@ -51,8 +51,6 @@ export const EventCard: React.FC<EventCardData> = ({EventID, Name, Description, 
         })
       });
       if (!response.ok) throw new Error('Failed to post event rsvp request.');
-
-      const result = await response.json();
       setAttendingStatus(true);
       toast.success("Successfully RSVP'd for event.", );
     } catch (error) {
@@ -72,7 +70,6 @@ export const EventCard: React.FC<EventCardData> = ({EventID, Name, Description, 
       });
       if (!response.ok) throw new Error('Failed to cancel RSVP.');
 
-      const result = await response.json();
       if (response.status === 200) {
         //alert(result.message);
         setAttendingStatus(false);
