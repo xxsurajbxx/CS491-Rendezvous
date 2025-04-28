@@ -38,8 +38,10 @@ import {
   Lock,
   Ticket,
   ExternalLink,
+  FootprintsIcon as Walking,
 } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Skeleton } from "@/components/ui/skeleton"
 
 interface FullDataResponse {
   event: Event
@@ -97,6 +99,18 @@ interface CarpoolParticipant {
   UserName: string
 }
 
+interface TransitTypeInfo {
+  distanceMeters: number | null //if the distance is null, don't bother displaying it since the api couldnt get the info
+  distanceMiles: string
+  durationMinutes: string
+}
+
+interface TransitAPIResponse {
+    status: string
+    driving: TransitTypeInfo
+    walking: TransitTypeInfo
+}
+
 export const EventScreen = ({ id }: { id: number }) => {
   const { eventId } = useParams<{ eventId: string }>()
   const [event, setEvent] = useState<Event | null>(null)
@@ -113,6 +127,72 @@ export const EventScreen = ({ id }: { id: number }) => {
   const [hasAccess, setHasAccess] = useState<boolean>(false)
   const [accessChecked, setAccessChecked] = useState<boolean>(false)
   const [seatsError, setSeatsError] = useState<string | null>(null)
+  const [drivingKilometers, setDrivingKilometers] = useState<number | null>(null);
+  const [walkingKilometers, setWalkingKilometers] = useState<number | null>(null);
+  const [drivingMiles, setDrivingMiles] = useState<string>("0.00");
+  const [walkingMiles, setWalkingMiles] = useState<string>("0.00");
+  const [drivingMinutes, setDrivingMinutes] = useState<string>("0.00");
+  const [walkingMinutes, setWalkingMinutes] = useState<string>("0.00");
+  const [transitError, setTransitError] = useState<boolean>(false)
+  const [isLoadingTransit, setIsLoadingTransit] = useState<boolean>(false)
+
+  async function getTransitInfo() {
+    try {
+      setIsLoadingTransit(true)
+      setTransitError(false)
+
+      const response = await fetch("http://localhost:8080/api/transport/getTravelInfo", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: id,
+          eventId: eventId,
+        }),
+      })
+
+      if (!response.ok) throw new Error("Failed to get transit info")
+
+      const json: {
+        status: string
+        driving: {
+          distanceMeters: number | null
+          distanceMiles: string
+          durationMinutes: string
+        }
+        walking: {
+          distanceMeters: number | null
+          distanceMiles: string
+          durationMinutes: string
+        }
+      } = await response.json()
+
+      setDrivingMiles(json.driving.distanceMiles)
+      setWalkingMiles(json.walking.distanceMiles)
+      setDrivingMinutes(json.driving.durationMinutes)
+      setWalkingMinutes(json.walking.durationMinutes)
+
+      // Check if we got valid data
+      if (
+        (json.driving.distanceMeters === null && json.walking.distanceMeters === null) ||
+        (json.driving.distanceMiles === "0.00" && json.walking.distanceMiles === "0.00") ||
+        (json.driving.durationMinutes === "0.00" && json.walking.durationMinutes === "0.00")
+      ) {
+        setTransitError(true)
+      }
+      if(json.driving.distanceMeters !== null && json.walking.distanceMeters != null){
+        setDrivingKilometers(Math.floor((json.driving.distanceMeters / 1000) * 100) / 100);
+        setWalkingKilometers(Math.floor((json.walking.distanceMeters / 1000) * 100) / 100);
+
+      }
+    } catch (error) {
+      console.log(error)
+      setTransitError(true)
+    } finally {
+      setIsLoadingTransit(false)
+    }
+  }
 
   // Check if the user has access to view this event
   async function checkEventAccess() {
@@ -182,6 +262,7 @@ export const EventScreen = ({ id }: { id: number }) => {
     checkEventAccess()
     getRSVP()
     getCarpool()
+    getTransitInfo();
   }, [id, eventId])
 
   // Function to determine if the user has rsvp'ed or not
@@ -575,6 +656,80 @@ export const EventScreen = ({ id }: { id: number }) => {
               <p className="text-gray-600 whitespace-pre-line">{event.Description}</p>
             </div>
           )}
+
+                    {/* Transit Information Section */}
+                    {isLoadingTransit ? (
+            <div className="mt-6 pt-6 border-t border-gray-200">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Transit Information</h3>
+              <div className="space-y-4">
+                <Skeleton className="h-16 w-full rounded-md" />
+                <Skeleton className="h-16 w-full rounded-md" />
+              </div>
+            </div>
+          ) : transitError ? (
+            <div className="mt-6 pt-6 border-t border-gray-200">
+              <h3 className="text-lg font-medium text-gray-900 mb-2">Transit Information</h3>
+              <div className="p-4 bg-gray-50 rounded-lg border border-gray-200 text-center">
+                <p className="text-gray-600">We couldn&apos;t find transit information for this event.</p>
+                <p className="text-sm text-gray-500 mt-1">This may be because the location is not accessible by land or your address is not set.</p>
+              </div>
+            </div>
+          ) : (
+            <>
+              {/* Only show transit section if we have valid data */}
+              {((drivingKilometers !== null && drivingMiles !== "0.00" && drivingMinutes !== "0.00") ||
+                (walkingKilometers !== null && walkingMiles !== "0.00" && walkingMinutes !== "0.00")) && (
+                <div className="mt-6 pt-6 border-t border-gray-200">
+                  <h3 className="text-lg font-medium text-gray-900 mb-4">Transit Information</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Driving Info */}
+                    {drivingKilometers !== null && drivingMiles !== "0.00" && drivingMinutes !== "0.00" && (
+                      <div className="bg-purple-50 rounded-lg p-4 border border-purple-100">
+                        <div className="flex items-center mb-2">
+                          <Car className="h-5 w-5 mr-2 text-purple-600" />
+                          <h4 className="font-medium text-purple-800">Driving</h4>
+                        </div>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex items-center text-gray-700">
+                            <span className="font-medium mr-2">Distance:</span>
+                            <span>{drivingMiles} miles ({drivingKilometers} km)</span>
+                          </div>
+                          <div className="flex items-center text-gray-700">
+                            <Clock className="h-4 w-4 mr-1 text-purple-600" />
+                            <span className="font-medium mr-2">Duration:</span>
+                            <span>{drivingMinutes} minutes</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Walking Info */}
+                    {walkingKilometers !== null && walkingMiles !== "0.00" && walkingMinutes !== "0.00" && (
+                      <div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
+                        <div className="flex items-center mb-2">
+                          <Walking className="h-5 w-5 mr-2 text-blue-600" />
+                          <h4 className="font-medium text-blue-800">Walking</h4>
+                        </div>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex items-center text-gray-700">
+                            <span className="font-medium mr-2">Distance:</span>
+                            <span>{walkingMiles} miles ({walkingKilometers} km)</span>
+                          </div>
+                          <div className="flex items-center text-gray-700">
+                            <Clock className="h-4 w-4 mr-1 text-blue-600" />
+                            <span className="font-medium mr-2">Duration:</span>
+                            <span>{walkingMinutes} minutes</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+
+
         </div>
       </div>
 
