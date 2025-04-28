@@ -99,18 +99,6 @@ interface CarpoolParticipant {
   UserName: string
 }
 
-interface TransitTypeInfo {
-  distanceMeters: number | null //if the distance is null, don't bother displaying it since the api couldnt get the info
-  distanceMiles: string
-  durationMinutes: string
-}
-
-interface TransitAPIResponse {
-    status: string
-    driving: TransitTypeInfo
-    walking: TransitTypeInfo
-}
-
 export const EventScreen = ({ id }: { id: number }) => {
   const { eventId } = useParams<{ eventId: string }>()
   const [event, setEvent] = useState<Event | null>(null)
