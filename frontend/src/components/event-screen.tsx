@@ -1,5 +1,7 @@
 "use client"
 
+import type React from "react"
+
 import { useParams } from "next/navigation"
 import Link from "next/link"
 import { useEffect, useState } from "react"
@@ -55,10 +57,10 @@ interface Event {
   Description: string | null
   IsPublic: number // 1 or 0
   HostUserID: number
-  TicketmasterLink: string | null
   Latitude: string
   Longitude: string
   EventState: string
+  TicketmasterLink: string | null
 }
 
 interface Host {
@@ -110,6 +112,7 @@ export const EventScreen = ({ id }: { id: number }) => {
   const [isCreateCarpoolOpen, setIsCreateCarpoolOpen] = useState<boolean>(false)
   const [hasAccess, setHasAccess] = useState<boolean>(false)
   const [accessChecked, setAccessChecked] = useState<boolean>(false)
+  const [seatsError, setSeatsError] = useState<string | null>(null)
 
   // Check if the user has access to view this event
   async function checkEventAccess() {
@@ -250,10 +253,59 @@ export const EventScreen = ({ id }: { id: number }) => {
     }
   }
 
+  // Function to validate seats input
+  const validateSeats = (value: string | number): boolean => {
+    // Clear previous error
+    setSeatsError(null)
+
+    // Convert to number if it's a string
+    const numValue = typeof value === "string" ? Number.parseInt(value, 10) : value
+
+    // Check if it's a valid number
+    if (isNaN(numValue)) {
+      setSeatsError("Please enter a valid number")
+      return false
+    }
+
+    // Check if it's within range
+    if (numValue < 1) {
+      setSeatsError("Seats must be at least 1")
+      return false
+    }
+
+    if (numValue > 10) {
+      setSeatsError("Maximum 10 seats allowed")
+      return false
+    }
+
+    return true
+  }
+
+  // Function to handle seats input change
+  const handleSeatsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+
+    // Allow empty input during typing, but validate if there's a value
+    if (value === "") {
+      setCarpoolSeats(0)
+      setSeatsError("Seats are required")
+    } else {
+      const numValue = Number.parseInt(value, 10)
+      setCarpoolSeats(numValue)
+      validateSeats(numValue)
+    }
+  }
+
   // Function to offer carpool
   async function makeCarpool() {
     try {
       if (!id || !eventId) return
+
+      // Validate seats before submission
+      if (!validateSeats(carpoolSeats)) {
+        return
+      }
+
       // Notes can be an empty string, this is fine
       const response = await fetch(`http://localhost:8080/api/carpool/offer`, {
         method: "POST",
@@ -410,8 +462,8 @@ export const EventScreen = ({ id }: { id: number }) => {
           <Lock className="h-16 w-16 mx-auto text-purple-600 mb-4" />
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Denied</h2>
           <p className="text-gray-600 mb-6">
-            You don&apos;t have permission to view this event. This event might be private and only visible to the host and
-            their friends.
+            You don&apos;t have permission to view this event. This event might be private and only visible to the host
+            and their friends.
           </p>
           <Button asChild className="bg-purple-600 hover:bg-purple-700">
             <Link href="/">Return to Home</Link>
@@ -502,22 +554,17 @@ export const EventScreen = ({ id }: { id: number }) => {
 
             <div className="mt-6 md:mt-0">
               {!rsvpStatus ? (
-                <Button onClick={rsvpToEvent} className="bg-purple-600 hover:bg-purple-700">
+                <Button onClick={rsvpToEvent} className="bg-purple-600 hover:bg-purple-700 mt-10">
                   RSVP to Event
                 </Button>
               ) : (
-                <div className="space-y-3">
-                  <Badge className="bg-green-100 text-green-800 hover:bg-green-100 px-3 py-1 text-sm">
-                    You&apos;re attending
-                  </Badge>
-                  <Button
-                    onClick={unrsvpFromEvent}
-                    variant="outline"
-                    className="border-red-300 text-red-600 hover:bg-red-50 w-full"
-                  >
-                    Cancel RSVP
-                  </Button>
-                </div>
+                <Button
+                  onClick={unrsvpFromEvent}
+                  variant="outline"
+                  className="border-red-300 text-red-600 hover:bg-red-50 mt-10"
+                >
+                  Cancel RSVP
+                </Button>
               )}
             </div>
           </div>
@@ -541,7 +588,7 @@ export const EventScreen = ({ id }: { id: number }) => {
             </TabsTrigger>
             <TabsTrigger value="attendees" className="text-base">
               <Users className="h-4 w-4 mr-2" />
-              Friends Attending ({rsvps.length})
+              Friends Attending ({rsvps.filter((rsvp) => rsvp.UserID !== id).length})
             </TabsTrigger>
           </TabsList>
 
@@ -665,17 +712,21 @@ export const EventScreen = ({ id }: { id: number }) => {
                             <div className="grid gap-4 py-4">
                               <div className="grid grid-cols-4 items-center gap-4">
                                 <Label htmlFor="seats" className="text-right">
-                                  Seats
+                                  Seats <span className="text-red-500">*</span>
                                 </Label>
-                                <Input
-                                  id="seats"
-                                  type="number"
-                                  min="1"
-                                  max="10"
-                                  value={carpoolSeats}
-                                  onChange={(e) => setCarpoolSeats(Number.parseInt(e.target.value))}
-                                  className="col-span-3"
-                                />
+                                <div className="col-span-3 space-y-1">
+                                  <Input
+                                    id="seats"
+                                    type="number"
+                                    min="1"
+                                    max="10"
+                                    value={carpoolSeats || ""}
+                                    onChange={handleSeatsChange}
+                                    className={seatsError ? "border-red-300" : ""}
+                                    required
+                                  />
+                                  {seatsError && <p className="text-xs text-red-500">{seatsError}</p>}
+                                </div>
                               </div>
                               <div className="grid grid-cols-4 items-center gap-4">
                                 <Label htmlFor="notes" className="text-right">
@@ -694,7 +745,11 @@ export const EventScreen = ({ id }: { id: number }) => {
                               <Button variant="outline" onClick={() => setIsCreateCarpoolOpen(false)}>
                                 Cancel
                               </Button>
-                              <Button onClick={makeCarpool} className="bg-purple-600 hover:bg-purple-700">
+                              <Button
+                                onClick={makeCarpool}
+                                className="bg-purple-600 hover:bg-purple-700"
+                                disabled={!carpoolSeats || carpoolSeats < 1 || !!seatsError}
+                              >
                                 Create Carpool
                               </Button>
                             </DialogFooter>
@@ -767,7 +822,7 @@ export const EventScreen = ({ id }: { id: number }) => {
 
           {/* Attendees Tab */}
           <TabsContent value="attendees">
-            {rsvps.length === 0 ? (
+            {rsvps.filter((rsvp) => rsvp.UserID !== id).length === 0 ? (
               <div className="text-center py-12 bg-white rounded-lg border border-gray-200">
                 <Users className="h-12 w-12 mx-auto text-gray-400" />
                 <h3 className="mt-4 text-lg font-medium text-gray-900">No Friends Attending Yet</h3>
@@ -781,32 +836,36 @@ export const EventScreen = ({ id }: { id: number }) => {
             ) : (
               <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 <div className="px-6 py-5">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Friends Attending ({rsvps.length})</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                    Friends Attending ({rsvps.filter((rsvp) => rsvp.UserID !== id).length})
+                  </h3>
                   <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
-                    {rsvps.map((rsvp) => (
-                      <Link
-                        href={`/users/${rsvp.UserID}`}
-                        key={rsvp.RSVP_ID}
-                        className="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50 hover:border-purple-300 transition-all"
-                      >
-                        <Avatar className="h-10 w-10 mr-3">
-                          <AvatarFallback className="bg-purple-100 text-purple-800">
-                            {rsvp.UserName.charAt(0)}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="font-medium text-gray-900 group-hover:text-purple-700">{rsvp.UserName}</p>
-                          <p className="text-xs text-gray-500">
-                            RSVP&apos;d{" "}
-                            {new Date(rsvp.RSVPTimestamp).toLocaleString(undefined, {
-                              month: "short",
-                              day: "numeric",
-                              year: "numeric",
-                            })}
-                          </p>
-                        </div>
-                      </Link>
-                    ))}
+                    {rsvps
+                      .filter((rsvp) => rsvp.UserID !== id) // Filter out the current user
+                      .map((rsvp) => (
+                        <Link
+                          href={`/users/${rsvp.UserID}`}
+                          key={rsvp.RSVP_ID}
+                          className="flex items-center p-3 rounded-lg border border-gray-200 hover:bg-gray-50 hover:border-purple-300 transition-all"
+                        >
+                          <Avatar className="h-10 w-10 mr-3">
+                            <AvatarFallback className="bg-purple-100 text-purple-800">
+                              {rsvp.UserName.charAt(0)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="font-medium text-gray-900 group-hover:text-purple-700">{rsvp.UserName}</p>
+                            <p className="text-xs text-gray-500">
+                              RSVP&apos;d{" "}
+                              {new Date(rsvp.RSVPTimestamp).toLocaleString(undefined, {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              })}
+                            </p>
+                          </div>
+                        </Link>
+                      ))}
                   </div>
                 </div>
               </div>
