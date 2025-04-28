@@ -21,6 +21,8 @@ import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { getTokenPayload } from "../../utils/auth"
+import { toast } from "sonner"
+import { useRouter } from "next/navigation"
 // import Image from 'next/image';
 
 // Replace the form schema definition with this updated version that includes all fields
@@ -58,6 +60,7 @@ export const EventForm = () => {
   const [coordinates, setCoordinates] = useState<{ lat: number | null; lon: number | null }>({ lat: null, lon: null })
   const [isLocationValid, setIsLocationValid] = useState(true)
   const [locationTouched, setLocationTouched] = useState(false)
+  const router = useRouter();
   // const [imagePreview, setImagePreview] = useState<string | null>(null)
 
   // Initialize the form
@@ -169,23 +172,25 @@ export const EventForm = () => {
         },
         body: JSON.stringify(formData),
       });
-      
-      // Reset form after successful submission
-      if (response.ok) {
-        alert("Form submitted successfully!");
-        form.reset();
-        setLocation("");
-        setCoordinates({ lat: null, lon: null });
-        setIsLocationValid(true);
-        setLocationTouched(false);
-        // setImagePreview(null);
-      } else {
-        console.log(response)
-        alert("Error submitting form!");
+
+      if(!response.ok){
+        throw new Error("Failed to create event.");
       }
+      const json = await response.json();
+
+      //alert("Form submitted successfully!");
+      toast.success("Successfully created event.");
+      router.push(`/events/${json.eventID}`);
+      /*
+      form.reset();
+      setLocation("");
+      setCoordinates({ lat: null, lon: null });
+      setIsLocationValid(true);
+      setLocationTouched(false);
+      */
     } catch (error) {
       console.error("Error submitting form:", error);
-      alert("An error occurred!");
+      toast.error("Failed to create event.");
     }
 
     // For demo purposes, just show a success message
