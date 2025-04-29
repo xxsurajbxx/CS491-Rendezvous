@@ -23,7 +23,7 @@ export const deleteEvent = async (req: Request, res: Response): Promise<Response
 
     // remove RSVPs
     await conn.query(
-      `DELETE FROM RSVPs WHERE EventID = ?`,
+      `DELETE FROM RSVP WHERE EventID = ?`,
       [eventId]
     );
 
