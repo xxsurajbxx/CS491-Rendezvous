@@ -145,7 +145,7 @@ export const EventCard: React.FC<EventCardData> = ({
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
                   <div className="h-3 w-3 bg-green-500 rounded-full mr-2"></div>
-                  <span className="text-sm font-medium text-green-700">You're attending</span>
+                  <span className="text-sm font-medium text-green-700">You&apos;re attending</span>
                 </div>
                 <Button
                   onClick={handleCancelRsvp}
