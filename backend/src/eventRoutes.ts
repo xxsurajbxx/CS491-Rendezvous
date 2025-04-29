@@ -4,6 +4,7 @@ import { getUserEventData } from "./getUserEventDataEndpoint";
 import { searchEvents } from "./searchEventsEndpoint";
 import { getFullEventData } from "./getFullEventData";
 import { scrapeTicketmasterEvents } from "./fetchTicketmasterEvents";
+import { deleteEvent } from "./deleteEvent";
 
 
 const router = express.Router();
@@ -30,6 +31,11 @@ router.get("/full/:eventId/:userId", async (req, res) => {
   // admin scrape Ticketmaster events
 router.post("/scrape-ticketmaster", async (req, res) => {
   await scrapeTicketmasterEvents(req, res);
+});
+
+  // delete event
+router.delete("/:eventId/:userId", async (req, res) => {
+  await deleteEvent(req, res);
 });
   
 export default router;
