@@ -26,7 +26,7 @@ export const sendVerificationCode = async (req: Request, res: Response) => {
 
   try {
     await pool.query(
-      `INSERT INTO EmailVerifications (UserID, Code, ExpiresAt) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 15 MINUTE))`,
+      `INSERT INTO EmailVerifications (UserID, Code, ExpiresAt) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 1 DAY))`,
       [userId, code]
     );
 

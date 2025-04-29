@@ -35,6 +35,7 @@ export const findFriendCarpool = async (req: Request, res: Response) => {
            c.HostUserID,
            u.Name AS HostName,
            c.AvailableSeats,
+           c.Notes as Description,
            fMatch.UserID AS FriendUserID,
            fMatch.Name AS FriendName
          FROM Carpools c

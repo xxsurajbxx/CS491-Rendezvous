@@ -21,6 +21,7 @@ export const getFullEventData = async (req: Request, res: Response): Promise<Res
          e.Description, 
          e.IsPublic,
          e.HostUserID,
+         e.TicketmasterLink,
          m.Latitude, 
          m.Longitude,
          CASE
@@ -124,7 +125,9 @@ export const getFullEventData = async (req: Request, res: Response): Promise<Res
          c.EventID,
          c.HostUserID,
          u.Name AS HostName,
-         c.AvailableSeats
+         c.MaxSeats,
+         c.AvailableSeats,
+         c.Notes AS Description
        FROM Carpools c
        JOIN Users u ON u.UserID = c.HostUserID
        LEFT JOIN CarpoolParticipants cp ON cp.CarpoolID = c.CarpoolID

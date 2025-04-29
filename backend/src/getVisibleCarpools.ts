@@ -1,5 +1,3 @@
-// src/getVisibleCarpools.ts
-
 import { Request, Response } from "express";
 import { pool } from "./db";
 
@@ -32,7 +30,7 @@ export const getVisibleCarpools = async (req: Request, res: Response) => {
 
     const placeholders = friendIds.map(() => '?').join(',');
     const [carpools] = await pool.query(
-      `SELECT DISTINCT c.CarpoolID, c.EventID, c.HostUserID, u.Name AS HostName
+      `SELECT DISTINCT c.CarpoolID, c.EventID, c.HostUserID, u.Name AS HostName, c.Notes AS Description
        FROM Carpools c
        JOIN Users u ON u.UserID = c.HostUserID
        LEFT JOIN CarpoolParticipants cp ON c.CarpoolID = cp.CarpoolID

@@ -35,6 +35,12 @@ export const offerCarpool = async (req: Request, res: Response): Promise<void> =
       [carpoolId, userId]
     );
 
+    // automatically RSVP the host for the event
+    await pool.query(
+      `INSERT IGNORE INTO RSVP (UserID, EventID) VALUES (?, ?)`,
+      [userId, eventId]
+    );
+
     res.status(201).json({ status: "success", message: "Carpool offer created" });
   } catch (error) {
     console.error("Error offering carpool:", error);

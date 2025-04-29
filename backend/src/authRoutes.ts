@@ -42,7 +42,7 @@ router.post("/signup", async (req: Request<{}, {}, SignupRequestBody>, res: Resp
     const { firstName, lastName, username, email, password, address } = req.body;
 
     if (!firstName || !lastName || !username || !email || !password || !address) {
-        res.status(400).json({ status: "fail", message: "Missing name, email, or password" });
+        res.status(400).json({ status: "fail", message: "Missing a field" });
         return;
     }
 

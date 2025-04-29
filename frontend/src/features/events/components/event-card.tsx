@@ -15,10 +15,11 @@ import {
 import dayjs from "dayjs";
 import { getTokenPayload } from "../../../../utils/auth";
 import { EventCardData } from "../types";
+import { toast } from "sonner";
 
-
-export const EventCard: React.FC<EventCardData> = ({EventID, Name, Description, Location, startDateTime, people, isOpen}) => {
+export const EventCard: React.FC<EventCardData> = ({EventID, Name, Description, Location, startDateTime, people, attending, isOpen}) => {
   const [open, setOpen] = useState(false);
+  const [attendingStatus, setAttendingStatus] = useState<boolean>(attending);
 
   const infoBtnEventHandle = () => {
     if (open === false){
@@ -39,6 +40,8 @@ export const EventCard: React.FC<EventCardData> = ({EventID, Name, Description, 
   const handleEventRsvp = async () => {
     try {
       const token = await getTokenPayload();
+      if (!token) throw new Error('Failed to retrieve token from cookies.');
+
       const response = await fetch(`http://localhost:8080/api/rsvp/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -47,17 +50,34 @@ export const EventCard: React.FC<EventCardData> = ({EventID, Name, Description, 
           eventId: EventID
         })
       });
-      if (!token) throw new Error('Failed to retrieve token from cookies.')
-      // if (!response.ok) throw new Error('Failed to post event rsvp request.');
-
-      const result = await response.json();
-      if (response.status === 409) {
-        alert(result.message)
-      } else if (response.status === 201) {
-        alert(result.message)
-      }
+      if (!response.ok) throw new Error('Failed to post event rsvp request.');
+      setAttendingStatus(true);
+      toast.success("Successfully RSVP'd for event.", );
     } catch (error) {
       console.error('Error rsvping for event.', error);
+      toast.error("Failed to RSVP for event.");
+
+    }
+  }
+
+  const handleCancelRsvp = async () => {
+    try {
+      const token = await getTokenPayload();
+      if (!token) throw new Error('Failed to retrieve token from cookies.');
+
+      const response = await fetch(`http://localhost:8080/api/rsvp/${token.userId}/${EventID}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('Failed to cancel RSVP.');
+
+      if (response.status === 200) {
+        //alert(result.message);
+        setAttendingStatus(false);
+        toast.success("Successfully UnRSVP'd from event.")
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to UnRSVP from event.");
     }
   }
 
@@ -87,8 +107,21 @@ export const EventCard: React.FC<EventCardData> = ({EventID, Name, Description, 
                 ))}
               </div>
             )}
-            
-            <Button onClick={handleEventRsvp} className="self-center w-1/2 font-semibold bg-purple-900">RSVP</Button>
+            {attendingStatus === true ? (
+              <Button
+              onClick={handleCancelRsvp}
+                className="self-center w-1/2 font-semibold bg-gray-700"
+              >
+                Cancel
+              </Button>
+            ) : (
+              <Button
+                onClick={handleEventRsvp}
+                className="self-center w-1/2 font-semibold bg-purple-900 hover:bg-purple-800"
+              >
+                RSVP
+              </Button>
+            )}
           </AccordionContent>
           <AccordionTrigger onClick={infoBtnEventHandle}><h3>{isOpen('event-card-'+EventID) ? "Hide Info" : "More Info"}</h3></AccordionTrigger>
         </AccordionItem>

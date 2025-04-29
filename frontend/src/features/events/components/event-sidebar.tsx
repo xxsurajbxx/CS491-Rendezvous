@@ -34,6 +34,7 @@ export const EventSideBar = ({ events, openEventCards, setOpenEventCards, isOpen
                     startDateTime={event.startDateTime}
                     endDateTime={event.endDateTime}
                     people={event.people}
+                    attending={event.attending}
                     isOpen={isOpen}
                   />
                 ))}
