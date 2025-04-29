@@ -7,6 +7,8 @@ import { deleteFriend } from "./deleteFriendEndpoint";
 import { countIncomingFriendRequests } from "./incomingFriendRequests";
 import { getFriendRequestStatus } from "./getFriendRequestStatus";
 import { getFriendsAttending } from "./getFriendsAttending";
+import { searchUsers } from "./searchUsers";
+
 const router = express.Router();
 
 // add friend
@@ -48,5 +50,10 @@ router.get("/status", async (req, res) => {
 router.get("/attending", async (req, res) => {
     await getFriendsAttending(req, res);
 });
+
+// search for users
+router.get("/search", async (req, res) => {
+    await searchUsers(req, res);
+  });
 
 export default router;
