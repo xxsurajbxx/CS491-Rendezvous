@@ -8,6 +8,7 @@ import { EventData, EventCardData, LeafletMarker } from "@/features/events/types
 import { useCallback, useEffect, useState } from "react"
 import { RsvpData } from "@/features/friends/types"
 import { VerifyPopup } from "@/features/verify/VerifyPopup"
+import { getTokenPayload } from "../../utils/auth"
 
 interface HomeClientProps {
   id: number;
@@ -215,9 +216,9 @@ export default function HomeClient({ id, address }: HomeClientProps) {
         console.error("No jwt token retrieved.");
         return;
       }
-      console.log(token)
+      // console.log(token)
   
-      if (!token.isVerified) {
+      if (!token.verified) {
         setShowPopup(true);
         console.log("User is not verified");
       }
