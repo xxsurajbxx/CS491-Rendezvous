@@ -3,11 +3,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 // import { setTokenCookie } from "../../../../utils/auth";
 import { getTokenPayload } from "../../../../utils/auth";
 //import { useAuthActions } from "@convex-dev/auth/react";
 import { GeoapifyGeocoderAutocomplete, GeoapifyContext } from "@geoapify/react-geocoder-autocomplete";
+import { toast } from "sonner";
 
 type SelectedPlace = {
     geometry?: {
@@ -18,8 +20,19 @@ type SelectedPlace = {
     };
   };
 
+interface CurrentUserData {
+    firstName?: string,
+    lastName?: string,
+    Address?: string,
+    Description?: string,
+    Email?: string,
+    UserID?: number,
+    Username?: string
+}
+
 
 export const EditProfileForm = () => {
+    const [currentUserData, setCurrentUserData] = useState<CurrentUserData>();
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [username, setUsername] = useState("");
@@ -29,10 +42,7 @@ export const EditProfileForm = () => {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [address, setAddress] = useState("");
     const [description, setDescription] = useState("");
-    // const [error, setError] = useState("");
-
-    // const [isLocationValid, setIsLocationValid] = useState(true)
-    // const [locationTouched, setLocationTouched] = useState(false)
+    const router = useRouter();
 
     // Handle location input
     const handleInputChange = (input: string) => {
@@ -54,11 +64,11 @@ export const EditProfileForm = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if(password !== confirmPassword){
-            // setError("Passwords do not match");
+            toast.error("Passwords do not match");
             return;
         }
         if(password !== "" && password.length < 8){
-            // setError("Password must have at least 8 characters");
+            toast.error("Password must have at least 8 characters");
             return;
         }
 
@@ -66,6 +76,7 @@ export const EditProfileForm = () => {
             // retrieve token from cookies to get userId
             const token = await getTokenPayload();
             if (!token) throw new Error('Failed to retrieve token from cookies.');
+            // console.log(`${firstName} ${lastName}`);
 
             const response = await fetch(`http://localhost:8080/api/update-profile/${token?.userId}`, {
                 method: "PUT",
@@ -73,7 +84,8 @@ export const EditProfileForm = () => {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    name: `${firstName} ${lastName}`,
+                    firstName: firstName,
+                    lastName: lastName,
                     username: username,
                     address: address,
                     description: description,
@@ -85,12 +97,46 @@ export const EditProfileForm = () => {
             if(data.status === "fail" || !response.ok){
                 throw new Error(data.message);
             }
-            console.log(data)
+            // console.log(data)
+            toast.success("Profile information updated.")
+            router.push(`/users/${token.userId}`)
         }
         catch (error) {
             console.log('Error occurred while editing profile information.', error)
         }
     }
+
+    useEffect(() => {
+        const getUserData = async () => {
+            try {
+                // retrieve token from cookies to get userId
+                const token = await getTokenPayload();
+                if (!token) throw new Error('Failed to retrieve token from cookies.');
+
+                const response = await fetch(`http://localhost:8080/api/user/${token?.userId}/data`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                });
+                const result = await response.json();
+                if(result.status === "fail" || !response.ok){
+                    throw new Error(result.message);
+                }
+                // console.log(result.data.user);
+                const fullName = result.data.user.Name;
+                const [firstName, lastName] = fullName.split(" ");
+                // console.log(firstName, lastName);
+
+                if (result.data.user) setCurrentUserData({...result.data.user, firstName: firstName, lastName: lastName});
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        getUserData();
+        console.log(currentUserData);
+    }, [])
     
     return (
         <Card className="w-full h-full p-8">
@@ -106,11 +152,11 @@ export const EditProfileForm = () => {
                 <GeoapifyContext apiKey={process.env.NEXT_PUBLIC_GEOAPIFY_KEY}>
                     <form onSubmit={handleSubmit} className="space-y-2.5">
                         <div className="grid grid-cols-2 gap-2.5">
-                            <Input value={firstName} onChange={(e) => {setFirstName(e.target.value)}} placeholder="New first name" />
-                            <Input value={lastName} onChange={(e) => {setLastName(e.target.value)}} placeholder="New last name" />
+                            <Input value={firstName} onChange={(e) => {setFirstName(e.target.value)}} placeholder={currentUserData?.firstName} />
+                            <Input value={lastName} onChange={(e) => {setLastName(e.target.value)}} placeholder={currentUserData?.lastName} />
                         </div>
-                        <Input value={username} onChange={(e) => {setUsername(e.target.value)}} placeholder="New username" type="text" />
-                        <Input value={email} onChange={(e) => {setEmail(e.target.value)}} placeholder="New email" type="email" />
+                        <Input value={username} onChange={(e) => {setUsername(e.target.value)}} placeholder={currentUserData?.Username} type="text" />
+                        <Input value={email} onChange={(e) => {setEmail(e.target.value)}} placeholder={currentUserData?.Email} type="email" />
                         <Input value={currentPassword} onChange={(e) => {setCurrentPassword(e.target.value)}} placeholder="Current password" type="password" />
                         <Input value={password} onChange={(e) => {setPassword(e.target.value)}} placeholder="New password" type="password" />
                         <Input value={confirmPassword} onChange={(e) => {setConfirmPassword(e.target.value)}} placeholder="Confirm new password" type="password" />
@@ -118,7 +164,7 @@ export const EditProfileForm = () => {
                         <div className="space-y-2 relative">
                             <div className="geocoder-container w-full relative">
                                 <GeoapifyGeocoderAutocomplete
-                                    placeholder="Enter address here"
+                                    placeholder={currentUserData?.Address}
                                     lang="en"
                                     value={address}
                                     limit={5}
@@ -127,7 +173,7 @@ export const EditProfileForm = () => {
                                 />
                             </div>
                         </div>
-                        <Textarea value={description} onChange={(e) => {setDescription(e.target.value)}} placeholder="Write a new about me description." className="min-h-[120px]" />
+                        <Textarea value={description} onChange={(e) => {setDescription(e.target.value)}} placeholder={currentUserData?.Description} className="min-h-[120px]" />
                         <Button type="submit" className="w-full" size="lg" disabled={false}>
                             Submit
                         </Button>
