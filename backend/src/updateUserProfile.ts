@@ -8,7 +8,6 @@ const JWT_SECRET = process.env.JWT_SECRET as string;
 export const updateUserProfile = async (req: Request, res: Response): Promise<void> => {
   const { userId } = req.params;
   const { username, address, description, currentPassword, newPassword, firstName, lastName } = req.body;
-  const { username, address, description, currentPassword, newPassword, firstName, lastName } = req.body;
 
   if (!userId) {
     res.status(400).json({ status: "fail", message: "Missing userId" });
