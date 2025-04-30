@@ -22,20 +22,23 @@ export const getFriendsRsvps = async (req: Request, res: Response): Promise<Resp
           AND (User1ID = ? OR User2ID = ?)
       )
       SELECT
-        r.*
+        e.EventID,
+        e.Name AS EventName,
+        e.StartDateTime,
+        e.EndDateTime,
+        e.Location,
+        e.Description,
+        u.Name AS FriendName,
+        u.Email AS FriendEmail
       FROM RSVP r
-      JOIN Events e
-        ON r.EventID = e.EventID
+      JOIN Events e ON r.EventID = e.EventID
+      JOIN Users u ON r.UserID = u.UserID
       WHERE
-        -- RSVPs made by one of your friends
         r.UserID IN (SELECT friendId FROM FriendList)
-        AND
-        (
-          -- to a public event
+        AND (
           e.IsPublic = TRUE
-          OR
-          -- OR to a private event whose host is also your friend
-          ( e.IsPublic = FALSE
+          OR (
+            e.IsPublic = FALSE
             AND e.HostUserID IN (SELECT friendId FROM FriendList)
           )
         );
