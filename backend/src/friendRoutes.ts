@@ -8,6 +8,7 @@ import { countIncomingFriendRequests } from "./incomingFriendRequests";
 import { getFriendRequestStatus } from "./getFriendRequestStatus";
 import { getFriendsAttending } from "./getFriendsAttending";
 import { searchUsers } from "./searchUsers";
+import { recommendFriends } from "./friendRecommendations";
 
 const router = express.Router();
 
@@ -54,6 +55,11 @@ router.get("/attending", async (req, res) => {
 // search for users
 router.get("/search", async (req, res) => {
     await searchUsers(req, res);
+  });
+
+// friend recommendations. events/recommendations/{userid}
+router.get("/recommendations/:userId", async (req, res) => {
+    await recommendFriends(req, res);
   });
 
 export default router;
