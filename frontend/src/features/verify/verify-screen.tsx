@@ -1,13 +1,12 @@
 "use client"
 
 import { useRef, useState } from "react";
-import { getTokenPayload } from "../../../utils/auth";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 interface VerifyScreenProps {
-  userId: Number,
+  userId: number,
   email: string,
 }
 
@@ -15,7 +14,6 @@ export const VerifyScreen = ({  userId, email }: VerifyScreenProps) => {
   const [digits, setDigits] = useState(Array(6).fill(""));
   const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
   const router = useRouter();
-  const [popupIsOpen, setPopupIsOpen] = useState<boolean>(false);
 
   const handleChange = (index: number, value: string) => {
     // exit the function if user inputs anything other than digits 0-9
@@ -139,7 +137,7 @@ export const VerifyScreen = ({  userId, email }: VerifyScreenProps) => {
           onClick={resendVerificationCode}
           className="mt-4 text-sm text-blue-600 hover:underline"
         >
-          Didn't receive a code?
+          Didn&apos;t receive a code?
         </button>
       </div>
     </div>

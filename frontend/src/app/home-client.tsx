@@ -51,7 +51,7 @@ export default function HomeClient({ address }: HomeClientProps) {
   const [openEventCards, setOpenEventCards] = useState<string[]>([]);
 
   // verify user account variable
-  const [showPopup, setShowPopup] = useState<boolean>(true);
+  const [showPopup, setShowPopup] = useState<boolean>(false);
 
   const isOpen = (eventCardId: string): boolean => {
     return openEventCards.includes(eventCardId)
@@ -192,15 +192,16 @@ export default function HomeClient({ address }: HomeClientProps) {
         console.error("No jwt token retrieved.");
         return;
       }
+      console.log(token)
   
-      if (!token.isVerified && showPopup) {
+      if (!token.isVerified) {
         setShowPopup(true);
         console.log("User is not verified");
       }
     };
 
     checkUserVerification();
-  })
+  }, [])
 
   return (
     <div>
@@ -225,6 +226,8 @@ export default function HomeClient({ address }: HomeClientProps) {
           </main>
         </SidebarInset>
       </SidebarProvider>
+
+      {/* Verification popup window */}
       {showPopup && <VerifyPopup setShowPopup={setShowPopup} />}
     </div>
   )
