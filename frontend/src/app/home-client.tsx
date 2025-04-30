@@ -8,6 +8,7 @@ import { EventData, EventCardData, LeafletMarker } from "@/features/events/types
 import { useCallback, useEffect, useState } from "react"
 import { getTokenPayload } from "../../utils/auth"
 import { RsvpData } from "@/features/friends/types"
+import { VerifyPopup } from "@/features/verify/VerifyPopup"
 
 interface HomeClientProps {
   address: string;
@@ -48,6 +49,9 @@ export default function HomeClient({ address }: HomeClientProps) {
   const [eventsData, setEventsData] = useState<EventData[] | undefined>(undefined);
   const [eventCards, setEventCards] = useState<EventCardData[] | undefined>(undefined);
   const [openEventCards, setOpenEventCards] = useState<string[]>([]);
+
+  // verify user account variable
+  const [showPopup, setShowPopup] = useState<boolean>(true);
 
   const isOpen = (eventCardId: string): boolean => {
     return openEventCards.includes(eventCardId)
@@ -179,6 +183,25 @@ export default function HomeClient({ address }: HomeClientProps) {
     getEventCardsData();
   }, [getEventCardsData])
 
+  // run for user verification popup window
+  useEffect(() => {
+
+    const checkUserVerification = async () => {
+      const token = await getTokenPayload();
+      if (!token) {
+        console.error("No jwt token retrieved.");
+        return;
+      }
+  
+      if (!token.isVerified && showPopup) {
+        setShowPopup(true);
+        console.log("User is not verified");
+      }
+    };
+
+    checkUserVerification();
+  })
+
   return (
     <div>
       <header>
@@ -202,6 +225,7 @@ export default function HomeClient({ address }: HomeClientProps) {
           </main>
         </SidebarInset>
       </SidebarProvider>
+      {showPopup && <VerifyPopup setShowPopup={setShowPopup} />}
     </div>
   )
 }

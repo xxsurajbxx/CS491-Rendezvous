@@ -7,7 +7,7 @@ import { useState } from "react";
 import { TriangleAlert } from "lucide-react";
 import { setTokenCookie, getTokenPayload } from "../../../../utils/auth";
 import { useRouter } from "next/navigation";
-import { GeoapifyGeocoderAutocomplete, GeoapifyContext } from "@geoapify/react-geocoder-autocomplete"
+import { GeoapifyGeocoderAutocomplete, GeoapifyContext } from "@geoapify/react-geocoder-autocomplete";
 //import { useAuthActions } from "@convex-dev/auth/react";
 
 interface SignUpCardProps {
@@ -61,6 +61,11 @@ export const SignUpCard = ({setState}: SignUpCardProps) => {
                     email: token.email,
                 }),
             });
+            const result = await response.json();
+
+            if (!response.ok || result.status === "fail") {
+                throw new Error("Error occurred while sending verification code.")
+            }
             
         } catch (error) {
             console.error(error);
@@ -123,6 +128,8 @@ export const SignUpCard = ({setState}: SignUpCardProps) => {
                     if (!cookieStatus) {
                         throw new Error("Something went wrong with logging in");
                     }
+                    
+                    sendVerificationCode();
                     router.replace("/");
                 }
                 catch (error) {
