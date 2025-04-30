@@ -5,7 +5,10 @@ export const getUserData = async (req: Request, res: Response): Promise<void> =>
   const { userId } = req.params;
 
   if (!userId) {
-    res.status(400).json({ status: "fail", message: "Missing userId" });
+    res.status(400).json({ 
+      status: "fail", 
+      message: "Missing userId" 
+    });
     return;
   }
 
@@ -19,14 +22,28 @@ export const getUserData = async (req: Request, res: Response): Promise<void> =>
 
     const user = userRows[0];
 
-    // getting RSVPd events
+    // get friend user IDs
+    const [friendIdRows] = await pool.query(
+      `SELECT 
+         CASE 
+           WHEN f.User1ID = ? THEN f.User2ID 
+           ELSE f.User1ID 
+         END AS FriendID
+       FROM Friends f
+       WHERE (f.User1ID = ? OR f.User2ID = ?) AND f.Status = 'Accepted'`,
+      [userId, userId, userId]
+    );
+
+    const friendIds = new Set((friendIdRows as any[]).map(row => row.FriendID));
+    friendIds.add(Number(userId)); // include the user themself
+
+    // getting RSVPd events where host is user/friend or event is public
     const [eventRows] = await pool.query(`
       SELECT 
         e.EventID,
         e.Name AS EventName,
         e.startDateTime,
         e.endDateTime,
-        e.IsPublic,
         r.Timestamp AS RSVPTimestamp,
         CASE
           WHEN NOW() < e.startDateTime THEN 'Upcoming'
@@ -35,9 +52,14 @@ export const getUserData = async (req: Request, res: Response): Promise<void> =>
           ELSE 'Unknown'
         END AS EventState
       FROM RSVP r
-      JOIN Events e ON r.EventID = e.EventID
-      WHERE r.UserID = ?
-    `, [userId]);
+       JOIN Events e ON r.EventID = e.EventID
+       WHERE r.UserID = ?
+         AND (
+           e.IsPublic = 1
+           OR e.HostUserID IN (${Array.from(friendIds).map(() => '?').join(',')})
+         )`,
+      [userId, ...Array.from(friendIds)]
+    );
 
     // getting friends
     const [friendRows] = await pool.query(`
