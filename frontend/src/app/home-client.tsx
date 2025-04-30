@@ -6,10 +6,10 @@ import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
 import { EventSideBar } from "@/features/events/components/event-sidebar"
 import { EventData, EventCardData, LeafletMarker } from "@/features/events/types"
 import { useCallback, useEffect, useState } from "react"
-import { getTokenPayload } from "../../utils/auth"
 import { RsvpData } from "@/features/friends/types"
 
 interface HomeClientProps {
+  id: number;
   address: string;
 }
 
@@ -40,7 +40,7 @@ const getCoordinatesFromAddress = async (
   }
 }
 
-export default function HomeClient({ address }: HomeClientProps) {
+export default function HomeClient({ id, address }: HomeClientProps) {
   const [coordinates, setCoordinates] = useState<{ lat: number; lon: number }>({
     lat: 40.7128,
     lon: -74.006,
@@ -65,12 +65,8 @@ export default function HomeClient({ address }: HomeClientProps) {
   
   const getAllEventsData = async () => {
     try {
-      // getting jwt token
-      const token = await getTokenPayload();
-      if (!token) throw new Error("Error occurred while fetching jwt token.");
-
       // fetching all events
-      let response = await fetch('http://localhost:8080/api/events/user-events', {
+      let response = await fetch(`http://localhost:8080/api/events/user-events/${id}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -81,7 +77,7 @@ export default function HomeClient({ address }: HomeClientProps) {
       // console.log(events);
 
       // fetching events that user RSVP'ed to
-      response = await fetch(`http://localhost:8080/api/rsvp?userId=${token.userId}`, {
+      response = await fetch(`http://localhost:8080/api/rsvp?userId=${id}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       })
@@ -114,6 +110,7 @@ export default function HomeClient({ address }: HomeClientProps) {
       startDateTime: event.startDateTime,
       endDateTime: event.endDateTime,
       Description: event.Description,
+      HostUserID: event.HostUserID,
       Location: event.Location,
       people: event.people,
       attending: event.attending,
@@ -140,28 +137,54 @@ export default function HomeClient({ address }: HomeClientProps) {
 
   // function for handling search results using search api endpoint
   const handleSearch = async (query: string) => {
+    console.log("Searching")
     // If query is empty, reload original data using the fetch function that gets all eventsData
     if (!query.trim()) {
       getAllEventsData();
       return;
     }
 
-    const url = `http://localhost:8080/api/events/search?query=${encodeURIComponent(query)}`
-
     try {
-      const response = await fetch(url, {
-        method: 'GET',
+      const response = await fetch(`http://localhost:8080/api/events/search`, {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query: query,
+          userId: id
+        })
       });
       const results = await response.json();
+      const events = results.data;
 
       if (!response.ok || results.status === "fail") throw new Error("Error occured while searching for events")
-      if (results.data.length > 0) {
+      if (events.length > 0) {
         setEventsData(results.data)
       } else {
         // search results returned no events based on given search query from user
         console.log("No event results matched the user's query.")
       }
+
+         // fetching events that user RSVP'ed to
+        const response2 = await fetch(`http://localhost:8080/api/rsvp?userId=${id}`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+        })
+        if (!response2.ok) throw new Error("Error occurred while fetching rsvp data.");
+  
+        const result = await response2.json();
+        const rsvps = result.data;
+        // console.log(rsvps);
+  
+        // setting attending status based on if the eventId is in the list of rsvp's
+        const rsvpEventIds = rsvps.map((r: RsvpData) => r.EventID); // array of unique rsvp event id's
+        
+        events.forEach((event: EventData) => {
+          event.attending = rsvpEventIds.includes(event.EventID) ? true : false
+        });
+        setEventsData(events)
+        console.log(events)
+
+
       console.log(results)
     } catch(error) {
       console.warn(error)
