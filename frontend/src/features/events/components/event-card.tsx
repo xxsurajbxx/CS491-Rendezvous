@@ -3,8 +3,8 @@
 import type React from "react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Calendar, Clock, MapPin, ArrowRight } from "lucide-react"
+import { Card, CardContent, CardFooter } from "@/components/ui/card"
+import { Clock, MapPin, ArrowRight, CheckCircle } from 'lucide-react'
 import dayjs from "dayjs"
 import { getTokenPayload } from "../../../../utils/auth"
 import type { EventCardData } from "../types"
@@ -17,6 +17,7 @@ export const EventCard: React.FC<EventCardData> = ({
   Description,
   Location,
   startDateTime,
+  endDateTime,
   attending,
 }) => {
   const router = useRouter()
@@ -27,8 +28,8 @@ export const EventCard: React.FC<EventCardData> = ({
     router.push(`events/${EventID}`)
   }
 
-  const formatDate = (dateString: Date) => {
-    return dayjs(dateString).format("MMMM D, YYYY")
+  const formatDate = (dateTime: Date) => {
+    return dayjs(dateTime).format("MMM D, YYYY")
   }
 
   const formatTime = (dateTime: Date) => {
@@ -94,79 +95,84 @@ export const EventCard: React.FC<EventCardData> = ({
   return (
     <Card
       id={"event-card-" + EventID}
-      className="overflow-hidden transition-all duration-300 hover:shadow-lg group border-0 shadow-md"
+      className="overflow-hidden transition-all duration-300 hover:shadow-md group border border-purple-100"
     >
-      <div className="flex flex-col md:flex-row">
+      <div className="flex">
         {/* Date Column */}
-        <div className="bg-purple-900 text-white p-4 flex flex-row md:flex-col items-center justify-center md:w-24 md:min-w-24">
-          <div className="text-center">
-            <div className="text-sm font-medium">{formatDayOfWeek(startDateTime)}</div>
-            <div className="text-3xl font-bold">{formatDay(startDateTime)}</div>
-          </div>
+        <div className="bg-purple-900 text-white p-2 flex flex-col items-center justify-center w-16">
+          <div className="text-xs font-medium">{formatDayOfWeek(startDateTime)}</div>
+          <div className="text-2xl font-bold">{formatDay(startDateTime)}</div>
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col">
-          {/* Event Header - Clickable */}
-          <div
-            onClick={navigateToEvent}
-            className="p-5 cursor-pointer group-hover:bg-purple-50 transition-colors duration-300 border-b border-gray-100"
-          >
-            <div className="flex justify-between items-start">
-              <h2 className="text-xl font-bold text-gray-900 group-hover:text-purple-900 transition-colors duration-300">
-                {Name}
-              </h2>
-              <ArrowRight className="h-5 w-5 text-purple-700 opacity-0 group-hover:opacity-100 transition-all duration-300 transform group-hover:translate-x-1" />
+        <div className="flex-1">
+          <CardContent className="p-3 pb-0">
+            {/* Event Header - Clickable */}
+            <div onClick={navigateToEvent} className="cursor-pointer group/title mb-3">
+              <div className="flex justify-between items-start">
+                <h3 className="text-sm font-semibold text-gray-900 group-hover/title:text-purple-800 transition-colors duration-200">
+                  {Name}
+                </h3>
+                <ArrowRight className="h-3.5 w-3.5 text-purple-700 opacity-0 group-hover/title:opacity-100 transition-opacity duration-200 flex-shrink-0 ml-1" />
+              </div>
+              <p className="text-xs text-gray-500 mt-1.5 line-clamp-3">{Description}</p>
             </div>
-            <p className="mt-2 text-gray-600 line-clamp-2">{Description}</p>
-          </div>
 
-          {/* Event Details */}
-          <div className="p-5 bg-white flex-1">
-            <div className="space-y-3">
-              <div className="flex items-center">
-                <Calendar className="h-4 w-4 text-purple-700 mr-2" />
-                <span className="text-sm text-gray-700">{formatDate(startDateTime)}</span>
+            {/* Event Details */}
+            <div className="space-y-2.5 text-xs">
+              {/* Time Section */}
+              <div className="flex items-start">
+                <Clock className="h-3.5 w-3.5 text-purple-700 mr-2 mt-0.5 flex-shrink-0" />
+                <div className="space-y-0.5">
+                  <div className="text-gray-700">
+                    <span className="font-medium">Start:</span> {formatDate(startDateTime)} at{" "}
+                    {formatTime(startDateTime)}
+                  </div>
+                  {endDateTime && (
+                    <div className="text-gray-700">
+                      <span className="font-medium">End:</span> {formatDate(endDateTime)} at {formatTime(endDateTime)}
+                    </div>
+                  )}
+                </div>
               </div>
-              <div className="flex items-center">
-                <Clock className="h-4 w-4 text-purple-700 mr-2" />
-                <span className="text-sm text-gray-700">{formatTime(startDateTime)}</span>
-              </div>
-              <div className="flex items-center">
-                <MapPin className="h-4 w-4 text-purple-700 mr-2" />
-                <span className="text-sm text-gray-700">{Location}</span>
+
+              {/* Location Section - No line clamp */}
+              <div className="flex items-start pb-2">
+                <MapPin className="h-3.5 w-3.5 text-purple-700 mr-2 mt-0.5 flex-shrink-0" />
+                <span className="text-gray-700 break-words">{Location}</span>
               </div>
             </div>
-          </div>
+          </CardContent>
 
-          {/* RSVP Button */}
-          <div className="p-5 bg-gray-50 border-t border-gray-100">
+          {/* RSVP Section */}
+          <CardFooter className="p-3 pt-2 border-t border-gray-100">
             {attendingStatus ? (
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between w-full">
                 <div className="flex items-center">
-                  <div className="h-3 w-3 bg-green-500 rounded-full mr-2"></div>
-                  <span className="text-sm font-medium text-green-700">You&apos;re attending</span>
+                  <CheckCircle className="h-3.5 w-3.5 text-green-600 mr-1.5" />
+                  <span className="text-xs font-medium text-green-700">Attending</span>
                 </div>
                 <Button
                   onClick={handleCancelRsvp}
                   variant="outline"
                   size="sm"
                   disabled={isLoading}
-                  className="border-gray-300 text-gray-700 hover:bg-gray-200 hover:text-gray-900"
+                  className="h-7 text-xs border-red-200 text-red-700 hover:bg-red-50 hover:text-red-800"
                 >
-                  Cancel RSVP
+                  Cancel
                 </Button>
               </div>
             ) : (
               <Button
                 onClick={handleEventRsvp}
-                className="w-full bg-purple-900 hover:bg-purple-800 text-white transition-colors duration-200"
+                size="sm"
+                className="w-full h-7 text-xs bg-purple-700 hover:bg-purple-800 text-white"
                 disabled={isLoading}
               >
                 RSVP to Event
               </Button>
             )}
-          </div>
+          </CardFooter>
         </div>
       </div>
     </Card>

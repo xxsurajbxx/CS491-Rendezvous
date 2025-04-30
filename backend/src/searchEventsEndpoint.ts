@@ -3,36 +3,57 @@ import { pool } from "./db";
 import fuzzysort from "fuzzysort"; // npm install fuzzysort
 
 export const searchEvents = async (req: Request, res: Response): Promise<Response> => {
-  const { query } = req.query;
+  const { query, userId } = req.body;
 
-  if (!query || typeof query !== "string") {
-    return res.status(400).json({ status: "fail", message: "Missing or invalid query parameter" });
+  if (!query || typeof query !== "string" || !userId) {
+    return res.status(400).json({ status: "fail", message: "Missing or invalid query or userId" });
   }
 
   try {
-    const [raw] = await pool.query(
+    const [eventRows] = await pool.query(
       `SELECT 
-        e.EventID, 
-        e.Name, 
-        e.startDateTime,
-        e.endDateTime, 
-        e.Location, 
-        e.Description, 
-        m.Latitude, 
-        m.Longitude
-       FROM Events e
-       LEFT JOIN Map m ON e.EventID = m.EventID
-       WHERE e.HostUserID IS NOT NULL
-       AND e.endDateTime > NOW()`
+          e.EventID, 
+          e.Name, 
+          e.startDateTime,
+          e.endDateTime, 
+          e.Location, 
+          e.Description,
+          e.IsPublic, 
+          e.HostUserID,
+          m.Latitude, 
+          m.Longitude
+        FROM Events e
+        LEFT JOIN Map m ON e.EventID = m.EventID
+        WHERE e.endDateTime > NOW()
+          AND (
+            e.IsPublic = 1
+            OR e.HostUserID = ?
+            OR (
+              e.IsPublic = 0
+              AND e.HostUserID IS NOT NULL
+              AND EXISTS (
+                SELECT 1
+                FROM Friends f
+                WHERE f.Status = 'Accepted'
+                  AND (
+                    (f.User1ID = e.HostUserID AND f.User2ID = ?)
+                    OR
+                    (f.User2ID = e.HostUserID AND f.User1ID = ?)
+                  )
+              )
+            )
+          )`,
+      [userId, userId, userId]
     );
 
-    const events = raw as any[]; // telling typescript to treat it as a normal array of objects
+    const filtered = eventRows as any[];// telling typescript to treat it as a normal array of objects
                                   // because fuzzysort likes a plain list
 
     // fuzzy search on name, location, description, and starting time of event
-    const results = fuzzysort.go(query, events, {
+    const results = fuzzysort.go(query, filtered, {
       keys: ["Name", "Location", "Description", "startDateTime"],
-      threshold: -1000,
+      threshold: 0, // stricter match
+      limit: 20,       // optional: restrict result count
     });
 
     const matchedEvents = results.map((r: any) => r.obj);

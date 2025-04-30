@@ -5,6 +5,7 @@ import { searchEvents } from "./searchEventsEndpoint";
 import { getFullEventData } from "./getFullEventData";
 import { scrapeTicketmasterEvents } from "./fetchTicketmasterEvents";
 import { deleteEvent } from "./deleteEvent";
+import { getRecommendedEvents } from "./getRecommendedEvents";
 
 
 const router = express.Router();
@@ -14,12 +15,12 @@ router.post("/", async (req, res) => {
 });
 
 // GET /api/events/user-events
-router.get("/user-events", async (req, res) => {
+router.get("/user-events/:userId", async (req, res) => {
     await getUserEventData(req, res);
 });
 
 // event searching
-router.get("/search", async (req, res) => {
+router.post("/search", async (req, res) => {
     await searchEvents(req, res);
   });
 
@@ -36,6 +37,11 @@ router.post("/scrape-ticketmaster", async (req, res) => {
   // delete event
 router.delete("/:eventId/:userId", async (req, res) => {
   await deleteEvent(req, res);
+});
+
+// recommended events sorting
+router.get("/recommended/:userId", async (req, res) => {
+  await getRecommendedEvents(req, res);
 });
   
 export default router;
