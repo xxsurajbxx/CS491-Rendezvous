@@ -135,7 +135,7 @@ export const EditProfileForm = () => {
         }
 
         getUserData();
-        console.log(currentUserData);
+        // console.log(currentUserData);
     }, [])
     
     return (
