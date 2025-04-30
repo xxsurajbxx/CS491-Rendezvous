@@ -20,7 +20,7 @@ router.get("/user-events/:userId", async (req, res) => {
 });
 
 // event searching
-router.get("/search", async (req, res) => {
+router.get("/search/:query/:userId", async (req, res) => {
     await searchEvents(req, res);
   });
 
