@@ -42,6 +42,8 @@ import {
 } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 
 interface FullDataResponse {
   event: Event
@@ -123,6 +125,27 @@ export const EventScreen = ({ id }: { id: number }) => {
   const [walkingMinutes, setWalkingMinutes] = useState<string>("0.00");
   const [transitError, setTransitError] = useState<boolean>(false)
   const [isLoadingTransit, setIsLoadingTransit] = useState<boolean>(false)
+  const router = useRouter();
+
+  async function deleteEvent() {
+    try{
+      if(!id || !eventId) return;
+      const response = await fetch(`http://localhost:8080/api/events/${eventId}/${id}`, {
+        method: "DELETE",
+      });
+
+      if(!response.ok) {
+        throw new Error("Failed to delete event.");
+      }
+
+      router.replace("/");
+    }
+    catch(error){
+      console.log(error);
+      toast.error("Failed to delete event.");
+    }
+
+  }
 
   async function getTransitInfo() {
     try {
@@ -626,13 +649,21 @@ export const EventScreen = ({ id }: { id: number }) => {
                 <Button onClick={rsvpToEvent} className="bg-purple-600 hover:bg-purple-700 mt-10">
                   RSVP to Event
                 </Button>
-              ) : (
+              ) : event.HostUserID !== id ? (
                 <Button
                   onClick={unrsvpFromEvent}
                   variant="outline"
                   className="border-red-300 text-red-600 hover:bg-red-50 mt-10"
                 >
                   Cancel RSVP
+                </Button>
+              ) : (
+                  <Button
+                  onClick={deleteEvent}
+                  variant="outline"
+                  className="border-red-300 text-red-600 hover:bg-red-50 mt-10"
+                >
+                  Delete Event
                 </Button>
               )}
             </div>
