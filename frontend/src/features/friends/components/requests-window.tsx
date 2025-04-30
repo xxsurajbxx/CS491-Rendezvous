@@ -75,7 +75,7 @@ export const RequestsWindow= ({ userId, friendRequests, updateFriendRequests, up
     try {
       const token = await getTokenPayload();
       if (!token) throw new Error("Error occurred while getting jwt token");
-      if (!token.isVerified) throw new Error("User cannot add friend because user is not verified")
+      if (!token.verified) throw new Error("User cannot add friend because user is not verified")
 
       const response = await fetch(`http://localhost:8080/api/friends/respond/${friendId}`, {
         method: 'POST',
