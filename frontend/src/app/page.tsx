@@ -10,7 +10,7 @@ export default async function Home() {
   }
   else{
       // Render the client component after auth check
-  return <HomeClient address={token.address} />
+  return <HomeClient id={token.userId} address={token.address} />
 
   }
 

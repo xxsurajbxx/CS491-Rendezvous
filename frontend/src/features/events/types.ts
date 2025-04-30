@@ -2,9 +2,11 @@ export interface EventData {
     EventID: number
     Name: string,
     startDateTime: Date,
-    endDateTime?: Date,
-    Description: string
+    endDateTime: Date,
     Location: string,
+    Description: string,
+    isPublic: number,
+    HostUserID: number,
     Latitude?: number,
     Longitude?: number,
     people?: string[],
@@ -15,7 +17,8 @@ export interface EventCardData {
     EventID: number
     Name: string,
     startDateTime: Date,
-    endDateTime?: Date,
+    endDateTime: Date,
+    HostUserID: number,
     Description: string
     Location: string,
     people?: string[],

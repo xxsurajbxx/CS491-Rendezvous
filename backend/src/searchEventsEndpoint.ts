@@ -3,7 +3,7 @@ import { pool } from "./db";
 import fuzzysort from "fuzzysort"; // npm install fuzzysort
 
 export const searchEvents = async (req: Request, res: Response): Promise<Response> => {
-  const { query, userId } = req.params;
+  const { query, userId } = req.body;
 
   if (!query || typeof query !== "string" || !userId) {
     return res.status(400).json({ status: "fail", message: "Missing or invalid query or userId" });
@@ -52,7 +52,8 @@ export const searchEvents = async (req: Request, res: Response): Promise<Respons
     // fuzzy search on name, location, description, and starting time of event
     const results = fuzzysort.go(query, filtered, {
       keys: ["Name", "Location", "Description", "startDateTime"],
-      threshold: -1000,
+      threshold: 0, // stricter match
+      limit: 20,       // optional: restrict result count
     });
 
     const matchedEvents = results.map((r: any) => r.obj);
