@@ -40,8 +40,10 @@ export const sendVerificationCode = async (req: Request, res: Response) => {
 
     return res.status(200).json({ status: "success", message: "Verification email sent" });
 
-  } catch (error) {
-    console.error("Error sending verification code:", error);
-    return res.status(500).json({ status: "fail", message: "Internal server error" });
+  } catch (error: any) {
+    console.error("sendVerificationCode error:", error);
+    return res
+      .status(500)
+      .json({ status: "fail", message: error.message });
   }
 };
