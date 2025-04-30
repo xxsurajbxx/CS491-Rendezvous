@@ -5,7 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { SignInFlow } from "../types";
 import { useState } from "react";
 import { TriangleAlert } from "lucide-react";
-import { setTokenCookie } from "../../../../utils/auth";
+import { setTokenCookie, getTokenPayload } from "../../../../utils/auth";
 import { useRouter } from "next/navigation";
 import { GeoapifyGeocoderAutocomplete, GeoapifyContext } from "@geoapify/react-geocoder-autocomplete"
 //import { useAuthActions } from "@convex-dev/auth/react";
@@ -45,6 +45,25 @@ export const SignUpCard = ({setState}: SignUpCardProps) => {
     const handlePlaceSelect = (selectedPlace: SelectedPlace) => {
         if (selectedPlace?.geometry?.coordinates) {
             setAddress(selectedPlace.properties.formatted)
+        }
+    }
+
+    const sendVerificationCode = async () => {
+        try {
+            const token = await getTokenPayload();
+            if (!token) throw new Error("Error occurred while getting token.");
+
+            const response = await fetch("http://localhost:8080/api/verify/send", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    userId: token.userId,
+                    email: token.email,
+                }),
+            });
+            
+        } catch (error) {
+            console.error(error);
         }
     }
 
