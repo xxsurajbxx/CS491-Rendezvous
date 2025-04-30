@@ -83,7 +83,7 @@ export const updateUserProfile = async (req: Request, res: Response): Promise<vo
 
     if (usernameChanged || addressChanged || nameChanged) {
       const token = jwt.sign(
-        { userId: userId, email: user.Email, name: user.Name, address: address || user.Address, },
+        { userId: userId, email: user.Email, name: user.Name, address: address || user.Address, verified: user.IsVerified },
         JWT_SECRET,
         { expiresIn: "1h" }
       );
