@@ -17,6 +17,7 @@ export const recommendFriends = async (req: Request, res: Response): Promise<Res
         u.UserID, 
         u.Name, 
         u.Username,
+        u.Email,
         CASE 
           WHEN f.User1ID = u.UserID AND f.User2ID = ? AND f.Status = 'Pending' THEN 'incoming'
           ELSE 'none'
