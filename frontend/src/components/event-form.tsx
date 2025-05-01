@@ -172,7 +172,7 @@ export const EventForm = () => {
       const token = await getTokenPayload();
       if (!token) throw new Error("Error occured while fetching the jwt token");
       if (!token.verified) {
-        toast("Only verified users can create events.")
+        toast.error("Only verified users can create events.")
         setShowPopup(true);
         throw new Error("User cannot create event becuase they are not verified");
       }

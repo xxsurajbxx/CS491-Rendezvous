@@ -33,6 +33,7 @@ export interface SidebarProps {
     setOpenEventCards(eventCard: string[]): void,
     isOpen(eventCardId: string): boolean,
     handleSearch(query: string): void,
+    setShowPopup(flag: boolean): void,
 }
 
 //Defines a marked position on the leaflet map including name of location, coordinates of location, and a popup description that describes that location/event.

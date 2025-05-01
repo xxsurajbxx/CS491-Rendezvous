@@ -133,12 +133,15 @@ export const VerifyScreen = ({  userId, email }: VerifyScreenProps) => {
           Verify
         </button>
 
-        <button
-          onClick={resendVerificationCode}
-          className="mt-4 text-sm text-blue-600 hover:underline"
-        >
-          Didn&apos;t receive a code?
-        </button>
+        <div className="flex flex-row justify-center items-center mt-4 text-sm">
+          <p>Didn&apos;t receive a code?&nbsp;</p>
+          <button
+            onClick={resendVerificationCode}
+            className="text-blue-600 hover:underline"
+          >
+            Resend
+          </button>
+        </div>
       </div>
     </div>
   );

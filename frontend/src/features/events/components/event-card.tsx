@@ -54,7 +54,7 @@ export const EventCard: React.FC<EventCardData> = ({
       if (!token.verified) {
         toast.error("Only verified users can RSVP to events.");
         setShowPopup(true);
-        return
+        return;
       }
 
       const response = await fetch(`http://localhost:8080/api/rsvp/`, {

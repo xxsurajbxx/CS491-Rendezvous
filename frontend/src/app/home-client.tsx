@@ -240,6 +240,7 @@ export default function HomeClient({ id, address }: HomeClientProps) {
           setOpenEventCards={setOpenEventCards}
           isOpen={isOpen}
           handleSearch={handleSearch}
+          setShowPopup={setShowPopup}
         />
         <SidebarInset>
           <main className="flex min-h-screen items-center justify-center bg-gray-100 p-6">
