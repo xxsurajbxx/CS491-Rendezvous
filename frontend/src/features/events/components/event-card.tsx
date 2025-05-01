@@ -4,7 +4,7 @@ import type React from "react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { Clock, MapPin, ArrowRight, CheckCircle } from 'lucide-react'
+import { Clock, MapPin, ArrowRight, CheckCircle, Crown } from "lucide-react"
 import dayjs from "dayjs"
 import { getTokenPayload } from "../../../../utils/auth"
 import type { EventCardData } from "../types"
@@ -19,9 +19,10 @@ export const EventCard: React.FC<EventCardData> = ({
   startDateTime,
   endDateTime,
   attending,
+  isHost,
 }) => {
   const router = useRouter()
-  const [attendingStatus, setAttendingStatus] = useState<boolean>(attending)
+  const [attendingStatus, setAttendingStatus] = useState<boolean>(attending) // Hosts are always attending
   const [isLoading, setIsLoading] = useState(false)
 
   const navigateToEvent = () => {
@@ -146,7 +147,14 @@ export const EventCard: React.FC<EventCardData> = ({
 
           {/* RSVP Section */}
           <CardFooter className="p-3 pt-2 border-t border-gray-100">
-            {attendingStatus ? (
+            {isHost ? (
+              <div className="flex items-center justify-between w-full">
+                <div className="flex items-center">
+                  <Crown className="h-3.5 w-3.5 text-amber-500 mr-1.5" />
+                  <span className="text-xs font-medium text-amber-700">You&apos;re hosting this event</span>
+                </div>
+              </div>
+            ) : attendingStatus ? (
               <div className="flex items-center justify-between w-full">
                 <div className="flex items-center">
                   <CheckCircle className="h-3.5 w-3.5 text-green-600 mr-1.5" />
