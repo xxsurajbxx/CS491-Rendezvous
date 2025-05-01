@@ -151,7 +151,7 @@ export const EventCard: React.FC<EventCardData> = ({
               <div className="flex items-center justify-between w-full">
                 <div className="flex items-center">
                   <Crown className="h-3.5 w-3.5 text-amber-500 mr-1.5" />
-                  <span className="text-xs font-medium text-amber-700">You're hosting this event</span>
+                  <span className="text-xs font-medium text-amber-700">You&apos;re hosting this event</span>
                 </div>
               </div>
             ) : attendingStatus ? (
