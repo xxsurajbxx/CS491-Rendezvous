@@ -54,7 +54,7 @@ interface Recommendation {
 }
 
 export const DiscoverScreen = ({ id }: DiscoverProps) => {
-  const [rsvps, setRsvps] = useState<RSVP[]>([])
+  //const [rsvps, setRsvps] = useState<RSVP[]>([])
   const [groupedEvents, setGroupedEvents] = useState<GroupedEvent[]>([])
   const [query, setQuery] = useState<string>("")
   const [users, setUsers] = useState<User[]>([])
@@ -129,7 +129,7 @@ export const DiscoverScreen = ({ id }: DiscoverProps) => {
       const response = await fetch(`http://localhost:8080/api/rsvp/friends/${id}/rsvps`)
       if (!response.ok) throw new Error("Failed to fetch friends' RSVPs")
       const json = await response.json()
-      setRsvps(json.data || [])
+      //setRsvps(json.data || [])
 
       // Group RSVPs by event
       groupRSVPsByEvent(json.data || [])
@@ -254,7 +254,7 @@ export const DiscoverScreen = ({ id }: DiscoverProps) => {
                 {hasSearched && users.length === 0 && !isSearching && (
                   <div className="mt-4 text-center py-8 border rounded-lg bg-gray-50">
                     <SearchX className="mx-auto h-10 w-10 text-gray-400 mb-2" />
-                    <p className="text-gray-500 font-medium">No users found matching "{query}"</p>
+                    <p className="text-gray-500 font-medium">No users found</p>
                     <p className="text-gray-400 text-sm mt-1">Try a different search term</p>
                   </div>
                 )}
@@ -359,7 +359,7 @@ export const DiscoverScreen = ({ id }: DiscoverProps) => {
             <Card>
               <CardHeader>
                 <CardTitle>Events</CardTitle>
-                <CardDescription>See what's happening in your network</CardDescription>
+                <CardDescription>See what&apos;s happening in your network</CardDescription>
               </CardHeader>
               <CardContent>
                 {groupedEvents.length === 0 ? (
