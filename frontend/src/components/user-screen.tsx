@@ -113,17 +113,13 @@ export default function UserScreen({ id }: { id: number }) {
   async function sendFriendRequest() {
     if (!userId || !id) return
     try {
-      // nested try catch for user verification logic
-      try {
-        const token = await getTokenPayload();
-        if (!token) throw new Error("Error occurred while getting jwt token");
-        if (!token.verified) {
-          toast("Only verified users can send friend requests.")
-          setShowPopup(true);
-          throw new Error("User cannot send friend requests becuase they are not verified");
-        }
-        } catch (error) {
-          console.error(error);
+      // if user is not verified they cannot send friend request
+      const token = await getTokenPayload();
+      if (!token) throw new Error("Error occurred while getting jwt token");
+      if (!token.verified) {
+        toast("Only verified users can send friend requests.")
+        setShowPopup(true);
+        throw new Error("User cannot send friend requests becuase they are not verified");
       }
 
       await fetch("http://localhost:8080/api/friends/add", {
@@ -160,17 +156,13 @@ export default function UserScreen({ id }: { id: number }) {
   const handleFriendRequest = async (action: "accept" | "reject", friendId: number) => {
     console.log(friendId)
     try {
-      // nested try-catch statement for user verification system
-      try {
-        const token = await getTokenPayload();
-        if (!token) throw new Error("Error occurred while getting jwt token");
-        if (!token.verified) {
-          toast("Only verified users can accept or reject friend requests.")
-          setShowPopup(true);
-          throw new Error("User cannot accept or reject friend requests becuase they are not verified");
-        }
-      } catch (error) {
-        console.error(error);
+      // if user is not verified they cannot accept or reject friend requests
+      const token = await getTokenPayload();
+      if (!token) throw new Error("Error occurred while getting jwt token");
+      if (!token.verified) {
+        toast("Only verified users can accept or reject friend requests.");
+        setShowPopup(true);
+        throw new Error("User cannot accept or reject friend requests becuase they are not verified");
       }
 
       const response = await fetch(`http://localhost:8080/api/friends/respond/${friendId}`, {

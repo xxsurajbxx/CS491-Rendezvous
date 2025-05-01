@@ -120,6 +120,7 @@ export default function HomeClient({ id, address }: HomeClientProps) {
       people: event.people,
       attending: event.attending,
       isOpen: (eventCardId: string) => openEventCards.includes(eventCardId),
+      setShowPopup: setShowPopup,
     }));
     setEventCards(eventCardsData);
   }, [eventsData, openEventCards])

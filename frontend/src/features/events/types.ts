@@ -23,7 +23,8 @@ export interface EventCardData {
     Location: string,
     people?: string[],
     attending: boolean,
-    isOpen(eventCardId: string): boolean
+    isOpen(eventCardId: string): boolean,
+    setShowPopup(flag: boolean): void,
 }
 
 export interface SidebarProps {

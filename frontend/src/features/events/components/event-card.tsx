@@ -19,6 +19,7 @@ export const EventCard: React.FC<EventCardData> = ({
   startDateTime,
   endDateTime,
   attending,
+  setShowPopup,
 }) => {
   const router = useRouter()
   const [attendingStatus, setAttendingStatus] = useState<boolean>(attending)
@@ -52,6 +53,7 @@ export const EventCard: React.FC<EventCardData> = ({
       // if user is not verified, exit function
       if (!token.verified) {
         toast.error("Only verified users can RSVP to events.");
+        setShowPopup(true);
         return
       }
 
