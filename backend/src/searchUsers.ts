@@ -6,7 +6,7 @@ export const searchUsers = async (req: Request, res: Response): Promise<Response
   if (!query || typeof query !== "string") {
     return res
       .status(400)
-      .json({ status: "fail", message: "Missing or invalid query parameter" });
+      .json({ status: "fail", message: "Missing or invalid qquery parameter" });
   }
 
   // escape any regex-special characters
