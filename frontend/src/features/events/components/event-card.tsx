@@ -48,7 +48,12 @@ export const EventCard: React.FC<EventCardData> = ({
     try {
       setIsLoading(true)
       const token = await getTokenPayload()
-      if (!token) throw new Error("Failed to retrieve token from cookies.")
+      if (!token) throw new Error("Failed to retrieve token from cookies.");
+      // if user is not verified, exit function
+      if (!token.verified) {
+        toast.error("Only verified users can RSVP to events.");
+        return
+      }
 
       const response = await fetch(`http://localhost:8080/api/rsvp/`, {
         method: "POST",
