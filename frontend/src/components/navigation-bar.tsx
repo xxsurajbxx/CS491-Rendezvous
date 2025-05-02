@@ -80,7 +80,7 @@ export default function NavigationBar({ hideNotification = false }: NavigationBa
   const navItems = [
     { name: "Home", href: "/", icon: <Home className="h-4 w-4 mr-2" /> },
     { name: "Create Event", href: "/events/create", icon: <Calendar className="h-4 w-4 mr-2" /> },
-    { name: "Friends", href: "/friends", icon: <Users className="h-4 w-4 mr-2" /> },
+    { name: "Discover", href: "/discover", icon: <Users className="h-4 w-4 mr-2" /> },
     { name: "About", href: "/about", icon: <Info className="h-4 w-4 mr-2" /> },
   ]
 

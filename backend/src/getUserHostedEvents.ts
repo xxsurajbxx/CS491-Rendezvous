@@ -21,11 +21,13 @@ export const getUserHostedEventData = async (req: Request, res: Response): Promi
           e.Location, 
           e.Description,
           e.IsPublic, 
+          e.HostUserID,
           m.Latitude, 
           m.Longitude
        FROM Events e
        LEFT JOIN Map m ON e.EventID = m.EventID
-       WHERE e.HostUserID = ?`,
+       WHERE e.HostUserID = ?
+       `,
       [userId]
     );
 

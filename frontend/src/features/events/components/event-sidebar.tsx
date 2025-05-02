@@ -12,7 +12,8 @@ import { Accordion } from "@radix-ui/react-accordion";
 import SearchBar from "./search-bar";
 
 
-export const EventSideBar = ({ events, openEventCards, setOpenEventCards, isOpen, handleSearch, setShowPopup }: SidebarProps) => {
+
+export const EventSideBar = ({ events, openEventCards, setOpenEventCards, isOpen, handleSearch, id, setShowPopup }: SidebarProps) => {
   
   return(
     <Sidebar variant="inset" collapsible="none" className="w-1/4 max-h-screen top-[80px]">
@@ -34,10 +35,12 @@ export const EventSideBar = ({ events, openEventCards, setOpenEventCards, isOpen
                     startDateTime={event.startDateTime}
                     endDateTime={event.endDateTime}
                     HostUserID={event.HostUserID}
+                    isHost={event.HostUserID === id}
                     people={event.people}
                     attending={event.attending}
                     isOpen={isOpen}
                     setShowPopup={setShowPopup}
+                    id={id}
                   />
                 ))}
               </Accordion>

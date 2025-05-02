@@ -57,52 +57,53 @@ export default function HomeClient({ id, address }: HomeClientProps) {
   const isOpen = (eventCardId: string): boolean => {
     return openEventCards.includes(eventCardId)
   }
-  
+
   const handleOpenEventCard = (eventCard: string) => {
     const targetElementCard = document.getElementById(eventCard)
-    setOpenEventCards((prev) => (
-      prev.includes(eventCard) ? prev.filter((currentEventCard) => currentEventCard !== eventCard) : [...prev, eventCard]
-    ))
+    setOpenEventCards((prev) =>
+      prev.includes(eventCard)
+        ? prev.filter((currentEventCard) => currentEventCard !== eventCard)
+        : [...prev, eventCard]
+    )
     if (targetElementCard) {
-      targetElementCard.scrollIntoView({behavior: 'smooth', block: 'center', inline: 'nearest'})
+      targetElementCard.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' })
     }
   }
-  
+
   const getAllEventsData = async () => {
     try {
-      // fetching all events
+      setEventsData(undefined);
+      setEventCards(undefined);
+      setOpenEventCards([]);
+
+      // Fetch all events
       let response = await fetch(`http://localhost:8080/api/events/user-events/${id}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
-      if (!response.ok) throw new Error('Error occurred while fetching all event data. Try Again.')
+      if (!response.ok) throw new Error('Error occurred while fetching all event data.')
 
       let result = await response.json();
       const events = result.events;
-      // console.log(events);
 
-      // fetching events that user RSVP'ed to
+      // Fetch RSVP data
       response = await fetch(`http://localhost:8080/api/rsvp?userId=${id}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
-      })
+      });
       if (!response.ok) throw new Error("Error occurred while fetching rsvp data.");
 
       result = await response.json();
       const rsvps = result.data;
-      // console.log(rsvps);
+      const rsvpEventIds = rsvps.map((r: RsvpData) => r.EventID);
 
-      // setting attending status based on if the eventId is in the list of rsvp's
-      const rsvpEventIds = rsvps.map((r: RsvpData) => r.EventID); // array of unique rsvp event id's
-      
       events.forEach((event: EventData) => {
-        event.attending = rsvpEventIds.includes(event.EventID) ? true : false
+        event.attending = rsvpEventIds.includes(event.EventID);
       });
-      setEventsData(events)
-      console.log(events)
 
+      setEventsData(events);
     } catch (error) {
-      console.error('Fetch error:', error)
+      console.error('Fetch error:', error);
     }
   }
 
@@ -119,14 +120,17 @@ export default function HomeClient({ id, address }: HomeClientProps) {
       Location: event.Location,
       people: event.people,
       attending: event.attending,
+      isHost: event.HostUserID === id,
       isOpen: (eventCardId: string) => openEventCards.includes(eventCardId),
       setShowPopup: setShowPopup,
+      id: id
     }));
+
     setEventCards(eventCardsData);
-  }, [eventsData, openEventCards])
+  }, [eventsData, openEventCards]);
 
   const getLeafletMarkersData = (): LeafletMarker[] | undefined => {
-    const leafletMarkersData: LeafletMarker[] = []
+    const leafletMarkersData: LeafletMarker[] = [];
     eventsData?.forEach(event => {
       if (event.Latitude && event.Longitude) {
         leafletMarkersData.push({
@@ -135,16 +139,16 @@ export default function HomeClient({ id, address }: HomeClientProps) {
           Description: event.Description,
           Latitude: event.Latitude,
           Longitude: event.Longitude
-        })
+        });
       }
-    })
+    });
     return leafletMarkersData.length > 0 ? leafletMarkersData : undefined;
   }
 
-  // function for handling search results using search api endpoint
   const handleSearch = async (query: string) => {
-    console.log("Searching")
-    // If query is empty, reload original data using the fetch function that gets all eventsData
+    setEventsData(undefined);
+    setEventCards(undefined);
+    setOpenEventCards([]);
     if (!query.trim()) {
       getAllEventsData();
       return;
@@ -154,59 +158,45 @@ export default function HomeClient({ id, address }: HomeClientProps) {
       const response = await fetch(`http://localhost:8080/api/events/search`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          query: query,
-          userId: id
-        })
+        body: JSON.stringify({ query, userId: id })
       });
+
       const results = await response.json();
       const events = results.data;
 
-      if (!response.ok || results.status === "fail") throw new Error("Error occured while searching for events")
-      if (events.length > 0) {
-        setEventsData(results.data)
-      } else {
-        // search results returned no events based on given search query from user
-        console.log("No event results matched the user's query.")
-      }
+      if (!response.ok || results.status === "fail") throw new Error("Error occurred while searching for events");
 
-         // fetching events that user RSVP'ed to
-        const response2 = await fetch(`http://localhost:8080/api/rsvp?userId=${id}`, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
-        })
-        if (!response2.ok) throw new Error("Error occurred while fetching rsvp data.");
-  
-        const result = await response2.json();
-        const rsvps = result.data;
-        // console.log(rsvps);
-  
-        // setting attending status based on if the eventId is in the list of rsvp's
-        const rsvpEventIds = rsvps.map((r: RsvpData) => r.EventID); // array of unique rsvp event id's
-        
-        events.forEach((event: EventData) => {
-          event.attending = rsvpEventIds.includes(event.EventID) ? true : false
-        });
-        setEventsData(events)
-        console.log(events)
+      // Fetch RSVP data
+      const rsvpResponse = await fetch(`http://localhost:8080/api/rsvp?userId=${id}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      if (!rsvpResponse.ok) throw new Error("Error occurred while fetching rsvp data.");
 
+      const rsvpResult = await rsvpResponse.json();
+      const rsvps = rsvpResult.data;
+      const rsvpEventIds = rsvps.map((r: RsvpData) => r.EventID);
 
-      console.log(results)
-    } catch(error) {
-      console.warn(error)
+      events.forEach((event: EventData) => {
+        event.attending = rsvpEventIds.includes(event.EventID);
+      });
+
+      setEventsData(events);
+    } catch (error) {
+      console.warn(error);
     }
   }
 
   useEffect(() => {
-    
     getAllEventsData();
     getCoordinatesFromAddress(address, setCoordinates);
-  }, [address]);  
+  }, [address]);
 
   useEffect(() => {
-    
-    getEventCardsData();
-  }, [getEventCardsData])
+    if (eventsData) {
+      getEventCardsData();
+    }
+  }, [eventsData, getEventCardsData]);
 
   // run for user verification popup window
   useEffect(() => {
@@ -235,6 +225,7 @@ export default function HomeClient({ id, address }: HomeClientProps) {
       </header>
       <SidebarProvider>
         <EventSideBar
+          id={id}
           events={eventCards}
           openEventCards={openEventCards}
           setOpenEventCards={setOpenEventCards}

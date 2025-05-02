@@ -11,6 +11,7 @@ export interface EventData {
     Longitude?: number,
     people?: string[],
     attending: boolean,
+    isHost: boolean,
 }
 
 export interface EventCardData {
@@ -23,8 +24,10 @@ export interface EventCardData {
     Location: string,
     people?: string[],
     attending: boolean,
-    isOpen(eventCardId: string): boolean,
     setShowPopup(flag: boolean): void,
+    isHost: boolean,
+    isOpen(eventCardId: string): boolean
+    id: number
 }
 
 export interface SidebarProps {
@@ -34,6 +37,7 @@ export interface SidebarProps {
     isOpen(eventCardId: string): boolean,
     handleSearch(query: string): void,
     setShowPopup(flag: boolean): void,
+    id: number
 }
 
 //Defines a marked position on the leaflet map including name of location, coordinates of location, and a popup description that describes that location/event.
