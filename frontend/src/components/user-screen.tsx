@@ -10,6 +10,9 @@ import { Badge } from "@/components/ui/badge"
 import { CalendarIcon, Users, Clock, MapPin, Mail, Info } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { getTokenPayload } from "../../utils/auth"
+import { VerifyPopup } from "@/features/verify/VerifyPopup";
+import { toast } from "sonner";
 
 interface User {
   UserID: number
@@ -71,6 +74,9 @@ export default function UserScreen({ id }: { id: number }) {
   const [friendId, setFriendId] = useState<number | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
+  // verify user account variable
+  const [showPopup, setShowPopup] = useState<boolean>(false);
+
   // Check if user is viewing their own profile
   const isOwnProfile = id === Number(userId)
 
@@ -107,6 +113,15 @@ export default function UserScreen({ id }: { id: number }) {
   async function sendFriendRequest() {
     if (!userId || !id) return
     try {
+      // if user is not verified they cannot send friend request
+      const token = await getTokenPayload();
+      if (!token) throw new Error("Error occurred while getting jwt token");
+      if (!token.verified) {
+        toast("Only verified users can send friend requests.")
+        setShowPopup(true);
+        throw new Error("User cannot send friend requests becuase they are not verified");
+      }
+
       await fetch("http://localhost:8080/api/friends/add", {
         method: "POST",
         headers: {
@@ -141,6 +156,15 @@ export default function UserScreen({ id }: { id: number }) {
   const handleFriendRequest = async (action: "accept" | "reject", friendId: number) => {
     console.log(friendId)
     try {
+      // if user is not verified they cannot accept or reject friend requests
+      const token = await getTokenPayload();
+      if (!token) throw new Error("Error occurred while getting jwt token");
+      if (!token.verified) {
+        toast("Only verified users can accept or reject friend requests.");
+        setShowPopup(true);
+        throw new Error("User cannot accept or reject friend requests becuase they are not verified");
+      }
+
       const response = await fetch(`http://localhost:8080/api/friends/respond/${friendId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -215,6 +239,24 @@ export default function UserScreen({ id }: { id: number }) {
     })
     setFilteredEvents(filtered)
   }, [events, friendStatus, isOwnProfile])
+
+  // run for user verification popup window
+  useEffect(() => {
+
+    const checkUserVerification = async () => {
+      const token = await getTokenPayload();
+      if (!token) {
+        console.error("No jwt token retrieved.");
+        return;
+      }
+      if (!token.verified) {
+        setShowPopup(true);
+        console.log("User is not verified");
+      }
+    };
+
+    checkUserVerification();
+  }, [])
 
   if (isLoading) {
     return <ProfileSkeleton />
@@ -507,6 +549,10 @@ export default function UserScreen({ id }: { id: number }) {
           </TabsContent>
         </Tabs>
       </div>
+
+
+      {/* Verification popup window */}
+      {showPopup && <VerifyPopup setShowPopup={setShowPopup} />}
     </div>
   )
 }

@@ -5,6 +5,7 @@ interface PopupProps {
   isOpen: boolean
   setIsOpen(status: boolean): void
   message: string
+  button?: string
 }
 
 export const Popup = ({message}: PopupProps) => {

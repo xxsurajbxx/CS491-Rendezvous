@@ -7,6 +7,8 @@ import { EventSideBar } from "@/features/events/components/event-sidebar"
 import { EventData, EventCardData, LeafletMarker } from "@/features/events/types"
 import { useCallback, useEffect, useState } from "react"
 import { RsvpData } from "@/features/friends/types"
+import { VerifyPopup } from "@/features/verify/VerifyPopup"
+import { getTokenPayload } from "../../utils/auth"
 
 interface HomeClientProps {
   id: number;
@@ -48,6 +50,9 @@ export default function HomeClient({ id, address }: HomeClientProps) {
   const [eventsData, setEventsData] = useState<EventData[] | undefined>(undefined);
   const [eventCards, setEventCards] = useState<EventCardData[] | undefined>(undefined);
   const [openEventCards, setOpenEventCards] = useState<string[]>([]);
+
+  // verify user account variable
+  const [showPopup, setShowPopup] = useState<boolean>(false);
 
   const isOpen = (eventCardId: string): boolean => {
     return openEventCards.includes(eventCardId)
@@ -117,6 +122,7 @@ export default function HomeClient({ id, address }: HomeClientProps) {
       attending: event.attending,
       isHost: event.HostUserID === id,
       isOpen: (eventCardId: string) => openEventCards.includes(eventCardId),
+      setShowPopup: setShowPopup,
       id: id
     }));
 
@@ -192,6 +198,26 @@ export default function HomeClient({ id, address }: HomeClientProps) {
     }
   }, [eventsData, getEventCardsData]);
 
+  // run for user verification popup window
+  useEffect(() => {
+
+    const checkUserVerification = async () => {
+      const token = await getTokenPayload();
+      if (!token) {
+        console.error("No jwt token retrieved.");
+        return;
+      }
+      // console.log(token)
+  
+      if (!token.verified) {
+        setShowPopup(true);
+        console.log("User is not verified");
+      }
+    };
+
+    checkUserVerification();
+  }, [])
+
   return (
     <div>
       <header>
@@ -205,6 +231,7 @@ export default function HomeClient({ id, address }: HomeClientProps) {
           setOpenEventCards={setOpenEventCards}
           isOpen={isOpen}
           handleSearch={handleSearch}
+          setShowPopup={setShowPopup}
         />
         <SidebarInset>
           <main className="flex min-h-screen items-center justify-center bg-gray-100 p-6">
@@ -216,6 +243,9 @@ export default function HomeClient({ id, address }: HomeClientProps) {
           </main>
         </SidebarInset>
       </SidebarProvider>
+
+      {/* Verification popup window */}
+      {showPopup && <VerifyPopup setShowPopup={setShowPopup} />}
     </div>
   )
 }

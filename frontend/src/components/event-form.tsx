@@ -24,6 +24,7 @@ import { getTokenPayload } from "../../utils/auth"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 // import Image from 'next/image';
+import { VerifyPopup } from "@/features/verify/VerifyPopup"
 
 // Replace the form schema definition with this updated version that includes all fields
 const formSchema = z.object({
@@ -62,6 +63,9 @@ export const EventForm = () => {
   const [locationTouched, setLocationTouched] = useState(false)
   const router = useRouter();
   // const [imagePreview, setImagePreview] = useState<string | null>(null)
+
+  // verify user account variable
+  const [showPopup, setShowPopup] = useState<boolean>(false);
 
   // Initialize the form
   const form = useForm<FormValues>({
@@ -165,6 +169,14 @@ export const EventForm = () => {
     }
 
     try {
+      const token = await getTokenPayload();
+      if (!token) throw new Error("Error occured while fetching the jwt token");
+      if (!token.verified) {
+        toast.error("Only verified users can create events.")
+        setShowPopup(true);
+        throw new Error("User cannot create event becuase they are not verified");
+      }
+
       const response = await fetch('http://localhost:8080/api/events/', {
         method: "POST",
         headers: {
@@ -203,6 +215,26 @@ export const EventForm = () => {
       getUserId()
     }
   })
+
+  // run for user verification popup window
+  useEffect(() => {
+
+    const checkUserVerification = async () => {
+      const token = await getTokenPayload();
+      if (!token) {
+        console.error("No jwt token retrieved.");
+        return;
+      }
+      // console.log(token)
+  
+      if (!token.verified) {
+        setShowPopup(true);
+        console.log("User is not verified");
+      }
+    };
+
+    checkUserVerification();
+  }, [])
 
   return (
     <div className="container mx-auto py-10 px-4 md:px-6">
@@ -517,6 +549,9 @@ export const EventForm = () => {
           </GeoapifyContext>
         </CardContent>
       </Card>
+
+      {/* Verification popup window */}
+      {showPopup && <VerifyPopup setShowPopup={setShowPopup} />}
     </div>
   )
 }

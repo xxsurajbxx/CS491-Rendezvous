@@ -11,6 +11,7 @@ export interface DecodedToken {
   name: string;
   exp: number;
   address: string;
+  verified: boolean;
 }
 
 

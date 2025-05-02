@@ -19,7 +19,8 @@ export const EventCard: React.FC<EventCardData> = ({
   startDateTime,
   endDateTime,
   attending,
-  isHost,
+  setShowPopup,
+  isHost
 }) => {
   const router = useRouter()
   const [attendingStatus, setAttendingStatus] = useState<boolean>(attending) // Hosts are always attending
@@ -49,7 +50,13 @@ export const EventCard: React.FC<EventCardData> = ({
     try {
       setIsLoading(true)
       const token = await getTokenPayload()
-      if (!token) throw new Error("Failed to retrieve token from cookies.")
+      if (!token) throw new Error("Failed to retrieve token from cookies.");
+      // if user is not verified, exit function
+      if (!token.verified) {
+        toast.error("Only verified users can RSVP to events.");
+        setShowPopup(true);
+        return;
+      }
 
       const response = await fetch(`http://localhost:8080/api/rsvp/`, {
         method: "POST",

@@ -24,6 +24,7 @@ export interface EventCardData {
     Location: string,
     people?: string[],
     attending: boolean,
+    setShowPopup(flag: boolean): void,
     isHost: boolean,
     isOpen(eventCardId: string): boolean
     id: number
@@ -35,6 +36,7 @@ export interface SidebarProps {
     setOpenEventCards(eventCard: string[]): void,
     isOpen(eventCardId: string): boolean,
     handleSearch(query: string): void,
+    setShowPopup(flag: boolean): void,
     id: number
 }
 
