@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { setTokenCookie } from "../../../utils/auth";
 
 interface VerifyScreenProps {
   userId: number,
@@ -52,9 +53,9 @@ export const VerifyScreen = ({  userId, email }: VerifyScreenProps) => {
         throw new Error(result.message || "Verification failed");
       }
       
-      console.log("Verified!", result);
-      toast.success('Account Verified!')
-      router.push("/")
+      setTokenCookie(result.token);
+      toast.success('Account Verified!');
+      router.push("/");
 
     } catch (error) {
       console.error("Verification error:", error);

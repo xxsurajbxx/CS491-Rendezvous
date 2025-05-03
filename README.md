@@ -1,16 +1,51 @@
-Sure! Here's a more detailed and polished version of the instructions for your README, with clearer steps and formatting for easier readability:
-
----
-
 # CS491-City-Nav-App
 
 Senior capstone project for the startup track
+
+---
 
 ## Setup
 
 To get the application up and running, follow these steps:
 
-### 1. Set up the Backend
+---
+
+### 1. Set up Environment Variables
+
+Before running the application, create the required `.env` files in the appropriate directories:
+
+#### **backend/.env**
+
+Create a `.env` file in the `backend` directory and include the following variables:
+
+```env
+DB_HOST=
+DB_PORT=
+DB_USER=
+DB_PASSWORD=
+DB_NAME=
+HASDATA_API_KEY=
+JWT_SECRET=
+EMAIL_USER=
+EMAIL_PW=
+TICKETMASTER_KEY=
+ORS_KEY=
+```
+
+#### **frontend/.env**
+
+Create a `.env` file in the `frontend` directory and include the following variables:
+
+```env
+NEXT_PUBLIC_JWT_SECRET=
+NEXT_PUBLIC_GEOAPIFY_KEY=
+```
+
+> **Note:** If you're connecting to the NJIT SQL Server, you must be on NJIT's Wi-Fi or connected to the NJIT network via the **Cisco Secure Client VPN** or any other VPN.
+
+---
+
+### 2. Set up the Backend
 
 * Open a terminal window.
 * Navigate to the **backend** directory:
@@ -34,7 +69,9 @@ To get the application up and running, follow these steps:
   npm run start
   ```
 
-### 2. Set up the Frontend
+---
+
+### 3. Set up the Frontend
 
 * Open another terminal window.
 * Navigate to the **frontend** directory:
@@ -58,13 +95,19 @@ To get the application up and running, follow these steps:
   npm run start
   ```
 
-### 3. Run End-to-End Tests (Optional)
+---
 
-* While the backend and frontend are running, open another terminal window in the **parent directory** (the directory that contains both the `backend` and `frontend` directories).
+### 4. Run End-to-End Tests (Optional)
+
+* While the backend and frontend are running, open another terminal window in the **parent directory** (the directory that contains both `backend` and `frontend`).
+* Install the Cypress testing dependencies:
+
+  ```bash
+  npm install
+  ```
 * Run Cypress to open the test interface:
 
   ```bash
-  npm i
   npm run cypress:open
   ```
 
@@ -72,5 +115,9 @@ To get the application up and running, follow these steps:
 
 ### Additional Notes
 
-* Make sure that both the backend and frontend servers are running before you run Cypress tests.
-* The frontend will typically be running on `http://localhost:3000`, and the backend will be running on its own port (configured in the backend code).
+* Ensure both the backend and frontend servers are running before running Cypress tests.
+* By default:
+
+  * Frontend runs on `http://localhost:3000`
+  * Backend runs on `http://localhost:8080`
+
