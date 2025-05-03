@@ -64,6 +64,7 @@ To get the application up and running, follow these steps:
 * Run Cypress to open the test interface:
 
   ```bash
+  npm i
   npm run cypress:open
   ```
 
