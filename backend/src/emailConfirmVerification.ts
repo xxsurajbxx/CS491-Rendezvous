@@ -46,7 +46,7 @@ export const confirmVerificationCode = async (req: Request, res: Response) => {
       );
 
   
-      return res.status(200).json({ status: "success", message: "Email verified" });
+      return res.status(200).json({ status: "success", message: "Email verified", token });
   
     } catch (error) {
       console.error("Error confirming code:", error);
