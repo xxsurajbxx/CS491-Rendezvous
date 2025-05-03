@@ -67,7 +67,7 @@ export const DiscoverScreen = ({ id }: DiscoverProps) => {
   async function sendFriendRequest(otherUserId: number) {
     if (!otherUserId || !id) return
     try {
-      const response = await fetch("http://localhost:8080/api/friends/add", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/friends/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -99,7 +99,7 @@ export const DiscoverScreen = ({ id }: DiscoverProps) => {
 
     try {
       if (!id) return
-      const response = await fetch(`http://localhost:8080/api/friends/search?query=${encodeURIComponent(query)}`)
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/friends/search?query=${encodeURIComponent(query)}`)
       if (!response.ok) throw new Error("Failed to search users")
       const json = await response.json()
       setUsers(json.data || [])
@@ -114,7 +114,7 @@ export const DiscoverScreen = ({ id }: DiscoverProps) => {
   async function getRecommendations() {
     try {
       if (!id) return
-      const response = await fetch(`http://localhost:8080/api/friends/recommendations/${id}`)
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/friends/recommendations/${id}`)
       if (!response.ok) throw new Error("Failed to fetch recommendations")
       const json = await response.json()
       setRecommendations(json.recommendations || [])
@@ -126,7 +126,7 @@ export const DiscoverScreen = ({ id }: DiscoverProps) => {
   async function getFriendsRSVPFeed() {
     try {
       if (!id) return
-      const response = await fetch(`http://localhost:8080/api/rsvp/friends/${id}/rsvps`)
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/rsvp/friends/${id}/rsvps`)
       if (!response.ok) throw new Error("Failed to fetch friends' RSVPs")
       const json = await response.json()
       //setRsvps(json.data || [])

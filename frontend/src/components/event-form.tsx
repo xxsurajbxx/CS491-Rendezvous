@@ -177,7 +177,7 @@ export const EventForm = () => {
         throw new Error("User cannot create event becuase they are not verified");
       }
 
-      const response = await fetch('http://localhost:8080/api/events/', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/events/`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json'

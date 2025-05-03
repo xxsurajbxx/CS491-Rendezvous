@@ -58,7 +58,7 @@ export const EventCard: React.FC<EventCardData> = ({
         return;
       }
 
-      const response = await fetch(`http://localhost:8080/api/rsvp/`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/rsvp/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -83,7 +83,7 @@ export const EventCard: React.FC<EventCardData> = ({
       const token = await getTokenPayload()
       if (!token) throw new Error("Failed to retrieve token from cookies.")
 
-      const response = await fetch(`http://localhost:8080/api/rsvp/${token.userId}/${EventID}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/rsvp/${token.userId}/${EventID}`, {
         method: "DELETE",
       })
       if (!response.ok) throw new Error("Failed to cancel RSVP.")

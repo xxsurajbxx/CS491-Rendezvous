@@ -83,7 +83,7 @@ export default function UserScreen({ id }: { id: number }) {
   async function fetchFriendRequests() {
     if (!isOwnProfile || !userId || !id) return
     try {
-      const response = await fetch(`http://localhost:8080/api/friends/requests/${userId}`)
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/friends/requests/${userId}`)
       if (!response.ok) throw new Error("Failed the retrieve incoming friend requests")
       const json = await response.json()
       setFriendRequests(json.data)
@@ -95,7 +95,7 @@ export default function UserScreen({ id }: { id: number }) {
   async function fetchRelationship() {
     if (!userId || !id || isOwnProfile) return
     try {
-      const response = await fetch(`http://localhost:8080/api/friends/status?userId1=${id}&userId2=${userId}`)
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/friends/status?userId1=${id}&userId2=${userId}`)
       if (!response.ok) throw new Error("Failed to fetch relationship")
       const json = await response.json()
 
@@ -122,7 +122,7 @@ export default function UserScreen({ id }: { id: number }) {
         throw new Error("User cannot send friend requests becuase they are not verified");
       }
 
-      await fetch("http://localhost:8080/api/friends/add", {
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/friends/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -141,7 +141,7 @@ export default function UserScreen({ id }: { id: number }) {
 
   const handleUnfollow = async (friendId: number) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/friends/delete/${friendId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/friends/delete/${friendId}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
       })
@@ -165,7 +165,7 @@ export default function UserScreen({ id }: { id: number }) {
         throw new Error("User cannot accept or reject friend requests becuase they are not verified");
       }
 
-      const response = await fetch(`http://localhost:8080/api/friends/respond/${friendId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/friends/respond/${friendId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action }),
@@ -183,7 +183,7 @@ export default function UserScreen({ id }: { id: number }) {
         // Reuse the fetchUserData function to update friends list
         if (userId) {
           try {
-            const response = await fetch(`http://localhost:8080/api/user/${userId}/data`)
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/${userId}/data`)
             if (!response.ok) throw new Error("Failed to fetch user data")
             const json: ApiResponse = await response.json()
             setFriends(json.data.friends)
@@ -205,7 +205,7 @@ export default function UserScreen({ id }: { id: number }) {
       if (!userId) return
       setIsLoading(true)
       try {
-        const response = await fetch(`http://localhost:8080/api/user/${userId}/data`)
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/${userId}/data`)
         if (!response.ok) throw new Error("Failed to fetch user data")
         const json: ApiResponse = await response.json()
         setUserData(json.data.user)

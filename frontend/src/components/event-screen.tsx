@@ -130,7 +130,7 @@ export const EventScreen = ({ id }: { id: number }) => {
   async function deleteEvent() {
     try{
       if(!id || !eventId) return;
-      const response = await fetch(`http://localhost:8080/api/events/${eventId}/${id}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/events/${eventId}/${id}`, {
         method: "DELETE",
       });
 
@@ -152,7 +152,7 @@ export const EventScreen = ({ id }: { id: number }) => {
       setIsLoadingTransit(true)
       setTransitError(false)
 
-      const response = await fetch("http://localhost:8080/api/transport/getTravelInfo", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/transport/getTravelInfo`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -232,7 +232,7 @@ export const EventScreen = ({ id }: { id: number }) => {
       }
 
       // Check if user and host are friends
-      const response = await fetch(`http://localhost:8080/api/friends/status?userId1=${id}&userId2=${event.HostUserID}`)
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/friends/status?userId1=${id}&userId2=${event.HostUserID}`)
       if (!response.ok) throw new Error("Failed to fetch relationship")
 
       const json = await response.json()
@@ -254,7 +254,7 @@ export const EventScreen = ({ id }: { id: number }) => {
     try {
       if (!id || !eventId) return
       setError(null)
-      const response = await fetch(`http://localhost:8080/api/events/full/${eventId}/${id}`)
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/events/full/${eventId}/${id}`)
       if (!response.ok) throw new Error("Failed to fetch event data")
       const json: FullDataResponse = await response.json()
       setEvent(json.event)
@@ -280,7 +280,7 @@ export const EventScreen = ({ id }: { id: number }) => {
   async function getRSVP() {
     try {
       if (!id || !eventId) return
-      const response = await fetch(`http://localhost:8080/api/rsvp/status/${id}/${eventId}`)
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/rsvp/status/${id}/${eventId}`)
       if (!response.ok) throw new Error("Failed to retrieve RSVP status")
       const json = await response.json()
       setRsvpStatus(json.rsvped)
@@ -293,7 +293,7 @@ export const EventScreen = ({ id }: { id: number }) => {
   async function rsvpToEvent() {
     try {
       if (!id || !eventId) return
-      const response = await fetch("http://localhost:8080/api/rsvp", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/rsvp`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -316,7 +316,7 @@ export const EventScreen = ({ id }: { id: number }) => {
   async function unrsvpFromEvent() {
     try {
       if (!id || !eventId) return
-      const response = await fetch(`http://localhost:8080/api/rsvp/${id}/${eventId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/rsvp/${id}/${eventId}`, {
         method: "DELETE",
       })
       if (!response.ok) throw new Error("Failed to unRSVP from this event")
@@ -334,7 +334,7 @@ export const EventScreen = ({ id }: { id: number }) => {
   async function getCarpool() {
     try {
       if (!id || !eventId) return
-      const response = await fetch(`http://localhost:8080/api/carpool/my/${id}/${eventId}`)
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/carpool/my/${id}/${eventId}`)
       if (!response.ok) throw new Error("Failed to find carpool user is in")
       const json = await response.json()
       setMyCarpool(json.carpool)
@@ -399,7 +399,7 @@ export const EventScreen = ({ id }: { id: number }) => {
       }
 
       // Notes can be an empty string, this is fine
-      const response = await fetch(`http://localhost:8080/api/carpool/offer`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/carpool/offer`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -425,7 +425,7 @@ export const EventScreen = ({ id }: { id: number }) => {
   async function deleteCarpool(carpoolId: number) {
     try {
       if (!id) return
-      const response = await fetch(`http://localhost:8080/api/carpool/delete`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/carpool/delete`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -448,7 +448,7 @@ export const EventScreen = ({ id }: { id: number }) => {
   async function joinCarpool(carpoolId: number) {
     try {
       if (!id) return
-      const response = await fetch(`http://localhost:8080/api/carpool/join`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/carpool/join`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -471,7 +471,7 @@ export const EventScreen = ({ id }: { id: number }) => {
   async function leaveCarpool(carpoolId: number) {
     try {
       if (!id) return
-      const response = await fetch(`http://localhost:8080/api/carpool/leave`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/carpool/leave`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -493,7 +493,7 @@ export const EventScreen = ({ id }: { id: number }) => {
   // Function to remove user from carpool, aka kicking a user from a carpool
   async function kickUserFromCarpool(carpoolId: number, userId: number) {
     try {
-      const response = await fetch(`http://localhost:8080/api/carpool/${carpoolId}/remove/${userId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/carpool/${carpoolId}/remove/${userId}`, {
         method: "DELETE",
       })
       if (!response.ok) throw new Error(`Failed to kick user ${userId} from carpool`)

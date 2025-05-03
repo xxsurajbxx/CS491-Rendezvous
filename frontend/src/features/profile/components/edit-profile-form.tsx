@@ -77,7 +77,7 @@ export const EditProfileForm = () => {
             if (!token) throw new Error('Failed to retrieve token from cookies.');
             // console.log(`${firstName} ${lastName}`);
 
-            const response = await fetch(`http://localhost:8080/api/update-profile/${token?.userId}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/update-profile/${token?.userId}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json"
@@ -114,7 +114,7 @@ export const EditProfileForm = () => {
                 const token = await getTokenPayload();
                 if (!token) throw new Error('Failed to retrieve token from cookies.');
 
-                const response = await fetch(`http://localhost:8080/api/user/${token?.userId}/data`, {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/${token?.userId}/data`, {
                     method: "GET",
                     headers: {
                         "Content-Type": "application/json"

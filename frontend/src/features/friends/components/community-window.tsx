@@ -28,7 +28,7 @@ export const CommunityWindow = ({ userId, friends, updateFriends, personProfiles
 
   const getFriends = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/friends/all/${userId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/friends/all/${userId}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -47,7 +47,7 @@ export const CommunityWindow = ({ userId, friends, updateFriends, personProfiles
 
   const handleUnfollow = async (friendId: number) => {
     try{
-      const response = await fetch(`http://localhost:8080/api/friends/delete/${friendId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/friends/delete/${friendId}`, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
       });

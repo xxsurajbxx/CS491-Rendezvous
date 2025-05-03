@@ -48,7 +48,7 @@ export default function NavigationBar({ hideNotification = false }: NavigationBa
       if (!token || !token.userId) return
 
       try {
-        const response = await fetch(`http://localhost:8080/api/friends/requests/${token.userId}`)
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/friends/requests/${token.userId}`)
         if (!response.ok) throw new Error("Failed to retrieve incoming friend requests")
 
         const json = await response.json()

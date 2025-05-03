@@ -38,7 +38,7 @@ export const VerifyScreen = ({  userId, email }: VerifyScreenProps) => {
 
   const verifyCode = async (code: string) => {
     try {
-      const response = await fetch("http://localhost:8080/api/verify/confirm", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/verify/confirm`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -64,7 +64,7 @@ export const VerifyScreen = ({  userId, email }: VerifyScreenProps) => {
 
   const resendVerificationCode = async () => {
     try {
-      const response = await fetch("http://localhost:8080/api/verify/send", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/verify/send`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

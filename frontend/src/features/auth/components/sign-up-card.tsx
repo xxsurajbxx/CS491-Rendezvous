@@ -53,7 +53,7 @@ export const SignUpCard = ({setState}: SignUpCardProps) => {
             const token = await getTokenPayload();
             if (!token) throw new Error("Error occurred while getting token.");
 
-            const response = await fetch("http://localhost:8080/api/verify/send", {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/verify/send`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -104,7 +104,7 @@ export const SignUpCard = ({setState}: SignUpCardProps) => {
         setPending(true);
 
         try {
-            const response = await fetch("http://localhost:8080/api/signup", {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/signup`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ firstName, lastName, username, email, address, password }),
@@ -114,7 +114,7 @@ export const SignUpCard = ({setState}: SignUpCardProps) => {
                 throw new Error(data.message || "Failed to sign up");
             }
                 try {
-                    const response = await fetch("http://localhost:8080/api/login", {
+                    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/login`, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ email, username, address, password }),

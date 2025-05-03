@@ -32,7 +32,7 @@ export const RequestsWindow= ({ userId, friendRequests, updateFriendRequests, up
 
   const getFriends = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/friends/all/${userId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/friends/all/${userId}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -52,7 +52,7 @@ export const RequestsWindow= ({ userId, friendRequests, updateFriendRequests, up
   // Function to get the friend requests
   const getFriendRequests = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/friends/requests/${userId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/friends/requests/${userId}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -77,7 +77,7 @@ export const RequestsWindow= ({ userId, friendRequests, updateFriendRequests, up
       if (!token) throw new Error("Error occurred while getting jwt token");
       if (!token.verified) throw new Error("User cannot add friend because user is not verified")
 
-      const response = await fetch(`http://localhost:8080/api/friends/respond/${friendId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/friends/respond/${friendId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action }),

@@ -77,7 +77,7 @@ export default function HomeClient({ id, address }: HomeClientProps) {
       setOpenEventCards([]);
 
       // Fetch all events
-      let response = await fetch(`http://localhost:8080/api/events/user-events/${id}`, {
+      let response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/events/user-events/${id}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -87,7 +87,7 @@ export default function HomeClient({ id, address }: HomeClientProps) {
       const events = result.events;
 
       // Fetch RSVP data
-      response = await fetch(`http://localhost:8080/api/rsvp?userId=${id}`, {
+      response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/rsvp?userId=${id}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
@@ -155,7 +155,7 @@ export default function HomeClient({ id, address }: HomeClientProps) {
     }
 
     try {
-      const response = await fetch(`http://localhost:8080/api/events/search`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/events/search`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query, userId: id })
@@ -167,7 +167,7 @@ export default function HomeClient({ id, address }: HomeClientProps) {
       if (!response.ok || results.status === "fail") throw new Error("Error occurred while searching for events");
 
       // Fetch RSVP data
-      const rsvpResponse = await fetch(`http://localhost:8080/api/rsvp?userId=${id}`, {
+      const rsvpResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/rsvp?userId=${id}`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
