@@ -1,5 +1,8 @@
 import { Request, Response } from "express";
 import { pool } from "./db";
+import jwt from "jsonwebtoken";
+
+const JWT_SECRET = process.env.JWT_SECRET as string;
 
 export const confirmVerificationCode = async (req: Request, res: Response) => {
     const { userId, code } = req.body;
@@ -27,6 +30,21 @@ export const confirmVerificationCode = async (req: Request, res: Response) => {
   
       // mark user as verified
       await pool.query(`UPDATE Users SET IsVerified = true WHERE UserID = ?`, [userId]);
+
+      // get user info to include in JWT
+      const [userRows] = await pool.query(
+        `SELECT Email, Name, Address FROM Users WHERE UserID = ?`,
+        [userId]
+      );
+      const user = (userRows as any[])[0];
+
+      //generate updated jwt
+      const token = jwt.sign(
+        { userId: user.UserID, email: user.Email, name: user.Name, address: user.Address, verified: true },
+        JWT_SECRET,
+        { expiresIn: "1h" }
+      );
+
   
       return res.status(200).json({ status: "success", message: "Email verified" });
   
