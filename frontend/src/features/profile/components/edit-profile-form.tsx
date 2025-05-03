@@ -5,9 +5,8 @@ import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-// import { setTokenCookie } from "../../../../utils/auth";
+import { setTokenCookie } from "../../../../utils/auth";
 import { getTokenPayload } from "../../../../utils/auth";
-//import { useAuthActions } from "@convex-dev/auth/react";
 import { GeoapifyGeocoderAutocomplete, GeoapifyContext } from "@geoapify/react-geocoder-autocomplete";
 import { toast } from "sonner";
 
@@ -97,7 +96,9 @@ export const EditProfileForm = () => {
             if(data.status === "fail" || !response.ok){
                 throw new Error(data.message);
             }
-            // console.log(data)
+            if ( !data.token && data.token !== undefined && data.token !== null && data.token !== ""){
+                setTokenCookie(data.token);
+            }
             toast.success("Profile information updated.")
             router.push(`/users/${token.userId}`)
         }
