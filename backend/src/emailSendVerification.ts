@@ -33,7 +33,7 @@ export const sendVerificationCode = async (req: Request, res: Response) => {
     }
 
     const username = user.Username;
-    const verificationURL = `http://localhost:3000/verify`;
+    const verificationURL = `${process.env.FRONTEND_URL}/verify`;
 
     await pool.query(
       `INSERT INTO EmailVerifications (UserID, Code, ExpiresAt) VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 1 DAY))`,
