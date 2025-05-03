@@ -96,7 +96,7 @@ export const EditProfileForm = () => {
             if(data.status === "fail" || !response.ok){
                 throw new Error(data.message);
             }
-            if ( !data.token && data.token !== undefined && data.token !== null && data.token !== ""){
+            if ( data.token && data.token !== undefined && data.token !== null && data.token !== ""){
                 setTokenCookie(data.token);
             }
             toast.success("Profile information updated.")
