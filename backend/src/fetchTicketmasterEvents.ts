@@ -102,7 +102,7 @@ export const scrapeTicketmasterEvents = async (req: Request, res: Response): Pro
           image,
           1,  // ispublic = true
           0,  // usercreated = false
-          null // hostuserid null for scraped events
+          39 // hostuserid null for scraped events
         ]
       );
 
