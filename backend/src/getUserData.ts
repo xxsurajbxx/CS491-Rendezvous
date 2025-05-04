@@ -3,7 +3,7 @@ import { pool } from "./db";
 
 export const getUserData = async (req: Request, res: Response): Promise<void> => {
   const profileUserId = req.params.userId
-  const viewerId = req.query.viewerId
+  const viewerId = req.params.viewerId
 
   if (!profileUserId) {
     res.status(400).json({ 
