@@ -205,7 +205,7 @@ export default function UserScreen({ id }: { id: number }) {
       if (!userId) return
       setIsLoading(true)
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/${userId}/data`)
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/user/${userId}/viewer/${id}/data`)
         if (!response.ok) throw new Error("Failed to fetch user data")
         const json: ApiResponse = await response.json()
         setUserData(json.data.user)
