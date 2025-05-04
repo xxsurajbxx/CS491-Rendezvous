@@ -5,7 +5,7 @@ import { getUserEventAttendees } from "./getUserHostedEventsAttendees";
 
 const router = express.Router();
 // user data
-router.get("/user/:userId/data", getUserData);
+router.get("/user/:userId/viewer/:viewerId/data", getUserData);
 
 // hosted events
 router.get("/user/:userId/events", async (req, res) => {
