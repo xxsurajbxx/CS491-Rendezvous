@@ -33,7 +33,7 @@ export const confirmVerificationCode = async (req: Request, res: Response) => {
 
       // get user info to include in JWT
       const [userRows] = await pool.query(
-        `SELECT Email, Name, Address FROM Users WHERE UserID = ?`,
+        `SELECT UserID, Email, Name, Address FROM Users WHERE UserID = ?`,
         [userId]
       );
       const user = (userRows as any[])[0];
